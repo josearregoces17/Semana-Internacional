@@ -34,7 +34,7 @@
 </head>
 <body class="text-uniNegro antialiased min-h-screen flex flex-col">
 
-    <!-- LOGIN / REGISTRO -->
+    <!-- LOGIN / REGISTRO / RECUPERACIÓN -->
     <div id="auth-container" class="fixed inset-0 z-50 bg-pattern flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-white p-8 rounded-3xl shadow-2xl border-t-4 border-uniAmarillo">
             <div class="text-center mb-8">
@@ -48,12 +48,17 @@
                 <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg">Registrarse</button>
             </div>
 
+            <!-- Formulario de Login -->
             <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
                 <input type="email" id="login-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-uniAzul outline-none">
                 <input type="password" id="login-password" required placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-uniAzul outline-none">
                 <button type="submit" class="w-full py-3 bg-uniAzul hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md">Ingresar a la Plataforma</button>
+                <div class="text-center">
+                    <button type="button" onclick="switchTab('recover')" class="text-xs font-bold text-gray-500 hover:text-uniRosado hover:underline mt-2">¿Olvidaste tu contraseña?</button>
+                </div>
             </form>
 
+            <!-- Formulario de Registro -->
             <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
                 <input type="text" id="reg-name" required placeholder="Nombre Completo" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
                 <input type="email" id="reg-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
@@ -61,6 +66,18 @@
                 <input type="password" id="reg-password" required placeholder="Crear Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
                 <button type="submit" class="w-full py-3 bg-uniAmarillo hover:bg-opacity-90 text-uniNegro font-bold rounded-xl shadow-md">Crear Cuenta</button>
             </form>
+
+            <!-- Formulario de Recuperación -->
+            <form id="form-recover" onsubmit="handleRecover(event)" class="space-y-4 hidden">
+                <p class="text-xs text-gray-500 mb-2 text-center">Ingresa tu correo institucional y define una nueva contraseña de acceso.</p>
+                <input type="email" id="rec-email" required placeholder="Correo Electrónico Registrado" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
+                <input type="password" id="rec-password" required placeholder="Nueva Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
+                <button type="submit" class="w-full py-3 bg-uniRosado hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md">Restablecer Contraseña</button>
+                <div class="text-center">
+                    <button type="button" onclick="switchTab('login')" class="text-xs font-bold text-gray-500 hover:text-uniAzul hover:underline mt-2">Volver al inicio de sesión</button>
+                </div>
+            </form>
+
             <div id="auth-error" class="mt-4 text-xs text-uniRosado text-center font-bold"></div>
         </div>
     </div>
@@ -98,13 +115,15 @@
             
             <!-- SECCIÓN: ACTIVIDADES (ESTUDIANTE) -->
             <section id="sec-act" class="space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-uniAzul">
-                    <h2 class="text-2xl font-extrabold text-uniNegro">Retos Activos</h2>
-                    <p class="text-sm text-gray-500">Participa en las actividades habilitadas por la ORI para sumar puntos.</p>
+                <div class="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-uniAzul flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-uniNegro">Retos Activos</h2>
+                        <p class="text-sm text-gray-500">Participa en las actividades habilitadas por la ORI para sumar puntos.</p>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="activities-container">
-                    <!-- Se llena dinámicamente según lo activo en matriz -->
+                    <!-- Se llena dinámicamente -->
                 </div>
             </section>
 
@@ -161,7 +180,7 @@
                                 <button id="btn-toggle-act1" onclick="toggleAct(1)" class="text-xs px-3 py-1 rounded font-bold text-white"></button>
                             </div>
                             <input type="text" id="admin-act1-link" placeholder="Link de Instagram Objetivo..." class="w-full p-2 text-sm border rounded">
-                            <button onclick="saveAct1Link()" class="mt-2 text-xs bg-uniAzul text-white px-3 py-1 rounded">Guardar Link Configurado</button>
+                            <button onclick="saveAct1Link()" class="mt-2 text-xs bg-uniAzul text-white px-3 py-1 rounded font-bold hover:bg-opacity-90">Guardar Link</button>
                         </div>
                     </div>
 
@@ -200,11 +219,9 @@
     <script>
         const ADMIN_EMAIL = 'josearregocesfreyles@gmail.com';
 
-        // LÓGICA DE ALMACENAMIENTO (Reemplazar con Firebase en Producción)
         function getD(k, def) { const v = localStorage.getItem('uni_'+k); return v ? JSON.parse(v) : def; }
         function setD(k, v) { localStorage.setItem('uni_'+k, JSON.stringify(v)); }
 
-        // ESTADO INICIAL
         if(!getD('settings', false)) {
             setD('settings', { act1Active: true, act2Active: true, act3Active: true, act4Active: true, act1Link: 'https://instagram.com/uniguajira' });
         }
@@ -216,19 +233,55 @@
         }
         if(!getD('subsAct3', false)) setD('subsAct3', []);
 
-        // AUTH
+        // SINCRONIZACIÓN EN TIEMPO REAL ENTRE PESTAÑAS
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'uni_settings' || e.key === 'uni_users' || e.key === 'uni_subsAct3') {
+                const cu = getD('cu', null);
+                if (cu) {
+                    // Actualizar el usuario actual si sus datos cambiaron (ej: la matriz le aprobó puntos)
+                    if (e.key === 'uni_users') {
+                        const updatedUser = getD('users', []).find(u => u.email === cu.email);
+                        if (updatedUser) setD('cu', updatedUser);
+                    }
+                    initApp(getD('cu')); // Recargar la interfaz automáticamente
+                }
+            }
+        });
+
         function switchTab(t) {
-            document.getElementById('form-login').classList.toggle('hidden', t!=='login');
-            document.getElementById('form-register').classList.toggle('hidden', t==='login');
-            document.getElementById('tab-login').className = t==='login' ? 'flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-uniAzul' : 'flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg';
-            document.getElementById('tab-register').className = t!=='login' ? 'flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-uniAzul' : 'flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg';
+            document.getElementById('form-login').classList.toggle('hidden', t !== 'login');
+            document.getElementById('form-register').classList.toggle('hidden', t !== 'register');
+            document.getElementById('form-recover').classList.toggle('hidden', t !== 'recover');
+            
+            document.getElementById('tab-login').className = (t === 'login' || t === 'recover') ? 'flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-uniAzul' : 'flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg';
+            document.getElementById('tab-register').className = t === 'register' ? 'flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-uniAzul' : 'flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg';
+            document.getElementById('auth-error').innerText = '';
+        }
+
+        function handleRecover(e) {
+            e.preventDefault();
+            const em = document.getElementById('rec-email').value.toLowerCase().trim();
+            const np = document.getElementById('rec-password').value;
+            let users = getD('users', []);
+            let userIndex = users.findIndex(u => u.email === em);
+            
+            if(userIndex === -1) {
+                return document.getElementById('auth-error').innerText = 'El correo no está registrado en el sistema.';
+            }
+            
+            users[userIndex].password = btoa(np);
+            setD('users', users);
+            alert('¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.');
+            document.getElementById('rec-email').value = '';
+            document.getElementById('rec-password').value = '';
+            switchTab('login');
         }
 
         function handleRegister(e) {
             e.preventDefault();
             const em = document.getElementById('reg-email').value.toLowerCase().trim();
             let users = getD('users', []);
-            if(users.find(u => u.email === em)) return alert('Correo ya registrado');
+            if(users.find(u => u.email === em)) return document.getElementById('auth-error').innerText = 'Correo ya registrado';
             const nu = {
                 email: em, name: document.getElementById('reg-name').value, program: document.getElementById('reg-program').value,
                 password: btoa(document.getElementById('reg-password').value), points: 0, lastTime: Date.now(),
@@ -242,7 +295,7 @@
             const em = document.getElementById('login-email').value.toLowerCase().trim();
             const pw = btoa(document.getElementById('login-password').value);
             const user = getD('users', []).find(u => u.email === em && u.password === pw);
-            if(!user) return document.getElementById('auth-error').innerText = 'Credenciales inválidas';
+            if(!user) return document.getElementById('auth-error').innerText = 'Credenciales inválidas.';
             setD('cu', user); checkAuth();
         }
 
@@ -263,21 +316,36 @@
         }
 
         function switchSec(s) {
+            const u = getD('cu', {});
+            const isAdmin = u.email === ADMIN_EMAIL;
+
+            if (s === 'admin' && !isAdmin) return;
+
             ['act','rank','prof','admin'].forEach(x => {
                 const el = document.getElementById('sec-'+x);
                 const nav = document.getElementById('nav-'+x);
+                
                 if(el) el.classList.add('hidden');
-                if(nav) nav.className = 'py-3 text-sm font-bold text-gray-500 whitespace-nowrap';
+                
+                if(nav) {
+                    if (x === 'admin' && !isAdmin) {
+                        nav.className = 'py-3 text-sm font-bold text-uniRosado whitespace-nowrap hidden';
+                    } else {
+                        nav.className = 'py-3 text-sm font-bold text-gray-500 whitespace-nowrap';
+                        if (x === 'admin') nav.classList.add('text-uniRosado'); 
+                    }
+                }
             });
+            
             document.getElementById('sec-'+s).classList.remove('hidden');
-            document.getElementById('nav-'+s).className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap';
+            const activeNav = document.getElementById('nav-'+s);
+            if (activeNav) activeNav.className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap';
         }
 
-        // LÓGICA CORE APP
         function initApp(u) {
             const isAdmin = u.email === ADMIN_EMAIL;
             document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
-            document.getElementById('admin-badge').innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-xs px-2 py-1 font-bold rounded">MATRIZ</span>' : '';
+            document.getElementById('admin-badge').innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-xs px-2 py-1 font-bold rounded shadow-sm">MATRIZ</span>' : '';
             
             document.getElementById('p-name').innerText = u.name;
             document.getElementById('p-prog').innerText = u.program;
@@ -294,7 +362,7 @@
             u.points += pts; u.lastTime = Date.now();
             setD('cu', u);
             setD('users', users.map(x => x.email === u.email ? u : x));
-            initApp(u); alert(`¡Has sumado ${pts} puntos!`);
+            initApp(u); alert(`¡Felicidades! Has sumado ${pts} puntos.`);
         }
 
         function saveUserActState() {
@@ -302,61 +370,71 @@
             setD('users', users.map(x => x.email === u.email ? u : x));
         }
 
-        // RENDERIZAR ACTIVIDADES AL ESTUDIANTE
         function renderActivities(u) {
             const set = getD('settings', {});
             const cont = document.getElementById('activities-container');
             cont.innerHTML = '';
+            
+            let hasActiveActivities = false;
 
-            // ACT 1
             if(set.act1Active) {
+                hasActiveActivities = true;
                 let html = u.act1 ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded border border-green-200">✅ Completado (5 pts)</div>` : 
                     `<input type="text" id="a1-link" placeholder="Pega el link aquí..." class="w-full p-2 text-sm border rounded mb-2">
-                     <button onclick="checkAct1()" class="w-full bg-uniAzul text-white py-2 rounded font-bold text-sm hover:bg-opacity-90">Validar Link</button>`;
+                     <button onclick="checkAct1()" class="w-full bg-uniAzul text-white py-2 rounded font-bold text-sm hover:bg-opacity-90 transition-all">Validar Link</button>`;
                 cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 1: Adivina la publicación</h3><p class="text-xs text-gray-500 mb-3">Encuentra la publicación exacta de Instagram.</p>${html}</div>`;
             }
 
-            // ACT 2
             if(set.act2Active) {
+                hasActiveActivities = true;
                 let html = `<div class="space-y-3">`;
                 const q = [
                     { id: 0, t: '1. Política de Internacionalización (No. y Año)', in: `<input type="text" id="a2-q0" class="w-full p-1.5 border rounded text-xs" placeholder="Ej: 000 de 2020">` },
                     { id: 1, t: '2. ¿Cuántos objetivos tiene y cuál empieza por "Promover"?', in: `<input type="text" id="a2-q1" class="w-full p-1.5 border rounded text-xs" placeholder="Respuesta completa">` },
-                    { id: 2, t: '3. Si un estudiante va de intercambio a Mexico es:', in: `<select id="a2-q2" class="w-full p-1.5 border rounded text-xs"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
-                    { id: 3, t: '4. Profesor de B/quilla viene a Uniguajira a hacer una ponencia es:', in: `<select id="a2-q3" class="w-full p-1.5 border rounded text-xs"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
+                    { id: 2, t: '3. Uniguajira a México es:', in: `<select id="a2-q2" class="w-full p-1.5 border rounded text-xs"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
+                    { id: 3, t: '4. Profesor de B/quilla a Uniguajira es:', in: `<select id="a2-q3" class="w-full p-1.5 border rounded text-xs"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
                     { id: 4, t: '5. Nombre mascota ORI 🐶:', in: `<input type="text" id="a2-q4" class="w-full p-1.5 border rounded text-xs">` }
                 ];
                 q.forEach(i => {
                     html += `<div><label class="text-xs font-bold text-gray-700 block">${i.t}</label>
                     ${u.act2[i.id] ? '<span class="text-xs text-green-600 font-bold">✅ Correcto (+1 pt)</span>' : i.in}</div>`;
                 });
-                html += u.act2.every(x=>x) ? '' : `<button onclick="checkAct2()" class="w-full bg-uniAzul text-white py-2 rounded font-bold text-sm mt-2 hover:bg-opacity-90">Enviar Respuestas</button>`;
+                html += u.act2.every(x=>x) ? '' : `<button onclick="checkAct2()" class="w-full bg-uniAzul text-white py-2 rounded font-bold text-sm mt-2 hover:bg-opacity-90 transition-all">Enviar Respuestas</button>`;
                 cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 2: Preguntas</h3><p class="text-xs text-gray-500 mb-3">1 pt por cada una.</p>${html}</div>`;
             }
 
-            // ACT 3
             if(set.act3Active) {
+                hasActiveActivities = true;
                 let html = '';
                 if(u.act3 === 'approved') html = `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded border border-green-200">✅ Evaluado y Aprobado</div>`;
                 else if(u.act3 === 'pending') html = `<div class="p-3 bg-yellow-50 text-yellow-700 font-bold text-sm rounded border border-yellow-200">⏳ En revisión por Matriz ORI</div>`;
                 else {
                     html = `<input type="text" id="a3-link" placeholder="Link de tu video/historia..." class="w-full p-2 text-sm border rounded mb-2">
-                     <button onclick="submitAct3()" class="w-full bg-uniRosado text-white py-2 rounded font-bold text-sm hover:bg-opacity-90">Enviar a Revisión (Máx 8 pts)</button>`;
+                     <button onclick="submitAct3()" class="w-full bg-uniRosado text-white py-2 rounded font-bold text-sm hover:bg-opacity-90 transition-all">Enviar a Revisión (Máx 8 pts)</button>`;
                 }
                 cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 3: Historia Internacional</h3><p class="text-xs text-gray-500 mb-3">Sube tu evidencia para validación manual de la matriz.</p>${html}</div>`;
             }
 
-            // ACT 4
             if(set.act4Active) {
+                hasActiveActivities = true;
                 let found = u.act4.length;
                 let html = found >= 10 ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded border border-green-200">✅ Has encontrado las 10 palabras (50 pts)</div>` :
                     `<div class="flex gap-2 mb-2"><input type="text" id="a4-word" placeholder="Ingresa palabra oculta" class="flex-1 p-2 text-sm border rounded"><button onclick="checkAct4()" class="bg-uniAmarillo text-uniNegro px-4 py-2 rounded font-bold text-sm">Validar</button></div>`;
                 html += `<p class="text-xs font-bold mt-2">Encontradas (${found}/10): <span class="text-gray-500 font-normal">${u.act4.join(', ')}</span></p>`;
                 cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 4: Palabras Ocultas</h3><p class="text-xs text-gray-500 mb-3">Cada palabra correcta suma 5 pts.</p>${html}</div>`;
             }
+
+            // MENSAJE DE ESTADO VACÍO SI LA MATRIZ APAGA TODO
+            if (!hasActiveActivities) {
+                cont.innerHTML = `
+                <div class="col-span-1 md:col-span-2 text-center py-12 px-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <span class="text-4xl">⏳</span>
+                    <h3 class="text-lg font-bold text-uniAzul mt-4">Actualmente no hay retos activos</h3>
+                    <p class="text-sm text-gray-500 mt-2">La Oficina de Relaciones Internacionales (ORI) habilitará nuevas actividades pronto. ¡Mantente atento!</p>
+                </div>`;
+            }
         }
 
-        // VALIDADORES
         function checkAct1() {
             const v = document.getElementById('a1-link').value.trim();
             const set = getD('settings', {});
@@ -366,19 +444,13 @@
 
         function checkAct2() {
             let u = getD('cu'); let pts = 0;
-            // Q1: 018 de 2023
             if(!u.act2[0]) { let v = document.getElementById('a2-q0').value.toLowerCase(); if(v.includes('018') && v.includes('2023')) { u.act2[0] = true; pts++; } }
-            // Q2: 3 – Promover el relacionamiento...
             if(!u.act2[1]) { let v = document.getElementById('a2-q1').value.toLowerCase(); if((v.includes('3')||v.includes('tres')) && v.includes('promover') && v.includes('institucional')) { u.act2[1] = true; pts++; } }
-            // Q3: C
             if(!u.act2[2]) { let v = document.getElementById('a2-q2').value; if(v === 'C') { u.act2[2] = true; pts++; } }
-            // Q4: D
             if(!u.act2[3]) { let v = document.getElementById('a2-q3').value; if(v === 'D') { u.act2[3] = true; pts++; } }
-            // Q5: Shakira
             if(!u.act2[4]) { let v = document.getElementById('a2-q4').value.toLowerCase(); if(v.includes('shakira')) { u.act2[4] = true; pts++; } }
-            
             setD('cu', u); saveUserActState();
-            if(pts > 0) addPoints(pts); else alert('No hubo respuestas correctas nuevas.');
+            if(pts > 0) addPoints(pts); else alert('Revisa tus respuestas, no son correctas.');
         }
 
         function submitAct3() {
@@ -402,32 +474,30 @@
             } else alert('Palabra incorrecta.');
         }
 
-        // PANEL MATRIZ (ADMIN)
         function renderAdmin() {
             const set = getD('settings', {});
             [1,2,3,4].forEach(i => {
                 const b = document.getElementById('btn-toggle-act'+i);
                 const a = set['act'+i+'Active'];
                 b.innerText = a ? 'DESACTIVAR' : 'ACTIVAR';
-                b.className = `text-xs px-3 py-1 rounded font-bold text-white ${a ? 'bg-uniRosado' : 'bg-uniAzul'}`;
+                b.className = `text-xs px-3 py-1 rounded font-bold text-white shadow-sm transition-all ${a ? 'bg-uniRosado hover:bg-opacity-80' : 'bg-uniAzul hover:bg-opacity-80'}`;
             });
             document.getElementById('admin-act1-link').value = set.act1Link;
 
-            // Validaciones Act 3
             const subs = getD('subsAct3', []).filter(s => s.status === 'pending');
             const cont = document.getElementById('admin-validations');
-            if(subs.length === 0) cont.innerHTML = '<p class="text-xs text-gray-500">No hay evidencias pendientes.</p>';
+            if(subs.length === 0) cont.innerHTML = '<p class="text-xs text-gray-500">No hay evidencias pendientes en este momento.</p>';
             else {
                 cont.innerHTML = subs.map(s => `
-                    <div class="p-4 bg-gray-50 border rounded-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-col md:flex-row justify-between items-center gap-4">
                         <div>
-                            <p class="font-bold text-sm">${s.name}</p>
-                            <a href="${s.link}" target="_blank" class="text-xs text-blue-600 underline">Ver Evidencia</a>
+                            <p class="font-bold text-sm text-uniAzul">${s.name}</p>
+                            <a href="${s.link}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800 underline">Abrir Evidencia Adjunta</a>
                         </div>
                         <div class="flex items-center gap-2">
-                            <input type="number" id="pts-${s.id}" min="0" max="7" value="7" class="w-16 p-1 border rounded text-sm text-center" title="Puntos base (max 7)">
-                            <label class="text-xs flex items-center gap-1"><input type="checkbox" id="bon-${s.id}"> +1 pt Clave</label>
-                            <button onclick="approveAct3(${s.id})" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">Aprobar</button>
+                            <input type="number" id="pts-${s.id}" min="0" max="7" value="7" class="w-16 p-1 border border-gray-300 rounded text-sm text-center focus:ring-1 focus:ring-uniAzul outline-none" title="Puntos base (max 7)">
+                            <label class="text-xs flex items-center gap-1 font-bold text-gray-600"><input type="checkbox" id="bon-${s.id}"> +1 pt Clave</label>
+                            <button onclick="approveAct3(${s.id})" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold shadow-sm hover:bg-green-700">Aprobar</button>
                         </div>
                     </div>
                 `).join('');
@@ -443,7 +513,7 @@
         function saveAct1Link() {
             let set = getD('settings', {});
             set.act1Link = document.getElementById('admin-act1-link').value.trim();
-            setD('settings', set); alert('Link de Actividad 1 guardado.');
+            setD('settings', set); alert('Link de Instagram actualizado con éxito.');
         }
 
         function approveAct3(id) {
@@ -465,14 +535,12 @@
                 target.lastTime = Date.now();
                 setD('users', users);
             }
-            renderAdmin(); renderRanking(); alert(`Aprobado con ${total} puntos.`);
+            renderAdmin(); renderRanking(); alert(`Evidencia aprobada. Se han otorgado ${total} puntos al estudiante.`);
         }
 
-        // RANKING COMPLEJO (Desempate por Milisegundo)
         function renderRanking() {
-            let users = getD('users', []).filter(u => u.email !== ADMIN_EMAIL); // Excluir matriz del ranking
+            let users = getD('users', []).filter(u => u.email !== ADMIN_EMAIL); 
             
-            // Ordenar: Mayor puntaje primero. Si hay empate, menor lastTime (quien lo hizo primero)
             users.sort((a, b) => {
                 if(b.points !== a.points) return b.points - a.points;
                 return a.lastTime - b.lastTime;
@@ -480,13 +548,13 @@
 
             const tbody = document.getElementById('ranking-body');
             tbody.innerHTML = users.map((u, i) => `
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="p-4 font-bold text-gray-500">${i+1}</td>
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="p-4 font-extrabold text-gray-400">${i+1}</td>
                     <td class="p-4 font-bold text-uniAzul flex flex-col">
                         ${u.name} 
-                        <span class="text-[10px] text-gray-400 font-normal">Última act: ${new Date(u.lastTime).toLocaleTimeString()}</span>
+                        <span class="text-[10px] text-gray-400 font-normal mt-0.5">⏱ Desempate: ${new Date(u.lastTime).toLocaleTimeString()}</span>
                     </td>
-                    <td class="p-4 text-right font-extrabold text-uniNegro">${u.points} pts</td>
+                    <td class="p-4 text-right font-extrabold text-uniNegro text-lg">${u.points}</td>
                 </tr>
             `).join('');
         }
