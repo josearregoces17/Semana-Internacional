@@ -4,1156 +4,596 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semana Internacional - Universidad de La Guajira</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Poppins', 'sans-serif'],
-                    },
                     colors: {
-                        ug: {
-                            mar: '#62A7B4',       /* Azul Mar */
-                            desierto: '#E0A342',  /* Amarillo Desierto */
-                            flamenco: '#CA5E50',  /* Rosado Flamenco */
-                            negro: '#000000',     /* Negro */
-                            light: '#f8fafc',
-                        }
+                        uniguajiraBlue: '#62A7B4',
+                        uniguajiraYellow: '#EOA342',
+                        uniguajiraPink: '#CA5E50',
+                        uniguajiraDark: '#0A0F1D',
+                        uniguajiraLight: '#F8FAFC'
                     },
-                    backgroundImage: {
-                        'world-pattern': "url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M50 10c-22.1 0-40 17.9-40 40s17.9 40 40 40 40-17.9 40-40-17.9-40-40-40zm0 76c-19.9 0-36-16.1-36-36s16.1-36 36-36 36 16.1 36 36-16.1 36-36 36z\" fill=\"%2362A7B4\" fill-opacity=\"0.05\"/%3E%3C/svg%3E')",
-                    },
-                    animation: {
-                        'fly': 'fly 15s linear infinite',
-                        'spin-slow': 'spin 8s linear infinite',
-                    },
-                    keyframes: {
-                        fly: {
-                            '0%': { transform: 'translateX(-100%) translateY(50px) rotate(15deg)' },
-                            '100%': { transform: 'translateX(100vw) translateY(-150px) rotate(15deg)' },
-                        }
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif']
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #f8fafc; }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(98, 167, 180, 0.1);
-        }
-        
-        .btn-3d {
-            position: relative;
-            transition: all 0.2s ease;
-        }
-        .btn-3d:active {
-            transform: translateY(4px);
-        }
-        .btn-3d::after {
-            content: '';
-            position: absolute;
-            bottom: -4px; left: 0; right: 0; height: 4px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 0 0 inherit inherit;
-        }
-        .btn-3d:active::after {
-            height: 0px;
-            bottom: 0px;
-        }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #E0A342; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #CA5E50; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #62A7B4;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-        }
+        body { font-family: 'Poppins', sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .hero-pattern { background: linear-gradient(135deg, #0A0F1D 0%, #1E293B 100%); }
     </style>
 </head>
-<body class="text-gray-800 antialiased min-h-screen bg-world-pattern flex flex-col font-sans">
+<body class="bg-uniguajiraLight text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2"></div>
-
-    <div class="fixed top-20 left-0 w-full h-full pointer-events-none overflow-hidden z-0 opacity-[0.15]">
-        <i class="fas fa-plane text-ug-flamenco text-6xl absolute animate-fly"></i>
-    </div>
-
-    <div id="view-auth" class="flex-grow flex items-center justify-center p-4 relative z-10">
-        <div class="w-full max-w-md">
-            
-            <!-- Logo Header -->
+    <!-- CONTENEDOR DE AUTENTICACIÓN -->
+    <div id="auth-container" class="fixed inset-0 z-50 hero-pattern flex items-center justify-center p-4">
+        <div class="max-w-md w-full glass-card p-8 rounded-3xl shadow-2xl border border-white/20">
             <div class="text-center mb-8">
-                <div class="relative inline-block">
-                    <i class="fas fa-sun text-ug-desierto text-5xl absolute -top-4 -right-4 animate-spin-slow"></i>
-                    <i class="fas fa-cactus text-ug-mar text-6xl relative z-10 drop-shadow-md"></i>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-uniguajiraBlue text-white text-2xl font-bold mb-4 shadow-lg shadow-uniguajiraBlue/30">
+                    🌍
                 </div>
-                <h1 class="font-display font-black text-3xl mt-4 text-ug-negro tracking-tight leading-tight">
-                    Universidad de La Guajira<br>
-                    <span class="text-ug-desierto text-2xl font-bold">Uniguajira Internacional</span>
-                </h1>
-                <p class="text-xs font-bold text-ug-flamenco uppercase tracking-widest mt-2">Educación Global • Impacto Local</p>
+                <h1 class="text-2xl font-bold text-slate-900">Semana Internacional</h1>
+                <p class="text-sm text-slate-600 mt-1">Universidad de La Guajira</p>
             </div>
 
-            <!-- Login / Register Card -->
-            <div class="glass-panel rounded-3xl p-8 shadow-xl">
-                
-                <!-- Toggle Tabs -->
-                <div class="flex bg-gray-100 rounded-xl p-1 mb-6">
-                    <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg font-bold text-sm bg-white text-ug-mar shadow-sm transition-all">Ingresar</button>
-                    <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-ug-mar transition-all">Registrarse</button>
-                </div>
-
-                <!-- Login Form -->
-                <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Correo Electrónico</label>
-                        <div class="relative">
-                            <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="email" id="login-email" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-mar focus:bg-white transition" placeholder="tu@correo.com">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Contraseña</label>
-                        <div class="relative">
-                            <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="password" id="login-pass" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-mar focus:bg-white transition" placeholder="••••••••">
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-ug-mar hover:bg-[#4E8893] text-white font-bold py-3 rounded-xl btn-3d mt-2 shadow-md">
-                        Iniciar Sesión
-                    </button>
-                </form>
-
-                <!-- Register Form -->
-                <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Nombre Completo</label>
-                        <input type="text" id="reg-name" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-desierto focus:bg-white transition" placeholder="Juan Pérez">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Correo Electrónico</label>
-                        <input type="email" id="reg-email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-desierto focus:bg-white transition" placeholder="tu@correo.com">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Programa</label>
-                            <input type="text" id="reg-program" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-desierto" placeholder="Ej. Sistemas">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Semestre</label>
-                            <input type="number" id="reg-semester" min="1" max="10" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-desierto" placeholder="1-10">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Contraseña (Mín. 6 caracteres)</label>
-                        <input type="password" id="reg-pass" required minlength="6" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-desierto focus:bg-white transition" placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="w-full bg-ug-desierto hover:bg-[#c98e32] text-white font-bold py-3 rounded-xl btn-3d mt-2 shadow-md">
-                        Crear Cuenta y Participar
-                    </button>
-                </form>
-
+            <!-- Tabs -->
+            <div class="flex rounded-xl bg-slate-100 p-1 mb-6">
+                <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-slate-900 shadow-sm transition-all">Iniciar Sesión</button>
+                <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2 text-sm font-semibold text-slate-500 rounded-lg transition-all">Registrarse</button>
             </div>
+
+            <!-- Formulario Login -->
+            <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Correo Electrónico</label>
+                    <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Contraseña</label>
+                    <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 bg-uniguajiraBlue hover:bg-opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-uniguajiraBlue/30 transition-all text-sm">Entrar a la Plataforma</button>
+            </form>
+
+            <!-- Formulario Registro -->
+            <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre Completo</label>
+                    <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Correo Electrónico</label>
+                    <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Programa Académico</label>
+                    <input type="text" id="reg-program" required placeholder="Ej: Ingeniería Industrial" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Semestre</label>
+                    <select id="reg-semester" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm bg-white">
+                        <option value="1">Semestre 1</option><option value="2">Semestre 2</option><option value="3">Semestre 3</option>
+                        <option value="4">Semestre 4</option><option value="5">Semestre 5</option><option value="6">Semestre 6</option>
+                        <option value="7">Semestre 7</option><option value="8">Semestre 8</option><option value="9">Semestre 9</option>
+                        <option value="10" selected>Semestre 10</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Contraseña</label>
+                    <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 bg-uniguajiraYellow hover:bg-opacity-90 text-slate-900 font-bold rounded-xl shadow-lg shadow-uniguajiraYellow/30 transition-all text-sm">Registrarse Ahora</button>
+            </form>
+            <div id="auth-error" class="mt-4 text-xs text-red-500 text-center font-medium"></div>
         </div>
     </div>
 
-    <div id="app-container" class="flex-grow flex flex-col relative z-10 hidden">
-        
-        <!-- Header -->
-        <header class="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16 items-center">
-                    
-                    <!-- Branding Navbar -->
-                    <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('dashboard')">
-                        <i class="fas fa-cactus text-ug-mar text-2xl"></i>
-                        <div class="leading-none hidden sm:block">
-                            <span class="font-display font-black text-sm text-ug-negro">Uniguajira</span><br>
-                            <span class="text-[10px] font-bold text-ug-desierto uppercase tracking-widest">Internacional</span>
-                        </div>
+    <!-- APLICACIÓN PRINCIPAL -->
+    <div id="app-container" class="hidden flex-col min-h-screen">
+        <!-- HEADER -->
+        <header class="bg-uniguajiraDark text-white shadow-md sticky top-0 z-40 border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-uniguajiraYellow flex items-center justify-center font-bold text-slate-900 shadow-md">
+                        UNIG
                     </div>
-                    
-                    <!-- User Status Navbar -->
-                    <div class="flex items-center gap-4">
-                        <div class="bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100 flex items-center gap-2" title="Tus Puntos">
-                            <i class="fas fa-star text-ug-desierto"></i>
-                            <span id="nav-points" class="font-bold text-ug-negro">0</span> <span class="text-xs text-gray-500 font-bold hidden sm:inline">pts</span>
-                        </div>
-                        
-                        <div class="relative group cursor-pointer">
-                            <button onclick="navigate('profile')" class="w-10 h-10 rounded-full border-2 border-ug-mar overflow-hidden hover:opacity-80 transition">
-                                <img id="nav-avatar" src="https://placehold.co/100/62A7B4/white?text=U" alt="Avatar" class="w-full h-full object-cover">
-                            </button>
-                            <button onclick="logout()" class="absolute right-0 top-full mt-2 w-32 bg-white rounded-xl shadow-lg border border-gray-100 py-2 text-sm font-bold text-ug-flamenco hidden group-hover:block hover:bg-gray-50 text-left px-4">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Salir
-                            </button>
-                        </div>
+                    <div>
+                        <span class="text-xs tracking-widest text-uniguajiraYellow uppercase font-bold">Uniguajira Internacional</span>
+                        <h2 class="text-lg font-bold leading-none">Semana Internacional</h2>
                     </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="admin-badge-container"></div>
+                    <button onclick="logout()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-xl transition-all">Cerrar Sesión</button>
                 </div>
             </div>
         </header>
 
-        <!-- Main Layout with Navigation -->
-        <div class="flex-grow flex max-w-7xl mx-auto w-full">
+        <!-- NAVEGACIÓN INTERNA -->
+        <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[61px] z-30">
+            <div class="max-w-7xl mx-auto px-4 flex space-x-8 overflow-x-auto">
+                <button onclick="switchSection('home')" id="nav-home" class="py-3 text-sm font-semibold text-uniguajiraBlue border-b-2 border-uniguajiraBlue whitespace-nowrap">🏠 Inicio</button>
+                <button onclick="switchSection('challenges')" id="nav-challenges" class="py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap">🎯 Retos</button>
+                <button onclick="switchSection('ranking')" id="nav-ranking" class="py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap">🏆 Ranking</button>
+                <button onclick="switchSection('profile')" id="nav-profile" class="py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap">👤 Mi Perfil</button>
+                <button id="nav-admin" onclick="switchSection('admin')" class="py-3 text-sm font-semibold text-uniguajiraPink hover:text-opacity-80 whitespace-nowrap hidden">⚙️ Panel ORI (Admin)</button>
+            </div>
+        </nav>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
             
-            <!-- Sidebar / Bottom Nav -->
-            <nav class="bg-white shadow-[0_-5px_20px_rgba(0,0,0,0.05)] md:shadow-none md:w-64 fixed bottom-0 w-full md:relative md:flex-col flex justify-around md:justify-start z-30 md:border-r border-gray-100 pb-safe md:pb-0">
-                <div class="md:p-6 md:block hidden">
-                    <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Navegación</h2>
+            <!-- SECCIÓN: INICIO -->
+            <section id="sec-home" class="space-y-6">
+                <div class="relative rounded-3xl overflow-hidden hero-pattern text-white p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between">
+                    <div class="relative z-10 max-w-xl space-y-4">
+                        <span class="px-3 py-1 bg-uniguajiraYellow/20 text-uniguajiraYellow border border-uniguajiraYellow/30 rounded-full text-xs font-bold uppercase tracking-wider">Edición 2026</span>
+                        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Vive la Semana Internacional Universidad de La Guajira</h2>
+                        <p class="text-slate-300 text-sm md:text-base">Participa en retos globales, acumula puntos, obtén insignias y compite para convertirte en el embajador internacional del año.</p>
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <button onclick="switchSection('challenges')" class="px-6 py-3 bg-uniguajiraYellow text-slate-900 font-bold rounded-xl shadow-lg hover:scale-105 transition-all text-sm">Explorar Retos</button>
+                            <button onclick="switchSection('profile')" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all text-sm">Ver mi Progreso</button>
+                        </div>
+                    </div>
+                    <div class="mt-8 md:mt-0 text-6xl md:text-9xl select-none">
+                        ✈️🌎
+                    </div>
                 </div>
-                
-                <button onclick="navigate('dashboard')" id="nav-btn-dashboard" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-400 hover:text-ug-mar hover:bg-teal-50/50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent">
-                    <i class="fas fa-compass text-xl"></i>
-                    <span class="text-[10px] md:text-sm font-bold tracking-wide">Inicio</span>
-                </button>
-                
-                <button onclick="navigate('challenges')" id="nav-btn-challenges" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-400 hover:text-ug-desierto hover:bg-amber-50/50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent">
-                    <i class="fas fa-map-marked-alt text-xl"></i>
-                    <span class="text-[10px] md:text-sm font-bold tracking-wide">Retos</span>
-                </button>
-                
-                <button onclick="navigate('ranking')" id="nav-btn-ranking" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-400 hover:text-ug-flamenco hover:bg-rose-50/50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent">
-                    <i class="fas fa-trophy text-xl"></i>
-                    <span class="text-[10px] md:text-sm font-bold tracking-wide">Ranking</span>
-                </button>
-                
-                <button onclick="navigate('profile')" id="nav-btn-profile" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-400 hover:text-ug-mar hover:bg-teal-50/50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent">
-                    <i class="fas fa-passport text-xl"></i>
-                    <span class="text-[10px] md:text-sm font-bold tracking-wide">Perfil</span>
-                </button>
-                
-                <div id="admin-menu-container" class="mt-auto hidden md:block p-6 border-t border-gray-100">
-                    <button onclick="navigate('admin')" id="nav-btn-admin" class="nav-btn w-full bg-ug-negro text-white py-3 rounded-xl font-bold text-sm hover:bg-gray-800 transition btn-3d flex items-center justify-center gap-2 shadow">
-                        <i class="fas fa-user-shield text-ug-desierto"></i> Panel ORI
-                    </button>
+
+                <!-- Resumen rápido -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-uniguajiraBlue/10 text-uniguajiraBlue flex items-center justify-center text-2xl font-bold">🎯</div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-semibold">Tus Puntos</p>
+                            <h3 id="home-points" class="text-2xl font-extrabold text-slate-900">0 pts</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-uniguajiraYellow/10 text-uniguajiraYellow flex items-center justify-center text-2xl font-bold">⭐</div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-semibold">Nivel Actual</p>
+                            <h3 id="home-level" class="text-lg font-extrabold text-slate-900">Explorador Internacional</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-uniguajiraPink/10 text-uniguajiraPink flex items-center justify-center text-2xl font-bold">🏆</div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-semibold">Posición en Ranking</p>
+                            <h3 id="home-rank" class="text-2xl font-extrabold text-slate-900">#--</h3>
+                        </div>
+                    </div>
                 </div>
-                <!-- Admin shortcut mobile -->
-                <button onclick="navigate('admin')" id="admin-mobile-btn" class="hidden nav-btn flex flex-col md:hidden items-center gap-1 p-3 w-full text-ug-negro hover:bg-gray-100 transition-colors border-t-2 border-transparent">
-                    <i class="fas fa-cogs text-xl text-ug-desierto"></i>
-                    <span class="text-[10px] font-bold tracking-wide">Admin</span>
-                </button>
-            </nav>
+            </section>
 
-            <!-- Dynamic Content Area -->
-            <main class="flex-grow p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto w-full relative" id="main-content">
-                <!-- Views injected here -->
-            </main>
-        </div>
-    </div>
+            <!-- SECCIÓN: RETOS -->
+            <section id="sec-challenges" class="space-y-6 hidden">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Retos Globales</h2>
+                        <p class="text-sm text-slate-500">Completa actividades para acumular puntos y subir de nivel.</p>
+                    </div>
+                </div>
+                <div id="challenges-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dinámico -->
+                </div>
+            </section>
 
-    <div id="global-modal" class="fixed inset-0 bg-ug-negro/80 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl transform transition-all relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-ug-flamenco z-10 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition">
-                <i class="fas fa-times"></i>
-            </button>
-            <div id="modal-content"></div>
-        </div>
-    </div>
+            <!-- SECCIÓN: RANKING -->
+            <section id="sec-ranking" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Ranking General</h2>
+                    <p class="text-sm text-slate-500">Los estudiantes con mayor puntaje en la Semana Internacional.</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-100">
+                                <th class="p-4 font-semibold">Posición</th>
+                                <th class="p-4 font-semibold">Estudiante</th>
+                                <th class="p-4 font-semibold">Programa</th>
+                                <th class="p-4 font-semibold text-right">Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking-tbody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            <!-- SECCIÓN: PERFIL -->
+            <section id="sec-profile" class="space-y-6 hidden">
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <div class="w-24 h-24 rounded-full bg-uniguajiraBlue text-white text-3xl font-bold flex items-center justify-center shadow-lg" id="profile-avatar">
+                        U
+                    </div>
+                    <div class="flex-1 text-center md:text-left space-y-2">
+                        <h2 id="profile-name" class="text-2xl font-bold text-slate-900">Nombre Estudiante</h2>
+                        <p id="profile-program" class="text-sm text-slate-600 font-medium">Programa Académico</p>
+                        <p id="profile-semester" class="text-xs text-slate-400">Semestre 10</p>
+                        <div class="pt-2 flex flex-wrap justify-center md:justify-start gap-2">
+                            <span id="profile-level-badge" class="px-3 py-1 bg-uniguajiraYellow/20 text-uniguajiraYellow text-xs font-bold rounded-full border border-uniguajiraYellow/30">Explorador Internacional</span>
+                            <span class="px-3 py-1 bg-uniguajiraBlue/10 text-uniguajiraBlue text-xs font-bold rounded-full">Puntos Totales: <span id="profile-points-val">0</span></span>
+                        </div>
+                    </div>
+                </div>
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'uniguajira-semana-intl-v3';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "demo", projectId: "demo" };
-        
-        let app, db;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-        } catch (e) {
-            console.error("Firebase init error", e);
-        }
+                <!-- Insignias -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900">Insignias Obtenidas</h3>
+                    <div id="profile-badges" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2">
+                            <div class="text-3xl">🌎</div>
+                            <h4 class="text-xs font-bold text-slate-800">Primer reto completado</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2 opacity-50">
+                            <div class="text-3xl">📸</div>
+                            <h4 class="text-xs font-bold text-slate-800">Creador cultural</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2 opacity-50">
+                            <div class="text-3xl">🎥</div>
+                            <h4 class="text-xs font-bold text-slate-800">Narrador internacional</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2 opacity-50">
+                            <div class="text-3xl">🏆</div>
+                            <h4 class="text-xs font-bold text-slate-800">Participante destacado</h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        const USERS_PATH = `artifacts/${appId}/public/data/users`;
-        const CHALLENGES_PATH = `artifacts/${appId}/public/data/challenges`;
+            <!-- SECCIÓN: PANEL ADMIN (ORI) -->
+            <section id="sec-admin" class="space-y-6 hidden">
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-lg flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-uniguajiraPink uppercase tracking-wider">Panel de Control Exclusivo</span>
+                        <h2 class="text-2xl font-bold">Oficina de Relaciones Internacionales (ORI)</h2>
+                    </div>
+                    <div class="text-3xl">🛡️</div>
+                </div>
 
-        window.currentUser = null;
-        window.allUsers = [];
-        window.allChallenges = [];
-        window.currentView = '';
-
-        const LEVELS = [
-            { name: 'Explorador Internacional', min: 0, icon: 'fa-hiking', color: 'text-gray-500' },
-            { name: 'Viajero Cultural', min: 150, icon: 'fa-suitcase-rolling', color: 'text-ug-mar' },
-            { name: 'Embajador Global', min: 400, icon: 'fa-passport', color: 'text-ug-desierto' },
-            { name: 'Líder Internacional', min: 700, icon: 'fa-globe-americas', color: 'text-ug-flamenco' }
-        ];
-
-        const BADGES_DEF = {
-            'b_first': { id: 'b_first', title: 'Primer Vuelo', desc: 'Completaste tu primer reto.', icon: 'fa-paper-plane', color: 'bg-ug-mar' },
-            'b_social': { id: 'b_social', title: 'Creador Cultural', desc: 'Misión de redes sociales.', icon: 'fa-hashtag', color: 'bg-ug-flamenco' },
-            'b_smart': { id: 'b_smart', title: 'Sabio del Mundo', desc: 'Reto de conocimiento.', icon: 'fa-lightbulb', color: 'bg-ug-desierto' },
-            'b_star': { id: 'b_star', title: 'Destacado', desc: 'Alcanzaste 500 puntos.', icon: 'fa-star', color: 'bg-ug-negro' }
-        };
-
-        const encode64 = str => btoa(encodeURIComponent(str));
-        const decode64 = str => decodeURIComponent(atob(str));
-
-        window.switchAuthTab = function(tab) {
-            if(tab === 'login') {
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('form-register').classList.add('hidden');
-                document.getElementById('tab-login').classList.replace('text-gray-500', 'text-ug-mar');
-                document.getElementById('tab-login').classList.replace('bg-transparent', 'bg-white');
-                document.getElementById('tab-register').classList.replace('text-ug-mar', 'text-gray-500');
-                document.getElementById('tab-register').classList.replace('bg-white', 'bg-transparent');
-            } else {
-                document.getElementById('form-register').classList.remove('hidden');
-                document.getElementById('form-login').classList.add('hidden');
-                document.getElementById('tab-register').classList.replace('text-gray-500', 'text-ug-mar');
-                document.getElementById('tab-register').classList.replace('bg-transparent', 'bg-white');
-                document.getElementById('tab-login').classList.replace('text-ug-mar', 'text-gray-500');
-                document.getElementById('tab-login').classList.replace('bg-white', 'bg-transparent');
-            }
-        };
-
-        window.handleRegister = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('reg-email').value.trim().toLowerCase();
-            const pass = document.getElementById('reg-pass').value;
-            const name = document.getElementById('reg-name').value.trim();
-            const program = document.getElementById('reg-program').value.trim();
-            const semester = document.getElementById('reg-semester').value;
-
-            if(pass.length < 6) return showToast("La contraseña debe tener mínimo 6 caracteres", "error");
-
-            try {
-                const uid = encode64(email);
-                const userRef = doc(db, USERS_PATH, uid);
-                const snap = await getDoc(userRef);
-                
-                if(snap.exists()) {
-                    return showToast("Este correo ya está registrado. Inicia sesión.", "error");
-                }
-
-                const role = email === 'josearregocesfreyles@gmail.com' ? 'admin' : 'student';
-
-                const newUserData = {
-                    uid: uid,
-                    emailEncoded: encode64(email),
-                    passEncoded: encode64(pass),
-                    name: name,
-                    program: program,
-                    semester: semester,
-                    role: role,
-                    points: 0,
-                    badges: [],
-                    challengesCompleted: [],
-                    avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=62A7B4,E0A342,CA5E50`
-                };
-
-                await setDoc(userRef, newUserData);
-                showToast("¡Cuenta creada con éxito!", "success");
-                
-                localStorage.setItem(`session_${appId}`, uid);
-                loadApp(newUserData);
-
-            } catch (err) {
-                console.error(err);
-                showToast("Error al registrar cuenta.", "error");
-            }
-        };
-
-        window.handleLogin = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const pass = document.getElementById('login-pass').value;
-
-            try {
-                const uid = encode64(email);
-                const userRef = doc(db, USERS_PATH, uid);
-                const snap = await getDoc(userRef);
-
-                if(!snap.exists()) {
-                    return showToast("Correo no encontrado. Regístrate primero.", "error");
-                }
-
-                const userData = snap.data();
-                if(userData.passEncoded !== encode64(pass)) {
-                    return showToast("Contraseña incorrecta.", "error");
-                }
-
-                showToast(`¡Bienvenido de nuevo, ${userData.name.split(' ')[0]}!`, "success");
-                localStorage.setItem(`session_${appId}`, uid);
-                loadApp(userData);
-
-            } catch (err) {
-                console.error(err);
-                showToast("Error al iniciar sesión.", "error");
-            }
-        };
-
-        window.logout = function() {
-            localStorage.removeItem(`session_${appId}`);
-            window.currentUser = null;
-            document.getElementById('app-container').classList.add('hidden');
-            document.getElementById('view-auth').classList.remove('hidden');
-            document.getElementById('form-login').reset();
-            document.getElementById('form-register').reset();
-            switchAuthTab('login');
-        };
-
-        async function checkSession() {
-            const storedUid = localStorage.getItem(`session_${appId}`);
-            if(storedUid) {
-                try {
-                    const snap = await getDoc(doc(db, USERS_PATH, storedUid));
-                    if(snap.exists()) {
-                        loadApp(snap.data());
-                    } else {
-                        logout();
-                    }
-                } catch(e) {
-                    console.error("Session check failed", e);
-                }
-            }
-        }
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            checkSession();
-        });
-
-        function loadApp(userData) {
-            window.currentUser = userData;
-            
-            document.getElementById('view-auth').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-            document.getElementById('nav-avatar').src = userData.avatarUrl;
-            
-            if(userData.role === 'admin') {
-                document.getElementById('admin-menu-container').classList.remove('hidden');
-                document.getElementById('admin-mobile-btn').classList.remove('hidden');
-            } else {
-                document.getElementById('admin-menu-container').classList.add('hidden');
-                document.getElementById('admin-mobile-btn').classList.add('hidden');
-            }
-
-            setupRealtimeListeners();
-            navigate('dashboard');
-        }
-
-        function setupRealtimeListeners() {
-            if(!window.currentUser) return;
-
-            onSnapshot(doc(db, USERS_PATH, window.currentUser.uid), (docSnap) => {
-                if(docSnap.exists()){
-                    const oldPts = window.currentUser.points || 0;
-                    window.currentUser = docSnap.data();
-                    
-                    document.getElementById('nav-points').textContent = window.currentUser.points || 0;
-                    
-                    const oldLvl = getLevelData(oldPts);
-                    const newLvl = getLevelData(window.currentUser.points);
-                    if(oldLvl.name !== newLvl.name) showToast(`¡Subiste de nivel a ${newLvl.name}!`, "success");
-                    
-                    if(window.currentUser.points >= 500 && !(window.currentUser.badges||[]).includes('b_star')) {
-                        awardBadge('b_star');
-                    }
-
-                    if(window.currentView === 'dashboard') renderDashboard();
-                    if(window.currentView === 'profile') renderProfile();
-                }
-            });
-
-            onSnapshot(collection(db, USERS_PATH), (snapshot) => {
-                window.allUsers = [];
-                snapshot.forEach(doc => window.allUsers.push(doc.data()));
-                if(window.currentView === 'ranking') renderRanking();
-                if(window.currentView === 'admin') renderAdmin();
-            });
-
-            onSnapshot(collection(db, CHALLENGES_PATH), (snapshot) => {
-                window.allChallenges = [];
-                snapshot.forEach(doc => window.allChallenges.push({ id: doc.id, ...doc.data() }));
-                
-                if(window.allChallenges.length === 0) {
-                    seedDefaultChallenges();
-                }
-
-                if(window.currentView === 'challenges') renderChallenges();
-                if(window.currentView === 'dashboard') renderDashboard();
-            });
-        }
-
-        async function seedDefaultChallenges() {
-            const defaults = [
-                { title: '🌎 Reto Instagram Internacional', desc: 'Sube una foto en el stand cultural.', points: 100, type: 'upload', icon: 'fab fa-instagram', color: 'bg-ug-flamenco' },
-                { title: '🌍 Quiz Cultural Rápido', desc: 'Responde la pregunta del día.', points: 50, type: 'quiz', icon: 'fas fa-brain', color: 'bg-ug-mar' },
-                { title: '🎤 Asistencia Magistral', desc: 'Ingresa el código dado por el ponente.', points: 200, type: 'code', icon: 'fas fa-chalkboard-teacher', color: 'bg-ug-desierto' }
-            ];
-            for (let c of defaults) {
-                const cRef = doc(collection(db, CHALLENGES_PATH));
-                await setDoc(cRef, { ...c, createdAt: new Date().toISOString() });
-            }
-        }
-
-        window.navigate = function(viewId) {
-            window.currentView = viewId;
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-ug-mar', 'text-ug-desierto', 'text-ug-flamenco', 'bg-teal-50', 'bg-amber-50', 'bg-rose-50', 'border-ug-mar', 'border-ug-desierto', 'border-ug-flamenco');
-                btn.classList.add('text-gray-400', 'border-transparent');
-                
-                if(btn.id === 'admin-mobile-btn') btn.classList.replace('text-gray-400', 'text-ug-negro');
-                if(btn.id === 'nav-btn-admin') {
-                    btn.classList.remove('text-gray-400');
-                    btn.classList.add('text-white');
-                }
-            });
-            
-            const btn = document.getElementById(`nav-btn-${viewId}`);
-            if(btn && viewId !== 'admin') {
-                const colors = {
-                    'dashboard': ['text-ug-mar', 'bg-teal-50', 'border-ug-mar'],
-                    'challenges': ['text-ug-desierto', 'bg-amber-50', 'border-ug-desierto'],
-                    'ranking': ['text-ug-flamenco', 'bg-rose-50', 'border-ug-flamenco'],
-                    'profile': ['text-ug-mar', 'bg-teal-50', 'border-ug-mar']
-                };
-                btn.classList.remove('text-gray-400', 'border-transparent');
-                btn.classList.add(...colors[viewId]);
-            }
-            if (viewId === 'admin') {
-                 const mobileBtn = document.getElementById('admin-mobile-btn');
-                 if(mobileBtn) { mobileBtn.classList.add('bg-gray-200'); }
-            }
-
-            const main = document.getElementById('main-content');
-            main.innerHTML = '<div class="flex justify-center mt-20"><div class="loader"></div></div>';
-            
-            setTimeout(() => {
-                switch(viewId) {
-                    case 'dashboard': renderDashboard(); break;
-                    case 'challenges': renderChallenges(); break;
-                    case 'ranking': renderRanking(); break;
-                    case 'profile': renderProfile(); break;
-                    case 'admin': renderAdmin(); break;
-                }
-                window.scrollTo(0,0);
-            }, 50);
-        };
-
-        function getLevelData(points) {
-            let current = LEVELS[0], next = LEVELS[1];
-            for (let i = 0; i < LEVELS.length; i++) {
-                if (points >= LEVELS[i].min) {
-                    current = LEVELS[i];
-                    next = LEVELS[i+1] || null;
-                }
-            }
-            let progress = 100;
-            if (next) {
-                const range = next.min - current.min;
-                const earned = points - current.min;
-                progress = Math.min(100, Math.max(0, (earned / range) * 100));
-            }
-            return { current, next, progress };
-        }
-
-        window.showToast = function(msg, type="info") {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colors = {
-                success: 'bg-ug-mar',
-                error: 'bg-ug-flamenco',
-                info: 'bg-ug-negro',
-                warning: 'bg-ug-desierto'
-            };
-            const icons = {
-                success: 'fa-check-circle', error: 'fa-exclamation-triangle',
-                info: 'fa-info-circle', warning: 'fa-exclamation-circle'
-            };
-
-            toast.className = `${colors[type] || colors.info} text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-x-full font-bold text-sm`;
-            toast.innerHTML = `<i class="fas ${icons[type]}"></i> <span>${msg}</span>`;
-            
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
-            setTimeout(() => {
-                toast.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        };
-
-        window.closeModal = () => document.getElementById('global-modal').classList.add('hidden');
-        window.openModal = (html) => {
-            document.getElementById('modal-content').innerHTML = html;
-            document.getElementById('global-modal').classList.remove('hidden');
-        };
-
-        async function awardBadge(badgeId) {
-            if(!window.currentUser) return;
-            const bArr = window.currentUser.badges || [];
-            if(bArr.includes(badgeId)) return;
-            try {
-                await updateDoc(doc(db, USERS_PATH, window.currentUser.uid), { badges: [...bArr, badgeId] });
-                const b = BADGES_DEF[badgeId];
-                showToast(`¡Nueva insignia: ${b.title}!`, "success");
-            } catch(e) { console.error("Badge error", e); }
-        }
-
-        function renderDashboard() {
-            const main = document.getElementById('main-content');
-            const u = window.currentUser;
-            const lvl = getLevelData(u.points || 0);
-            
-            const completed = u.challengesCompleted || [];
-            const available = window.allChallenges.filter(c => !completed.includes(c.id)).slice(0,2);
-            
-            let recosHTML = available.map(c => `
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-center justify-between hover:bg-gray-100 transition cursor-pointer" onclick="navigate('challenges')">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full ${c.color} text-white flex items-center justify-center shadow-sm">
-                            <i class="${c.icon}"></i>
+                <!-- Crear Reto -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900">Crear Nuevo Reto Internacional</h3>
+                    <form onsubmit="handleCreateChallenge(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Título del Reto</label>
+                            <input type="text" id="admin-ch-title" required class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm">
                         </div>
                         <div>
-                            <h4 class="font-bold text-sm text-ug-negro">${c.title}</h4>
-                            <p class="text-xs text-ug-desierto font-black">+${c.points} pts</p>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Puntos</label>
+                            <input type="number" id="admin-ch-points" required value="50" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm">
                         </div>
-                    </div>
-                    <i class="fas fa-chevron-right text-gray-300"></i>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Descripción / Evidencia</label>
+                            <input type="text" id="admin-ch-desc" required placeholder="Ej: Sube foto a Instagram..." class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm">
+                        </div>
+                        <div class="md:col-span-3">
+                            <button type="submit" class="px-6 py-3 bg-uniguajiraPink text-white font-semibold rounded-xl text-sm shadow-md hover:bg-opacity-90">Publicar Reto</button>
+                        </div>
+                    </form>
                 </div>
-            `).join('');
 
-            if(!recosHTML) recosHTML = `<p class="text-sm text-gray-500 italic text-center py-4">¡Estás al día con todos los retos!</p>`;
-
-            main.innerHTML = `
-                <div class="max-w-4xl mx-auto space-y-6">
-                    <!-- Hero Card -->
-                    <div class="bg-ug-mar rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden btn-3d">
-                        <div class="absolute -right-10 -bottom-10 opacity-20">
-                            <i class="fas fa-globe-americas text-9xl"></i>
-                        </div>
-                        <div class="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
-                            <div class="w-24 h-24 rounded-2xl border-4 border-white/20 overflow-hidden bg-white shrink-0 rotate-[-3deg] shadow-lg">
-                                <img src="${u.avatarUrl}" class="w-full h-full object-cover">
-                            </div>
-                            <div class="flex-grow text-center md:text-left">
-                                <h1 class="text-3xl md:text-4xl font-display font-black mb-1 drop-shadow-md">¡Hola, ${u.name.split(' ')[0]}!</h1>
-                                <p class="text-white/80 text-sm mb-4 font-semibold"><i class="fas fa-graduation-cap mr-1"></i> ${u.program} • Semestre ${u.semester}</p>
-                                
-                                <div class="inline-flex items-center gap-2 bg-ug-negro/20 backdrop-blur px-4 py-2 rounded-xl font-bold border border-white/10 shadow-inner">
-                                    <i class="fas ${lvl.current.icon} text-ug-desierto"></i>
-                                    <span class="tracking-wide">${lvl.current.name}</span>
-                                </div>
-                            </div>
-                            <div class="text-center md:text-right shrink-0 bg-white p-4 rounded-2xl shadow-lg border-b-4 border-gray-200 rotate-[2deg]">
-                                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-black mb-1">Puntos Globales</p>
-                                <p class="text-4xl font-display font-black text-ug-desierto drop-shadow-sm">${u.points || 0}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Progress Area -->
-                        <div class="glass-panel rounded-3xl p-6 shadow-sm md:col-span-2 relative overflow-hidden">
-                            <h3 class="text-lg font-black text-ug-negro mb-4 flex items-center gap-2 uppercase tracking-wide">
-                                <i class="fas fa-route text-ug-mar"></i> Tu Ruta
-                            </h3>
-                            
-                            <div class="flex justify-between text-xs font-bold text-gray-500 mb-2 uppercase">
-                                <span>${lvl.current.name}</span>
-                                <span>${lvl.next ? lvl.next.name : 'Rango Máximo'}</span>
-                            </div>
-                            
-                            <div class="h-6 w-full bg-gray-100 rounded-full overflow-hidden mb-2 relative shadow-inner border border-gray-200">
-                                <div class="h-full bg-ug-desierto transition-all duration-1000 relative" style="width: ${lvl.progress}%">
-                                    <div class="absolute inset-0 bg-white/20 w-full h-full" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.2) 10px, rgba(255,255,255,0.2) 20px);"></div>
-                                </div>
-                                <i class="fas fa-plane text-ug-negro text-sm absolute top-1/2 -translate-y-1/2 drop-shadow" style="left: calc(${lvl.progress}% - 14px);"></i>
-                            </div>
-                            <p class="text-xs text-gray-400 font-semibold text-right">
-                                ${lvl.next ? `Faltan ${lvl.next.min - (u.points||0)} pts` : '¡Completado!'}
-                            </p>
-
-                            <div class="mt-8 border-t border-gray-100 pt-6">
-                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Últimas Insignias</h4>
-                                <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                                    ${renderBadgesList(u.badges)}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recommendations -->
-                        <div class="glass-panel rounded-3xl p-6 shadow-sm">
-                            <h3 class="text-lg font-black text-ug-negro mb-4 flex items-center gap-2 uppercase tracking-wide">
-                                <i class="fas fa-bolt text-ug-desierto"></i> Siguientes Pasos
-                            </h3>
-                            <div class="space-y-3">
-                                ${recosHTML}
-                            </div>
-                        </div>
+                <!-- Lista de Retos Activos -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900">Retos Activos en el Sistema</h3>
+                    <div id="admin-challenges-list" class="space-y-3">
+                        <!-- Dinámico -->
                     </div>
                 </div>
-            `;
+            </section>
+
+        </main>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA LOCAL ROBUSTA -->
+    <script>
+        // DATOS INICIALES POR DEFECTO
+        const DEFAULT_CHALLENGES = [
+            { id: '1', title: '🌎 Reto Instagram Internacional', points: 50, desc: 'Sube una historia etiquetando a la @uniguajira_ori conmemorando la diversidad cultural.' },
+            { id: '2', title: '🌍 Quiz Cultural Global', points: 30, desc: 'Responde correctamente el cuestionario sobre geografía y cultura general.' },
+            { id: '3', title: '✈️ Explorador Cultural (Video)', points: 100, desc: 'Carga un video corto explicando un plato o tradición internacional.' }
+        ];
+
+        function getStore(key, defaultValue) {
+            const val = localStorage.getItem('unig_' + key);
+            return val ? JSON.parse(val) : defaultValue;
         }
 
-        function renderBadgesList(badgesArr) {
-            if(!badgesArr || badgesArr.length === 0) {
-                return `<div class="w-12 h-12 rounded-full bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300"><i class="fas fa-lock"></i></div>`;
-            }
-            return badgesArr.map(bId => {
-                const b = BADGES_DEF[bId];
-                if(!b) return '';
-                return `
-                    <div class="w-14 h-14 rounded-full ${b.color} text-white flex items-center justify-center shrink-0 shadow-md transform hover:scale-110 transition relative group border-2 border-white">
-                        <i class="fas ${b.icon} text-lg"></i>
-                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-3 py-1.5 bg-ug-negro text-white text-[10px] font-bold rounded uppercase tracking-wider opacity-0 group-hover:opacity-100 pointer-events-none transition shadow-xl z-50">
-                            ${b.title}
-                        </div>
-                    </div>
-                `;
-            }).join('');
+        function setStore(key, value) {
+            localStorage.setItem('unig_' + key, JSON.stringify(value));
         }
 
-        function renderChallenges() {
-            const main = document.getElementById('main-content');
-            const completed = window.currentUser.challengesCompleted || [];
-            
-            let gridHTML = window.allChallenges.map(c => {
-                const isDone = completed.includes(c.id);
-                const colorCls = isDone ? 'bg-gray-300' : c.color;
-                
-                return `
-                <div class="glass-panel rounded-3xl overflow-hidden shadow-sm flex flex-col hover:shadow-xl transition group border border-gray-100 relative">
-                    ${isDone ? '<div class="absolute inset-0 bg-white/60 z-10 pointer-events-none"></div><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-ug-negro opacity-20 transform -rotate-12"><i class="fas fa-stamp text-7xl"></i></div>' : ''}
-                    
-                    <div class="${colorCls} p-5 text-white flex justify-between items-center relative overflow-hidden">
-                        <i class="${c.icon} absolute -right-4 -bottom-4 text-6xl opacity-20"></i>
-                        <h3 class="font-display font-black text-lg relative z-10 w-[75%] leading-tight">${c.title}</h3>
-                        <div class="relative z-10 text-xl font-black bg-white text-ug-negro w-12 h-12 flex items-center justify-center rounded-full shadow-lg">
-                            ${isDone ? '<i class="fas fa-check text-green-500"></i>' : c.points}
-                        </div>
-                    </div>
-                    <div class="p-6 flex-grow flex flex-col bg-white">
-                        <p class="text-sm text-gray-500 mb-6 flex-grow font-medium leading-relaxed">${c.desc}</p>
-                        
-                        ${isDone 
-                            ? `<div class="bg-gray-100 text-gray-500 p-3 rounded-xl text-xs text-center font-bold uppercase tracking-wider"><i class="fas fa-check-circle mr-1"></i> Misión Cumplida</div>`
-                            : `<button onclick="openChallengeModal('${c.id}')" class="w-full py-3 bg-gray-50 hover:bg-gray-100 text-ug-negro border border-gray-200 rounded-xl font-bold text-sm transition btn-3d uppercase tracking-wider flex items-center justify-center gap-2">
-                                Completar <i class="fas fa-arrow-right text-ug-desierto"></i>
-                               </button>`
-                        }
-                    </div>
-                </div>
-                `;
-            }).join('');
-
-            if(window.allChallenges.length === 0) gridHTML = '<p class="col-span-full text-center text-gray-400 py-10">No hay retos disponibles en este momento.</p>';
-
-            main.innerHTML = `
-                <div class="max-w-5xl mx-auto">
-                    <div class="mb-10 text-center md:text-left">
-                        <h2 class="text-3xl font-display font-black text-ug-negro uppercase tracking-tight flex items-center justify-center md:justify-start gap-3">
-                            <i class="fas fa-passport text-ug-mar"></i> Pasaporte de Retos
-                        </h2>
-                        <p class="text-gray-500 mt-2 font-medium">Completa misiones globales para acumular puntos.</p>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${gridHTML}
-                    </div>
-                </div>
-            `;
+        // Inicializar Storage si está vacío
+        if (!localStorage.getItem('unig_challenges')) {
+            setStore('challenges', DEFAULT_CHALLENGES);
+        }
+        if (!localStorage.getItem('unig_users')) {
+            // Usuario Admin por defecto
+            const adminUser = {
+                name: 'Jose Arregoces Freyles',
+                email: 'josearregocesfreyles@gmail.com',
+                program: 'Ingeniería Industrial',
+                semester: '10',
+                password: btoa('admin123'),
+                points: 250,
+                completed: []
+            };
+            setStore('users', [adminUser]);
+            setStore('currentUser', adminUser);
         }
 
-        window.openChallengeModal = function(id) {
-            const c = window.allChallenges.find(x => x.id === id);
-            if(!c) return;
+        // GESTIÓN DE TABS DE AUTH
+        function switchTab(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-register').classList.toggle('hidden', isLogin);
+            document.getElementById('tab-login').className = isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-slate-900 shadow-sm transition-all' : 'flex-1 py-2 text-sm font-semibold text-slate-500 rounded-lg transition-all';
+            document.getElementById('tab-register').className = !isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-slate-900 shadow-sm transition-all' : 'flex-1 py-2 text-sm font-semibold text-slate-500 rounded-lg transition-all';
+            document.getElementById('auth-error').innerText = '';
+        }
 
-            let actionArea = `
-                <div class="mt-6">
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Evidencia / Respuesta</label>
-                    <input type="text" id="challenge-input" class="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-mar font-medium" placeholder="Escribe tu respuesta o enlace...">
-                </div>
-                <button onclick="submitChallenge('${c.id}')" class="w-full mt-6 ${c.color} text-white font-bold py-4 rounded-xl transition btn-3d uppercase tracking-widest text-sm shadow-lg">
-                    Enviar Misión
-                </button>
-            `;
+        // REGISTRO
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const program = document.getElementById('reg-program').value.trim();
+            const semester = document.getElementById('reg-semester').value;
+            const password = document.getElementById('reg-password').value;
 
-            if(c.type === 'quiz') {
-                actionArea = `
-                    <div class="mt-6 space-y-3" id="quiz-options">
-                        <button onclick="submitQuiz('${c.id}', false)" class="w-full p-4 text-left border-2 border-gray-100 rounded-xl hover:border-ug-mar hover:bg-teal-50 transition font-bold text-ug-negro">A. Opción Incorrecta</button>
-                        <button onclick="submitQuiz('${c.id}', true)"  class="w-full p-4 text-left border-2 border-gray-100 rounded-xl hover:border-ug-mar hover:bg-teal-50 transition font-bold text-ug-negro">B. Opción Correcta (Demo)</button>
-                    </div>
-                `;
-            }
-
-            const html = `
-                <div class="bg-white rounded-3xl overflow-hidden">
-                    <div class="${c.color} p-8 text-white text-center relative">
-                        <i class="${c.icon} text-5xl mb-4 opacity-90 drop-shadow-md"></i>
-                        <h3 class="text-2xl font-display font-black leading-tight drop-shadow">${c.title}</h3>
-                        <div class="absolute top-4 right-4 bg-white text-ug-negro px-3 py-1 rounded-lg text-sm font-black shadow-md">
-                            ${c.points} pts
-                        </div>
-                    </div>
-                    <div class="p-8">
-                        <p class="text-gray-600 text-center text-lg font-medium">${c.desc}</p>
-                        ${actionArea}
-                    </div>
-                </div>
-            `;
-            openModal(html);
-        };
-
-        window.submitChallenge = async function(id) {
-            const input = document.getElementById('challenge-input').value.trim();
-            if(!input) return showToast("Debes ingresar la evidencia.", "warning");
-            await processWin(id);
-        };
-        
-        window.submitQuiz = async function(id, isCorrect) {
-            if(!isCorrect) {
-                showToast("Respuesta incorrecta. ¡Inténtalo de nuevo!", "error");
-                closeModal();
+            let users = getStore('users', []);
+            if (users.find(u => u.email === email)) {
+                document.getElementById('auth-error').innerText = 'Este correo ya está registrado. Inicia sesión.';
                 return;
             }
-            await processWin(id, true);
-        };
 
-        async function processWin(challengeId, isQuiz = false) {
-            const c = window.allChallenges.find(x => x.id === challengeId);
-            const uid = window.currentUser.uid;
-            
-            try {
-                const userRef = doc(db, USERS_PATH, uid);
-                const snap = await getDoc(userRef);
-                const data = snap.data();
-                
-                const newPts = (data.points || 0) + c.points;
-                const newCompleted = [...(data.challengesCompleted || []), c.id];
-                
-                await updateDoc(userRef, { points: newPts, challengesCompleted: newCompleted });
-                
-                showToast(`¡Misión completada! +${c.points} pts`, "success");
-                
-                if(newCompleted.length === 1) awardBadge('b_first');
-                if(c.type === 'upload') awardBadge('b_social');
-                if(isQuiz) awardBadge('b_smart');
-                
-                closeModal();
-            } catch(e) {
-                showToast("Error de conexión al guardar.", "error");
+            const newUser = {
+                name,
+                email,
+                program,
+                semester,
+                password: btoa(password),
+                points: 0,
+                completed: []
+            };
+
+            users.push(newUser);
+            setStore('users', users);
+            setStore('currentUser', newUser);
+            checkSession();
+        }
+
+        // LOGIN
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value;
+
+            let users = getStore('users', []);
+            const user = users.find(u => u.email === email && u.password === btoa(password));
+
+            if (!user) {
+                document.getElementById('auth-error').innerText = 'Correo o contraseña incorrectos.';
+                return;
+            }
+
+            setStore('currentUser', user);
+            checkSession();
+        }
+
+        function logout() {
+            localStorage.removeItem('unig_currentUser');
+            checkSession();
+        }
+
+        // VERIFICAR SESIÓN
+        function checkSession() {
+            const user = getStore('currentUser', null);
+            const authContainer = document.getElementById('auth-container');
+            const appContainer = document.getElementById('app-container');
+
+            if (!user) {
+                authContainer.classList.remove('hidden');
+                authContainer.classList.add('flex');
+                appContainer.classList.add('hidden');
+                appContainer.classList.remove('flex');
+            } else {
+                authContainer.classList.add('hidden');
+                authContainer.classList.remove('flex');
+                appContainer.classList.remove('hidden');
+                appContainer.classList.add('flex');
+                initApp(user);
             }
         }
 
+        // INICIALIZAR APLICACIÓN CON DATOS DEL USUARIO
+        function initApp(user) {
+            // Verificar si es Admin
+            const isAdmin = user.email === 'josearregocesfreyles@gmail.com';
+            document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
+            document.getElementById('admin-badge-container').innerHTML = isAdmin ? '<span class="px-3 py-1 bg-uniguajiraPink text-white text-xs font-bold rounded-full">ORI Admin</span>' : '';
+
+            // Datos Home
+            document.getElementById('home-points').innerText = user.points + ' pts';
+            document.getElementById('home-level').innerText = getUserLevel(user.points);
+
+            // Datos Perfil
+            document.getElementById('profile-avatar').innerText = user.name.charAt(0).toUpperCase();
+            document.getElementById('profile-name').innerText = user.name;
+            document.getElementById('profile-program').innerText = user.program;
+            document.getElementById('profile-semester').innerText = 'Semestre ' + user.semester;
+            document.getElementById('profile-points-val').innerText = user.points;
+            document.getElementById('profile-level-badge').innerText = getUserLevel(user.points);
+
+            renderChallenges();
+            renderRanking();
+            if (isAdmin) renderAdminChallenges();
+        }
+
+        function getUserLevel(points) {
+            if (points >= 200) return 'Embajador Global';
+            if (points >= 120) return 'Viajero Cultural';
+            if (points >= 50) return 'Explorador Internacional';
+            return 'Participante Inicial';
+        }
+
+        // NAVEGACIÓN INTERNA
+        function switchSection(sectionId) {
+            ['home', 'challenges', 'ranking', 'profile', 'admin'].forEach(sec => {
+                document.getElementById('sec-' + sec).classList.add('hidden');
+                const navBtn = document.getElementById('nav-' + sec);
+                if (navBtn) {
+                    navBtn.className = 'py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap';
+                }
+            });
+            document.getElementById('sec-' + sectionId).classList.remove('hidden');
+            const activeNav = document.getElementById('nav-' + sectionId);
+            if (activeNav) {
+                activeNav.className = 'py-3 text-sm font-semibold text-uniguajiraBlue border-b-2 border-uniguajiraBlue whitespace-nowrap';
+            }
+        }
+
+        // RENDERIZAR RETOS
+        function renderChallenges() {
+            const challenges = getStore('challenges', []);
+            const currentUser = getStore('currentUser', {});
+            const grid = document.getElementById('challenges-grid');
+            grid.innerHTML = '';
+
+            challenges.forEach(ch => {
+                const isCompleted = currentUser.completed && currentUser.completed.includes(ch.id);
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between space-y-4';
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-slate-900 text-base">${ch.title}</h3>
+                            <span class="px-2.5 py-1 bg-uniguajiraYellow/20 text-uniguajiraYellow text-xs font-bold rounded-full">+${ch.points} pts</span>
+                        </div>
+                        <p class="text-sm text-slate-600">${ch.desc}</p>
+                    </div>
+                    <div>
+                        ${isCompleted ? 
+                            '<span class="block w-full py-2.5 bg-emerald-50 text-emerald-600 text-center text-xs font-bold rounded-xl border border-emerald-200">✅ Reto Completado</span>' :
+                            `<button onclick="completeChallenge('${ch.id}')" class="w-full py-2.5 bg-uniguajiraBlue hover:bg-opacity-90 text-white text-xs font-semibold rounded-xl shadow-md transition-all">Completar Reto</button>`
+                        }
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function completeChallenge(chId) {
+            let challenges = getStore('challenges', []);
+            let currentUser = getStore('currentUser', {});
+            let users = getStore('users', []);
+
+            const ch = challenges.find(c => c.id === chId);
+            if (!ch || (currentUser.completed && currentUser.completed.includes(chId))) return;
+
+            if (!currentUser.completed) currentUser.completed = [];
+            currentUser.completed.push(chId);
+            currentUser.points += ch.points;
+
+            // Actualizar en lista general de usuarios
+            users = users.map(u => u.email === currentUser.email ? currentUser : u);
+
+            setStore('currentUser', currentUser);
+            setStore('users', users);
+
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            initApp(currentUser);
+        }
+
+        // RANKING
         function renderRanking() {
-            const main = document.getElementById('main-content');
-            const sorted = [...window.allUsers].sort((a,b) => (b.points||0) - (a.points||0));
-            
-            let html = sorted.map((u, i) => {
-                let posEl = `<span class="text-gray-400 font-black text-lg">${i+1}</span>`;
-                if(i===0) posEl = '<i class="fas fa-medal text-3xl text-ug-desierto drop-shadow-md"></i>';
-                if(i===1) posEl = '<i class="fas fa-medal text-2xl text-gray-400 drop-shadow"></i>';
-                if(i===2) posEl = '<i class="fas fa-medal text-2xl text-amber-600 drop-shadow"></i>';
+            let users = getStore('users', []);
+            users.sort((a, b) => b.points - a.points);
+            const tbody = document.getElementById('ranking-tbody');
+            tbody.innerHTML = '';
 
-                const isMe = window.currentUser && u.uid === window.currentUser.uid;
+            const currentUser = getStore('currentUser', {});
+            let userRank = '--';
 
-                return `
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition ${isMe ? 'bg-teal-50/30' : ''}">
-                        <td class="py-4 px-4 text-center w-16">${posEl}</td>
-                        <td class="py-4 px-4">
-                            <div class="flex items-center gap-4">
-                                <img src="${u.avatarUrl}" class="w-12 h-12 rounded-xl shadow-sm border border-gray-200 bg-white">
-                                <div>
-                                    <p class="font-bold text-ug-negro flex items-center gap-2">
-                                        ${u.name} 
-                                        ${isMe ? '<span class="text-[9px] bg-ug-mar text-white px-2 py-0.5 rounded uppercase tracking-widest">Tú</span>' : ''}
-                                    </p>
-                                    <p class="text-xs text-gray-500 font-medium">${u.program}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 text-center hidden md:table-cell">
-                            <span class="text-xs font-bold px-3 py-1 bg-gray-100 text-gray-500 rounded-lg uppercase tracking-wider">${getLevelData(u.points||0).current.name}</span>
-                        </td>
-                        <td class="py-4 px-4 text-right pr-6 font-display font-black text-ug-desierto text-xl">
-                            ${u.points || 0}
-                        </td>
-                    </tr>
+            users.forEach((u, index) => {
+                if (u.email === currentUser.email) userRank = '#' + (index + 1);
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-50 hover:bg-slate-50/50';
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-slate-900">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1)}</td>
+                    <td class="p-4 font-medium text-slate-800">${u.name} ${u.email === currentUser.email ? '(Tú)' : ''}</td>
+                    <td class="p-4 text-slate-500">${u.program}</td>
+                    <td class="p-4 text-right font-extrabold text-uniguajiraBlue">${u.points} pts</td>
                 `;
-            }).join('');
+                tbody.appendChild(tr);
+            });
 
-            main.innerHTML = `
-                <div class="max-w-4xl mx-auto">
-                    <div class="text-center mb-10">
-                        <i class="fas fa-trophy text-5xl text-ug-flamenco mb-4 drop-shadow-lg"></i>
-                        <h2 class="text-3xl font-display font-black text-ug-negro uppercase tracking-tight">Ranking Global</h2>
-                    </div>
-
-                    <div class="glass-panel rounded-3xl overflow-hidden shadow-md">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-ug-negro text-white">
-                                    <tr class="text-[10px] uppercase tracking-widest font-bold">
-                                        <th class="py-4 px-4 text-center">Top</th>
-                                        <th class="py-4 px-4">Estudiante</th>
-                                        <th class="py-4 px-4 text-center hidden md:table-cell">Rango</th>
-                                        <th class="py-4 px-4 text-right pr-6">Puntos</th>
-                                    </tr>
-                                </thead>
-                                <tbody>${html}</tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            `;
+            document.getElementById('home-rank').innerText = userRank;
         }
 
-        function renderProfile() {
-            const main = document.getElementById('main-content');
-            const u = window.currentUser;
-            const lvl = getLevelData(u.points||0);
-
-            const badgesHTML = Object.values(BADGES_DEF).map(b => {
-                const has = (u.badges||[]).includes(b.id);
-                return `
-                    <div class="flex flex-col items-center p-5 bg-white rounded-2xl border ${has ? 'border-ug-mar shadow-md' : 'border-dashed border-gray-200 opacity-60'}">
-                        <div class="w-16 h-16 rounded-full ${has ? b.color : 'bg-gray-100 text-gray-300'} text-white flex items-center justify-center text-2xl mb-3 shadow-inner">
-                            <i class="fas ${has ? b.icon : 'fa-lock'}"></i>
-                        </div>
-                        <h4 class="font-bold text-xs text-center text-ug-negro uppercase tracking-wider mb-1">${b.title}</h4>
-                        <p class="text-[10px] text-center text-gray-500 font-medium">${b.desc}</p>
-                    </div>
-                `;
-            }).join('');
-
-            main.innerHTML = `
-                <div class="max-w-4xl mx-auto space-y-8">
-                    <!-- PASSPORT ID -->
-                    <div class="bg-ug-mar rounded-3xl overflow-hidden shadow-2xl relative border-b-8 border-[#4E8893]">
-                        <div class="absolute inset-0 bg-world-pattern opacity-[0.15]"></div>
-                        <div class="p-8 md:p-10 relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start">
-                            
-                            <div class="w-32 h-40 bg-white p-2 rounded-xl shadow-xl rotate-[-3deg] shrink-0 border border-gray-100">
-                                <img src="${u.avatarUrl}" class="w-full h-full object-cover rounded-lg bg-gray-50">
-                            </div>
-                            
-                            <div class="flex-grow text-white w-full">
-                                <div class="border-b-2 border-white/20 pb-4 mb-4 flex justify-between items-end">
-                                    <div>
-                                        <p class="text-xs font-bold text-white/70 uppercase tracking-widest mb-1">Universidad de La Guajira</p>
-                                        <h2 class="text-2xl md:text-3xl font-display font-black uppercase tracking-tight">${u.name}</h2>
-                                    </div>
-                                    <i class="fas fa-qrcode text-4xl opacity-50"></i>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
-                                    <div>
-                                        <p class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Programa</p>
-                                        <p class="font-bold uppercase tracking-wide">${u.program}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Semestre</p>
-                                        <p class="font-bold uppercase tracking-wide">${u.semester}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Status</p>
-                                        <p class="font-bold text-ug-desierto uppercase tracking-wide bg-ug-negro/30 inline-block px-2 py-0.5 rounded">${lvl.current.name}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Puntos Acumulados</p>
-                                        <p class="font-black text-xl">${u.points||0}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BADGES -->
-                    <div class="glass-panel rounded-3xl p-8 shadow-sm">
-                        <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
-                            <h3 class="text-xl font-display font-black text-ug-negro uppercase tracking-tight">
-                                Colección de Sellos
-                            </h3>
-                            <span class="bg-ug-negro text-white px-3 py-1 rounded-lg text-sm font-bold shadow-inner">
-                                ${(u.badges||[]).length} / ${Object.keys(BADGES_DEF).length}
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            ${badgesHTML}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderAdmin() {
-            if(!window.currentUser || window.currentUser.role !== 'admin') return navigate('dashboard');
-            
-            const main = document.getElementById('main-content');
-            const totalP = window.allUsers.reduce((s,u)=>s+(u.points||0), 0);
-            
-            main.innerHTML = `
-                <div class="max-w-6xl mx-auto space-y-8">
-                    <!-- Admin Header -->
-                    <div class="bg-ug-negro text-white p-8 rounded-3xl shadow-xl flex justify-between items-center relative overflow-hidden btn-3d">
-                        <i class="fas fa-cogs absolute -right-10 -bottom-10 text-9xl opacity-10"></i>
-                        <div class="relative z-10">
-                            <h2 class="text-3xl font-display font-black uppercase tracking-tight flex items-center gap-3">
-                                <i class="fas fa-shield-alt text-ug-desierto"></i> Panel ORI (Administrador)
-                            </h2>
-                            <p class="text-gray-400 font-medium mt-1">Gestión general de la Semana Internacional • Uniguajira</p>
-                        </div>
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Estudiantes</p>
-                            <p class="text-3xl font-black text-ug-mar">${window.allUsers.length}</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Puntos Totales</p>
-                            <p class="text-3xl font-black text-ug-desierto">${totalP}</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Retos Activos</p>
-                            <p class="text-3xl font-black text-ug-flamenco">${window.allChallenges.length}</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        
-                        <!-- Create Challenge Form -->
-                        <div class="glass-panel p-6 rounded-3xl shadow-sm">
-                            <h3 class="font-black uppercase text-ug-negro mb-6 border-b border-gray-100 pb-2">Crear Nuevo Reto</h3>
-                            <form onsubmit="createChallenge(event)" class="space-y-4">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Título</label>
-                                    <input id="new-c-title" required class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-ug-mar">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Descripción</label>
-                                    <textarea id="new-c-desc" required class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-ug-mar" rows="2"></textarea>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Puntos</label>
-                                        <input type="number" id="new-c-pts" required min="10" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Color</label>
-                                        <select id="new-c-color" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none">
-                                            <option value="bg-ug-mar">Azul Mar</option>
-                                            <option value="bg-ug-desierto">Amarillo Desierto</option>
-                                            <option value="bg-ug-flamenco">Rosado Flamenco</option>
-                                            <option value="bg-ug-negro">Negro</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <button type="submit" class="w-full bg-ug-negro hover:bg-gray-800 text-white font-bold py-3 rounded-xl text-sm btn-3d mt-2 shadow">Guardar Reto</button>
-                            </form>
-                            
-                            <h4 class="font-bold text-xs uppercase text-gray-400 mt-8 mb-4">Retos Actuales</h4>
-                            <div class="space-y-2 max-h-48 overflow-y-auto pr-2">
-                                ${window.allChallenges.map(c => `
-                                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded border border-gray-100 text-sm">
-                                        <span class="font-bold text-gray-700 truncate">${c.title}</span>
-                                        <button onclick="deleteChallenge('${c.id}')" class="text-red-500 hover:bg-red-50 p-1 rounded"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <!-- Users Table -->
-                        <div class="glass-panel p-0 rounded-3xl shadow-sm lg:col-span-2 overflow-hidden flex flex-col">
-                            <div class="p-6 bg-white border-b border-gray-100 flex justify-between items-center">
-                                <h3 class="font-black uppercase text-ug-negro">Directorio de Estudiantes</h3>
-                            </div>
-                            <div class="overflow-auto max-h-[500px] flex-grow">
-                                <table class="w-full text-left text-sm border-collapse">
-                                    <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm">
-                                        <tr class="text-[10px] uppercase text-gray-500 tracking-widest">
-                                            <th class="py-3 px-4">Estudiante</th>
-                                            <th class="py-3 px-4">Programa</th>
-                                            <th class="py-3 px-4 text-center">Puntos</th>
-                                            <th class="py-3 px-4 text-center">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100 bg-white">
-                                        ${window.allUsers.map(u => `
-                                            <tr class="hover:bg-gray-50">
-                                                <td class="py-3 px-4">
-                                                    <p class="font-bold text-gray-800">${u.name}</p>
-                                                    <p class="text-[10px] text-gray-400 font-mono">${decode64(u.emailEncoded)}</p>
-                                                </td>
-                                                <td class="py-3 px-4 text-xs text-gray-500">${u.program} (Sem. ${u.semester})</td>
-                                                <td class="py-3 px-4 text-center font-black text-ug-desierto">${u.points||0}</td>
-                                                <td class="py-3 px-4 text-center">
-                                                    <button onclick="adminAddPoints('${u.uid}', 50)" class="bg-ug-mar/10 text-ug-mar hover:bg-ug-mar hover:text-white px-2 py-1 rounded transition text-[10px] font-bold uppercase tracking-wider" title="Regalar 50 puntos">
-                                                        +50 Pts
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        window.createChallenge = async function(e) {
+        // ADMIN: CREAR RETO
+        function handleCreateChallenge(e) {
             e.preventDefault();
-            const title = document.getElementById('new-c-title').value;
-            const desc = document.getElementById('new-c-desc').value;
-            const pts = parseInt(document.getElementById('new-c-pts').value);
-            const color = document.getElementById('new-c-color').value;
+            const title = document.getElementById('admin-ch-title').value.trim();
+            const points = parseInt(document.getElementById('admin-ch-points').value);
+            const desc = document.getElementById('admin-ch-desc').value.trim();
 
-            try {
-                const cRef = doc(collection(db, CHALLENGES_PATH));
-                await setDoc(cRef, {
-                    title: title, desc: desc, points: pts, color: color,
-                    icon: 'fas fa-star', type: 'text', createdAt: new Date().toISOString()
-                });
-                showToast("Reto creado exitosamente", "success");
-            } catch(err) { showToast("Error al crear reto", "error"); }
-        };
+            let challenges = getStore('challenges', []);
+            const newCh = {
+                id: Date.now().toString(),
+                title,
+                points,
+                desc
+            };
 
-        window.deleteChallenge = async function(id) {
-            if(!confirm("¿Eliminar este reto definitivamente?")) return;
-            try {
-                await deleteDoc(doc(db, CHALLENGES_PATH, id));
-                showToast("Reto eliminado", "info");
-            } catch(err) { showToast("Error al eliminar", "error"); }
-        };
+            challenges.push(newCh);
+            setStore('challenges', challenges);
 
-        window.adminAddPoints = async function(targetUid, amount) {
-            try {
-                const u = window.allUsers.find(x => x.uid === targetUid);
-                if(!u) return;
-                const newPts = (u.points||0) + amount;
-                await updateDoc(doc(db, USERS_PATH, targetUid), { points: newPts });
-                showToast(`+${amount} pts asignados a ${u.name.split(' ')[0]}`, "success");
-            } catch(err) { showToast("Error", "error"); }
-        };
+            document.getElementById('admin-ch-title').value = '';
+            document.getElementById('admin-ch-desc').value = '';
+            renderAdminChallenges();
+            renderChallenges();
+        }
 
+        function renderAdminChallenges() {
+            const challenges = getStore('challenges', []);
+            const list = document.getElementById('admin-challenges-list');
+            list.innerHTML = '';
+
+            challenges.forEach(ch => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100';
+                item.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">${ch.title} <span class="text-xs font-normal text-slate-500">(+${ch.points} pts)</span></h4>
+                        <p class="text-xs text-slate-500">${ch.desc}</p>
+                    </div>
+                    <button onclick="deleteChallenge('${ch.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 font-semibold text-xs rounded-xl transition-all">Eliminar</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function deleteChallenge(id) {
+            let challenges = getStore('challenges', []);
+            challenges = challenges.filter(c => c.id !== id);
+            setStore('challenges', challenges);
+            renderAdminChallenges();
+            renderChallenges();
+        }
+
+        // Ejecutar al cargar la página
+        window.onload = checkSession;
     </script>
 </body>
 </html>
