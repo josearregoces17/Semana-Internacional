@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semana Internacional - Universidad de La Guajira</title>
+    <title>Semana Internacional - Uniguajira</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        uniguajiraBlue: '#62A7B4',
-                        uniguajiraYellow: '#EOA342',
-                        uniguajiraPink: '#CA5E50',
-                        uniguajiraDark: '#0A0F1D',
-                        uniguajiraLight: '#F8FAFC'
+                        uniAzul: '#62A7B4',
+                        uniAmarillo: '#EOA342',
+                        uniRosado: '#CA5E50',
+                        uniNegro: '#000000',
+                        uniFondo: '#F9FAFB'
                     },
                     fontFamily: {
                         poppins: ['Poppins', 'sans-serif']
@@ -26,695 +25,473 @@
         }
     </script>
     <style>
-        body { font-family: 'Poppins', sans-serif; }
-        .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
-        .hero-pattern { background: linear-gradient(135deg, #0A0F1D 0%, #1E293B 100%); }
+        body { font-family: 'Poppins', sans-serif; background-color: #F9FAFB; }
+        .bg-pattern {
+            background-color: #62A7B4;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
     </style>
 </head>
-<body class="bg-uniguajiraLight text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="text-uniNegro antialiased min-h-screen flex flex-col">
 
-    <!-- CONTENEDOR DE AUTENTICACIÓN -->
-    <div id="auth-container" class="fixed inset-0 z-50 hero-pattern flex items-center justify-center p-4">
-        <div class="max-w-md w-full glass-card p-8 rounded-3xl shadow-2xl border border-white/20">
+    <!-- LOGIN / REGISTRO -->
+    <div id="auth-container" class="fixed inset-0 z-50 bg-pattern flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white p-8 rounded-3xl shadow-2xl border-t-4 border-uniAmarillo">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-uniguajiraBlue text-white text-2xl font-bold mb-4 shadow-lg shadow-uniguajiraBlue/30">
-                    ✈️
-                </div>
-                <h1 class="text-2xl font-bold text-slate-900">Uniguajira Internacional</h1>
-                <p class="text-sm text-slate-600 mt-1">Semana Internacional 2026</p>
+                <h1 class="text-3xl font-extrabold text-uniAzul tracking-tight">Uniguajira</h1>
+                <h2 class="text-xl font-bold text-uniRosado">Internacional</h2>
+                <p class="text-sm text-gray-500 mt-2">Semana Internacional 2026</p>
             </div>
 
-            <!-- Tabs -->
-            <div class="flex rounded-xl bg-slate-100 p-1 mb-6">
-                <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-slate-900 shadow-sm transition-all">Iniciar Sesión</button>
-                <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2 text-sm font-semibold text-slate-500 rounded-lg transition-all">Registrarse</button>
+            <div class="flex rounded-xl bg-gray-100 p-1 mb-6">
+                <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-uniAzul">Ingresar</button>
+                <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg">Registrarse</button>
             </div>
 
-            <!-- Formulario Login -->
             <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Correo Electrónico</label>
-                    <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Contraseña</label>
-                    <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
-                </div>
-                <button type="submit" class="w-full py-3 bg-uniguajiraBlue hover:bg-opacity-90 text-white font-semibold rounded-xl shadow-lg shadow-uniguajiraBlue/30 transition-all text-sm">Entrar a la Plataforma</button>
+                <input type="email" id="login-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-uniAzul outline-none">
+                <input type="password" id="login-password" required placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-uniAzul outline-none">
+                <button type="submit" class="w-full py-3 bg-uniAzul hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md">Ingresar a la Plataforma</button>
             </form>
 
-            <!-- Formulario Registro -->
             <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre Completo</label>
-                    <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Correo Electrónico</label>
-                    <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Programa Académico</label>
-                    <input type="text" id="reg-program" required placeholder="Ej: Ingeniería Industrial" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Semestre</label>
-                    <select id="reg-semester" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm bg-white">
-                        <option value="1">Semestre 1</option><option value="2">Semestre 2</option><option value="3">Semestre 3</option>
-                        <option value="4">Semestre 4</option><option value="5">Semestre 5</option><option value="6">Semestre 6</option>
-                        <option value="7">Semestre 7</option><option value="8">Semestre 8</option><option value="9">Semestre 9</option>
-                        <option value="10" selected>Semestre 10</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Contraseña</label>
-                    <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-uniguajiraBlue text-sm">
-                </div>
-                <button type="submit" class="w-full py-3 bg-uniguajiraYellow hover:bg-opacity-90 text-slate-900 font-bold rounded-xl shadow-lg shadow-uniguajiraYellow/30 transition-all text-sm">Registrarse Ahora</button>
+                <input type="text" id="reg-name" required placeholder="Nombre Completo" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
+                <input type="email" id="reg-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
+                <input type="text" id="reg-program" required placeholder="Programa Académico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
+                <input type="password" id="reg-password" required placeholder="Crear Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
+                <button type="submit" class="w-full py-3 bg-uniAmarillo hover:bg-opacity-90 text-uniNegro font-bold rounded-xl shadow-md">Crear Cuenta</button>
             </form>
-            <div id="auth-error" class="mt-4 text-xs text-red-500 text-center font-medium"></div>
+            <div id="auth-error" class="mt-4 text-xs text-uniRosado text-center font-bold"></div>
         </div>
     </div>
 
-    <!-- APLICACIÓN PRINCIPAL -->
+    <!-- APP PRINCIPAL -->
     <div id="app-container" class="hidden flex-col min-h-screen">
-        <!-- HEADER -->
-        <header class="bg-uniguajiraDark text-white shadow-md sticky top-0 z-40 border-b border-white/10">
+        <!-- HEADER OFICIAL -->
+        <header class="bg-uniAzul text-white shadow-md sticky top-0 z-40 border-b-4 border-uniAmarillo">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-uniguajiraYellow flex items-center justify-center font-bold text-slate-900 shadow-md">
-                        UG
-                    </div>
+                    <div class="bg-white text-uniAzul p-2 rounded-lg font-extrabold text-xl leading-none">UI</div>
                     <div>
-                        <span class="text-xs tracking-widest text-uniguajiraYellow uppercase font-bold">Uniguajira Internacional</span>
-                        <h2 class="text-lg font-bold leading-none">Semana Internacional</h2>
+                        <h1 class="font-extrabold leading-none text-lg">Uniguajira Internacional</h1>
+                        <span class="text-xs font-semibold text-uniAmarillo">Impacto Local, Educación Global</span>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div id="admin-badge-container"></div>
-                    <button onclick="logout()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-xl transition-all">Cerrar Sesión</button>
+                    <div id="admin-badge"></div>
+                    <button onclick="logout()" class="text-xs font-bold bg-white/20 px-3 py-1.5 rounded-lg hover:bg-white/30">Salir</button>
                 </div>
             </div>
         </header>
 
-        <!-- NAVEGACIÓN INTERNA -->
-        <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[61px] z-30">
-            <div class="max-w-7xl mx-auto px-4 flex space-x-8 overflow-x-auto">
-                <button onclick="switchSection('home')" id="nav-home" class="py-3 text-sm font-semibold text-uniguajiraBlue border-b-2 border-uniguajiraBlue whitespace-nowrap">🏠 Inicio</button>
-                <button onclick="switchSection('challenges')" id="nav-challenges" class="py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap">🎯 Retos</button>
-                <button onclick="switchSection('ranking')" id="nav-ranking" class="py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap">🏆 Ranking</button>
-                <button onclick="switchSection('profile')" id="nav-profile" class="py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap">👤 Mi Perfil</button>
-                <!-- BOTÓN ADMIN EXCLUSIVO -->
-                <button id="nav-admin" onclick="switchSection('admin')" class="py-3 text-sm font-semibold text-uniguajiraPink hover:text-opacity-80 whitespace-nowrap hidden">🛡️ Panel ORI (Matriz)</button>
+        <!-- NAVEGACIÓN -->
+        <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-[60px] z-30">
+            <div class="max-w-7xl mx-auto px-4 flex space-x-6 overflow-x-auto">
+                <button onclick="switchSec('act')" id="nav-act" class="py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap">🎯 Actividades</button>
+                <button onclick="switchSec('rank')" id="nav-rank" class="py-3 text-sm font-bold text-gray-500 whitespace-nowrap">🏆 Ranking</button>
+                <button onclick="switchSec('prof')" id="nav-prof" class="py-3 text-sm font-bold text-gray-500 whitespace-nowrap">👤 Mi Perfil</button>
+                <button onclick="switchSec('admin')" id="nav-admin" class="py-3 text-sm font-bold text-uniRosado whitespace-nowrap hidden">⚙️ MATRIZ ORI</button>
             </div>
         </nav>
 
-        <!-- CONTENIDO PRINCIPAL -->
         <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
             
-            <!-- SECCIÓN: INICIO -->
-            <section id="sec-home" class="space-y-6">
-                <div class="relative rounded-3xl overflow-hidden hero-pattern text-white p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between border border-white/10">
-                    <div class="relative z-10 max-w-xl space-y-4">
-                        <span class="px-3 py-1 bg-uniguajiraYellow/20 text-uniguajiraYellow border border-uniguajiraYellow/30 rounded-full text-xs font-bold uppercase tracking-wider">Edición 2026</span>
-                        <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Vive la Semana Internacional Universidad de La Guajira</h2>
-                        <p class="text-slate-300 text-sm md:text-base">Participa en retos globales, envía tus evidencias, obtén validación de la ORI, acumula puntos y compite en el ranking oficial.</p>
-                        <div class="flex flex-wrap gap-4 pt-2">
-                            <button onclick="switchSection('challenges')" class="px-6 py-3 bg-uniguajiraYellow text-slate-900 font-bold rounded-xl shadow-lg hover:scale-105 transition-all text-sm">Explorar Retos</button>
-                            <button onclick="switchSection('profile')" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all text-sm">Ver mi Progreso</button>
-                        </div>
-                    </div>
-                    <div class="mt-8 md:mt-0 text-6xl md:text-9xl select-none">
-                        🌍✈️
-                    </div>
+            <!-- SECCIÓN: ACTIVIDADES (ESTUDIANTE) -->
+            <section id="sec-act" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-uniAzul">
+                    <h2 class="text-2xl font-extrabold text-uniNegro">Retos Activos</h2>
+                    <p class="text-sm text-gray-500">Participa en las actividades habilitadas por la ORI para sumar puntos.</p>
                 </div>
 
-                <!-- Resumen rápido -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-uniguajiraBlue/10 text-uniguajiraBlue flex items-center justify-center text-2xl font-bold">🎯</div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase font-semibold">Tus Puntos Aprobados</p>
-                            <h3 id="home-points" class="text-2xl font-extrabold text-slate-900">0 pts</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-uniguajiraYellow/10 text-uniguajiraYellow flex items-center justify-center text-2xl font-bold">⭐</div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase font-semibold">Nivel Actual</p>
-                            <h3 id="home-level" class="text-lg font-extrabold text-slate-900">Explorador Internacional</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-uniguajiraPink/10 text-uniguajiraPink flex items-center justify-center text-2xl font-bold">🏆</div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase font-semibold">Posición en Ranking</p>
-                            <h3 id="home-rank" class="text-2xl font-extrabold text-slate-900">#--</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECCIÓN: RETOS -->
-            <section id="sec-challenges" class="space-y-6 hidden">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Retos Globales</h2>
-                        <p class="text-sm text-slate-500">Envía tu evidencia para que la ORI valide tus puntos.</p>
-                    </div>
-                </div>
-                <div id="challenges-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Dinámico -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="activities-container">
+                    <!-- Se llena dinámicamente según lo activo en matriz -->
                 </div>
             </section>
 
             <!-- SECCIÓN: RANKING -->
-            <section id="sec-ranking" class="space-y-6 hidden">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-900">Ranking General</h2>
-                    <p class="text-sm text-slate-500">Estudiantes con mayor puntaje verificado en la Semana Internacional.</p>
-                </div>
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-100">
-                                <th class="p-4 font-semibold">Posición</th>
-                                <th class="p-4 font-semibold">Estudiante</th>
-                                <th class="p-4 font-semibold">Programa</th>
-                                <th class="p-4 font-semibold text-right">Puntos Aprobados</th>
+            <section id="sec-rank" class="space-y-6 hidden">
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold">Ranking General</h2>
+                        <span class="text-xs bg-uniAmarillo px-2 py-1 rounded text-uniNegro font-bold">Desempate por tiempo</span>
+                    </div>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-white text-gray-500">
+                            <tr>
+                                <th class="p-4">#</th>
+                                <th class="p-4">Estudiante</th>
+                                <th class="p-4 text-right">Puntos Totales</th>
                             </tr>
                         </thead>
-                        <tbody id="ranking-tbody" class="divide-y divide-slate-100 text-sm">
-                            <!-- Dinámico -->
-                        </tbody>
+                        <tbody id="ranking-body" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </section>
 
             <!-- SECCIÓN: PERFIL -->
-            <section id="sec-profile" class="space-y-6 hidden">
-                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center md:items-start gap-6">
-                    <div class="w-24 h-24 rounded-full bg-uniguajiraBlue text-white text-3xl font-bold flex items-center justify-center shadow-lg" id="profile-avatar">
-                        U
-                    </div>
-                    <div class="flex-1 text-center md:text-left space-y-2">
-                        <h2 id="profile-name" class="text-2xl font-bold text-slate-900">Nombre Estudiante</h2>
-                        <p id="profile-program" class="text-sm text-slate-600 font-medium">Programa Académico</p>
-                        <p id="profile-semester" class="text-xs text-slate-400">Semestre 10</p>
-                        <div class="pt-2 flex flex-wrap justify-center md:justify-start gap-2">
-                            <span id="profile-level-badge" class="px-3 py-1 bg-uniguajiraYellow/20 text-uniguajiraYellow text-xs font-bold rounded-full border border-uniguajiraYellow/30">Explorador Internacional</span>
-                            <span class="px-3 py-1 bg-uniguajiraBlue/10 text-uniguajiraBlue text-xs font-bold rounded-full">Puntos Totales: <span id="profile-points-val">0</span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Insignias -->
-                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-4">
-                    <h3 class="text-lg font-bold text-slate-900">Insignias Obtenidas</h3>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2">
-                            <div class="text-3xl">🌎</div>
-                            <h4 class="text-xs font-bold text-slate-800">Participante activo</h4>
-                        </div>
-                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2">
-                            <div class="text-3xl">📸</div>
-                            <h4 class="text-xs font-bold text-slate-800">Creador cultural</h4>
-                        </div>
-                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2">
-                            <div class="text-3xl">🎥</div>
-                            <h4 class="text-xs font-bold text-slate-800">Narrador internacional</h4>
-                        </div>
-                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center space-y-2">
-                            <div class="text-3xl">🏆</div>
-                            <h4 class="text-xs font-bold text-slate-800">Embajador Global</h4>
+            <section id="sec-prof" class="space-y-6 hidden">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-20 h-20 rounded-full bg-uniAzul text-white text-3xl font-bold flex items-center justify-center" id="p-avatar">U</div>
+                    <div class="text-center md:text-left">
+                        <h2 id="p-name" class="text-2xl font-bold text-uniNegro">Nombre</h2>
+                        <p id="p-prog" class="text-sm text-gray-600">Programa</p>
+                        <div class="mt-2 inline-block px-4 py-1 bg-uniAmarillo/20 text-uniAmarillo font-extrabold rounded-full border border-uniAmarillo/30">
+                            Puntos: <span id="p-points">0</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- SECCIÓN: PANEL ADMIN (MATRIZ / ORI) -->
+            <!-- SECCIÓN: MATRIZ (ADMIN) -->
             <section id="sec-admin" class="space-y-6 hidden">
-                <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-lg flex justify-between items-center border border-white/10">
-                    <div>
-                        <span class="text-xs font-bold text-uniguajiraPink uppercase tracking-wider">Cuenta Matriz / Administrador Principal</span>
-                        <h2 class="text-2xl font-bold">Oficina de Relaciones Internacionales (ORI)</h2>
-                    </div>
-                    <div class="text-3xl">🛡️</div>
+                <div class="bg-uniNegro text-white p-6 rounded-2xl shadow-lg border-t-4 border-uniRosado">
+                    <h2 class="text-2xl font-extrabold text-uniRosado">Panel de Control Matriz</h2>
+                    <p class="text-sm text-gray-400">Gestión total de actividades, validaciones y tiempos.</p>
                 </div>
 
-                <!-- Crear Reto -->
-                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-4">
-                    <h3 class="text-lg font-bold text-slate-900">Crear Nuevo Reto Internacional</h3>
-                    <form onsubmit="handleCreateChallenge(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Título del Reto</label>
-                            <input type="text" id="admin-ch-title" required class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm">
+                <!-- Controles de Actividades -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                    <h3 class="font-bold text-lg border-b pb-2">Activación y Configuración</h3>
+                    
+                    <!-- Act 1 -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                        <div class="flex-1 w-full">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Actividad 1: Adivina la publicación</span>
+                                <button id="btn-toggle-act1" onclick="toggleAct(1)" class="text-xs px-3 py-1 rounded font-bold text-white"></button>
+                            </div>
+                            <input type="text" id="admin-act1-link" placeholder="Link de Instagram Objetivo..." class="w-full p-2 text-sm border rounded">
+                            <button onclick="saveAct1Link()" class="mt-2 text-xs bg-uniAzul text-white px-3 py-1 rounded">Guardar Link Configurado</button>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Puntos Asignables</label>
-                            <input type="number" id="admin-ch-points" required value="50" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Descripción / Evidencia Requerida</label>
-                            <input type="text" id="admin-ch-desc" required placeholder="Ej: Link de Instagram o video..." class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm">
-                        </div>
-                        <div class="md:col-span-3">
-                            <button type="submit" class="px-6 py-3 bg-uniguajiraPink text-white font-semibold rounded-xl text-sm shadow-md hover:bg-opacity-90">Publicar Reto Oficial</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
 
-                <!-- Bandeja de Validación de Evidencias -->
-                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-4">
-                    <h3 class="text-lg font-bold text-slate-900">Validación de Evidencias (Pendientes de Aprobación)</h3>
-                    <p class="text-xs text-slate-500">Aquí puedes revisar las evidencias enviadas por los estudiantes y otorgarles los puntos de forma manual.</p>
-                    <div id="admin-submissions-list" class="space-y-3">
-                        <!-- Dinámico -->
+                    <!-- Act 2 -->
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                        <span class="font-bold">Actividad 2: Preguntas de Internacionalización</span>
+                        <button id="btn-toggle-act2" onclick="toggleAct(2)" class="text-xs px-3 py-1 rounded font-bold text-white"></button>
+                    </div>
+
+                    <!-- Act 3 -->
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                        <span class="font-bold">Actividad 3: Historia Internacional (Manual)</span>
+                        <button id="btn-toggle-act3" onclick="toggleAct(3)" class="text-xs px-3 py-1 rounded font-bold text-white"></button>
+                    </div>
+
+                    <!-- Act 4 -->
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                        <span class="font-bold">Actividad 4: Palabras Ocultas</span>
+                        <button id="btn-toggle-act4" onclick="toggleAct(4)" class="text-xs px-3 py-1 rounded font-bold text-white"></button>
                     </div>
                 </div>
 
-                <!-- Lista de Retos Activos -->
-                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 space-y-4">
-                    <h3 class="text-lg font-bold text-slate-900">Retos Publicados en la Plataforma</h3>
-                    <div id="admin-challenges-list" class="space-y-3">
-                        <!-- Dinámico -->
+                <!-- Validaciones Manuales Act 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                    <h3 class="font-bold text-lg border-b pb-2">Validación Manual (Actividad 3)</h3>
+                    <div id="admin-validations" class="space-y-3">
+                        <!-- Llenado por JS -->
                     </div>
                 </div>
+
             </section>
 
         </main>
     </div>
 
-    <!-- SCRIPT DE LÓGICA Y VALIDACIÓN -->
     <script>
         const ADMIN_EMAIL = 'josearregocesfreyles@gmail.com';
 
-        // DATOS INICIALES POR DEFECTO
-        const DEFAULT_CHALLENGES = [
-            { id: '1', title: '🌎 Reto Instagram Internacional', points: 50, desc: 'Sube una historia etiquetando a la @uniguajira_ori conmemorando la diversidad cultural.' },
-            { id: '2', title: '🌍 Quiz Cultural Global', points: 30, desc: 'Responde correctamente el cuestionario sobre geografía y cultura general.' },
-            { id: '3', title: '✈️ Explorador Cultural (Video)', points: 100, desc: 'Carga un video corto explicando un plato o tradición internacional.' }
-        ];
+        // LÓGICA DE ALMACENAMIENTO (Reemplazar con Firebase en Producción)
+        function getD(k, def) { const v = localStorage.getItem('uni_'+k); return v ? JSON.parse(v) : def; }
+        function setD(k, v) { localStorage.setItem('uni_'+k, JSON.stringify(v)); }
 
-        function getStore(key, defaultValue) {
-            const val = localStorage.getItem('unig_' + key);
-            return val ? JSON.parse(val) : defaultValue;
+        // ESTADO INICIAL
+        if(!getD('settings', false)) {
+            setD('settings', { act1Active: true, act2Active: true, act3Active: true, act4Active: true, act1Link: 'https://instagram.com/uniguajira' });
         }
+        if(!getD('users', false)) {
+            setD('users', [{ 
+                email: ADMIN_EMAIL, password: btoa('admin123'), name: 'MATRIZ ORI', program: 'Admin', points: 0, lastTime: 0, 
+                act1: false, act2: [false,false,false,false,false], act3: false, act4: [] 
+            }]);
+        }
+        if(!getD('subsAct3', false)) setD('subsAct3', []);
 
-        function setStore(key, value) {
-            localStorage.setItem('unig_' + key, JSON.stringify(value));
-        }
-
-        // Inicializar Storage si está vacío
-        if (!localStorage.getItem('unig_challenges')) {
-            setStore('challenges', DEFAULT_CHALLENGES);
-        }
-        if (!localStorage.getItem('unig_users')) {
-            const adminUser = {
-                name: 'Jose Arregoces Freyles (ORI)',
-                email: ADMIN_EMAIL,
-                program: 'Oficina de Relaciones Internacionales',
-                semester: '10',
-                password: btoa('admin123'),
-                points: 0,
-                completed: [],
-                submissions: []
-            };
-            setStore('users', [adminUser]);
-            setStore('currentUser', adminUser);
-        }
-        if (!localStorage.getItem('unig_submissions')) {
-            setStore('submissions', []); // { id, userEmail, userName, challengeId, challengeTitle, points, link, status }
+        // AUTH
+        function switchTab(t) {
+            document.getElementById('form-login').classList.toggle('hidden', t!=='login');
+            document.getElementById('form-register').classList.toggle('hidden', t==='login');
+            document.getElementById('tab-login').className = t==='login' ? 'flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-uniAzul' : 'flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg';
+            document.getElementById('tab-register').className = t!=='login' ? 'flex-1 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-uniAzul' : 'flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg';
         }
 
-        // GESTIÓN DE TABS DE AUTH
-        function switchTab(tab) {
-            const isLogin = tab === 'login';
-            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
-            document.getElementById('form-register').classList.toggle('hidden', isLogin);
-            document.getElementById('tab-login').className = isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-slate-900 shadow-sm transition-all' : 'flex-1 py-2 text-sm font-semibold text-slate-500 rounded-lg transition-all';
-            document.getElementById('tab-register').className = !isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-slate-900 shadow-sm transition-all' : 'flex-1 py-2 text-sm font-semibold text-slate-500 rounded-lg transition-all';
-            document.getElementById('auth-error').innerText = '';
-        }
-
-        // REGISTRO
         function handleRegister(e) {
             e.preventDefault();
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim().toLowerCase();
-            const program = document.getElementById('reg-program').value.trim();
-            const semester = document.getElementById('reg-semester').value;
-            const password = document.getElementById('reg-password').value;
-
-            let users = getStore('users', []);
-            if (users.find(u => u.email === email)) {
-                document.getElementById('auth-error').innerText = 'Este correo ya está registrado. Inicia sesión.';
-                return;
-            }
-
-            const newUser = {
-                name,
-                email,
-                program,
-                semester,
-                password: btoa(password),
-                points: 0,
-                completed: []
+            const em = document.getElementById('reg-email').value.toLowerCase().trim();
+            let users = getD('users', []);
+            if(users.find(u => u.email === em)) return alert('Correo ya registrado');
+            const nu = {
+                email: em, name: document.getElementById('reg-name').value, program: document.getElementById('reg-program').value,
+                password: btoa(document.getElementById('reg-password').value), points: 0, lastTime: Date.now(),
+                act1: false, act2: [false,false,false,false,false], act3: false, act4: []
             };
-
-            users.push(newUser);
-            setStore('users', users);
-            setStore('currentUser', newUser);
-            checkSession();
+            users.push(nu); setD('users', users); setD('cu', nu); checkAuth();
         }
 
-        // LOGIN
         function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const password = document.getElementById('login-password').value;
-
-            let users = getStore('users', []);
-            const user = users.find(u => u.email === email && u.password === btoa(password));
-
-            if (!user) {
-                document.getElementById('auth-error').innerText = 'Correo o contraseña incorrectos.';
-                return;
-            }
-
-            setStore('currentUser', user);
-            checkSession();
+            const em = document.getElementById('login-email').value.toLowerCase().trim();
+            const pw = btoa(document.getElementById('login-password').value);
+            const user = getD('users', []).find(u => u.email === em && u.password === pw);
+            if(!user) return document.getElementById('auth-error').innerText = 'Credenciales inválidas';
+            setD('cu', user); checkAuth();
         }
 
-        function logout() {
-            localStorage.removeItem('unig_currentUser');
-            checkSession();
-        }
+        function logout() { localStorage.removeItem('uni_cu'); checkAuth(); }
 
-        // VERIFICAR SESIÓN
-        function checkSession() {
-            const user = getStore('currentUser', null);
-            const authContainer = document.getElementById('auth-container');
-            const appContainer = document.getElementById('app-container');
-
-            if (!user) {
-                authContainer.classList.remove('hidden');
-                authContainer.classList.add('flex');
-                appContainer.classList.add('hidden');
-                appContainer.classList.remove('flex');
+        function checkAuth() {
+            const u = getD('cu', null);
+            if(!u) {
+                document.getElementById('auth-container').classList.remove('hidden');
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('flex');
             } else {
-                authContainer.classList.add('hidden');
-                authContainer.classList.remove('flex');
-                appContainer.classList.remove('hidden');
-                appContainer.classList.add('flex');
-                initApp(user);
+                document.getElementById('auth-container').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('app-container').classList.add('flex');
+                initApp(u);
             }
         }
 
-        // INICIALIZAR APLICACIÓN
-        function initApp(user) {
-            const isAdmin = user.email.toLowerCase() === ADMIN_EMAIL;
-            
-            // EL PANEL ADMIN SOLO APARECE PARA LA CUENTA MATRIZ
+        function switchSec(s) {
+            ['act','rank','prof','admin'].forEach(x => {
+                const el = document.getElementById('sec-'+x);
+                const nav = document.getElementById('nav-'+x);
+                if(el) el.classList.add('hidden');
+                if(nav) nav.className = 'py-3 text-sm font-bold text-gray-500 whitespace-nowrap';
+            });
+            document.getElementById('sec-'+s).classList.remove('hidden');
+            document.getElementById('nav-'+s).className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap';
+        }
+
+        // LÓGICA CORE APP
+        function initApp(u) {
+            const isAdmin = u.email === ADMIN_EMAIL;
             document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
-            document.getElementById('admin-badge-container').innerHTML = isAdmin ? '<span class="px-3 py-1 bg-uniguajiraPink text-white text-xs font-bold rounded-full">Cuenta Matriz ORI</span>' : '';
+            document.getElementById('admin-badge').innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-xs px-2 py-1 font-bold rounded">MATRIZ</span>' : '';
+            
+            document.getElementById('p-name').innerText = u.name;
+            document.getElementById('p-prog').innerText = u.program;
+            document.getElementById('p-points').innerText = u.points;
+            document.getElementById('p-avatar').innerText = u.name.charAt(0).toUpperCase();
 
-            // Datos Home y Perfil
-            document.getElementById('home-points').innerText = user.points + ' pts';
-            document.getElementById('home-level').innerText = getUserLevel(user.points);
-
-            document.getElementById('profile-avatar').innerText = user.name.charAt(0).toUpperCase();
-            document.getElementById('profile-name').innerText = user.name;
-            document.getElementById('profile-program').innerText = user.program;
-            document.getElementById('profile-semester').innerText = 'Semestre ' + user.semester;
-            document.getElementById('profile-points-val').innerText = user.points;
-            document.getElementById('profile-level-badge').innerText = getUserLevel(user.points);
-
-            renderChallenges();
+            renderActivities(u);
             renderRanking();
-            if (isAdmin) {
-                renderAdminChallenges();
-                renderAdminSubmissions();
+            if(isAdmin) renderAdmin();
+        }
+
+        function addPoints(pts) {
+            let u = getD('cu', {}); let users = getD('users', []);
+            u.points += pts; u.lastTime = Date.now();
+            setD('cu', u);
+            setD('users', users.map(x => x.email === u.email ? u : x));
+            initApp(u); alert(`¡Has sumado ${pts} puntos!`);
+        }
+
+        function saveUserActState() {
+            let u = getD('cu', {}); let users = getD('users', []);
+            setD('users', users.map(x => x.email === u.email ? u : x));
+        }
+
+        // RENDERIZAR ACTIVIDADES AL ESTUDIANTE
+        function renderActivities(u) {
+            const set = getD('settings', {});
+            const cont = document.getElementById('activities-container');
+            cont.innerHTML = '';
+
+            // ACT 1
+            if(set.act1Active) {
+                let html = u.act1 ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded border border-green-200">✅ Completado (5 pts)</div>` : 
+                    `<input type="text" id="a1-link" placeholder="Pega el link aquí..." class="w-full p-2 text-sm border rounded mb-2">
+                     <button onclick="checkAct1()" class="w-full bg-uniAzul text-white py-2 rounded font-bold text-sm hover:bg-opacity-90">Validar Link</button>`;
+                cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 1: Adivina la publicación</h3><p class="text-xs text-gray-500 mb-3">Encuentra la publicación exacta de Instagram.</p>${html}</div>`;
+            }
+
+            // ACT 2
+            if(set.act2Active) {
+                let html = `<div class="space-y-3">`;
+                const q = [
+                    { id: 0, t: '1. Política de Internacionalización (No. y Año)', in: `<input type="text" id="a2-q0" class="w-full p-1.5 border rounded text-xs" placeholder="Ej: 000 de 2020">` },
+                    { id: 1, t: '2. ¿Cuántos objetivos tiene y cuál empieza por "Promover"?', in: `<input type="text" id="a2-q1" class="w-full p-1.5 border rounded text-xs" placeholder="Respuesta completa">` },
+                    { id: 2, t: '3. Uniguajira a México es:', in: `<select id="a2-q2" class="w-full p-1.5 border rounded text-xs"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
+                    { id: 3, t: '4. Profesor de B/quilla a Uniguajira es:', in: `<select id="a2-q3" class="w-full p-1.5 border rounded text-xs"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
+                    { id: 4, t: '5. Nombre mascota ORI 🐶:', in: `<input type="text" id="a2-q4" class="w-full p-1.5 border rounded text-xs">` }
+                ];
+                q.forEach(i => {
+                    html += `<div><label class="text-xs font-bold text-gray-700 block">${i.t}</label>
+                    ${u.act2[i.id] ? '<span class="text-xs text-green-600 font-bold">✅ Correcto (+1 pt)</span>' : i.in}</div>`;
+                });
+                html += u.act2.every(x=>x) ? '' : `<button onclick="checkAct2()" class="w-full bg-uniAzul text-white py-2 rounded font-bold text-sm mt-2 hover:bg-opacity-90">Enviar Respuestas</button>`;
+                cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 2: Preguntas</h3><p class="text-xs text-gray-500 mb-3">1 pt por cada una.</p>${html}</div>`;
+            }
+
+            // ACT 3
+            if(set.act3Active) {
+                let html = '';
+                if(u.act3 === 'approved') html = `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded border border-green-200">✅ Evaluado y Aprobado</div>`;
+                else if(u.act3 === 'pending') html = `<div class="p-3 bg-yellow-50 text-yellow-700 font-bold text-sm rounded border border-yellow-200">⏳ En revisión por Matriz ORI</div>`;
+                else {
+                    html = `<input type="text" id="a3-link" placeholder="Link de tu video/historia..." class="w-full p-2 text-sm border rounded mb-2">
+                     <button onclick="submitAct3()" class="w-full bg-uniRosado text-white py-2 rounded font-bold text-sm hover:bg-opacity-90">Enviar a Revisión (Máx 8 pts)</button>`;
+                }
+                cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 3: Historia Internacional</h3><p class="text-xs text-gray-500 mb-3">Sube tu evidencia para validación manual de la matriz.</p>${html}</div>`;
+            }
+
+            // ACT 4
+            if(set.act4Active) {
+                let found = u.act4.length;
+                let html = found >= 10 ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded border border-green-200">✅ Has encontrado las 10 palabras (50 pts)</div>` :
+                    `<div class="flex gap-2 mb-2"><input type="text" id="a4-word" placeholder="Ingresa palabra oculta" class="flex-1 p-2 text-sm border rounded"><button onclick="checkAct4()" class="bg-uniAmarillo text-uniNegro px-4 py-2 rounded font-bold text-sm">Validar</button></div>`;
+                html += `<p class="text-xs font-bold mt-2">Encontradas (${found}/10): <span class="text-gray-500 font-normal">${u.act4.join(', ')}</span></p>`;
+                cont.innerHTML += `<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"><h3 class="font-bold text-uniAzul mb-1">Actividad 4: Palabras Ocultas</h3><p class="text-xs text-gray-500 mb-3">Cada palabra correcta suma 5 pts.</p>${html}</div>`;
             }
         }
 
-        function getUserLevel(points) {
-            if (points >= 200) return 'Embajador Global';
-            if (points >= 120) return 'Viajero Cultural';
-            if (points >= 50) return 'Explorador Internacional';
-            return 'Participante Inicial';
+        // VALIDADORES
+        function checkAct1() {
+            const v = document.getElementById('a1-link').value.trim();
+            const set = getD('settings', {});
+            if(v === set.act1Link) { let u = getD('cu'); u.act1 = true; setD('cu', u); saveUserActState(); addPoints(5); } 
+            else alert('Link incorrecto. ¡Sigue buscando!');
         }
 
-        // NAVEGACIÓN INTERNA
-        function switchSection(sectionId) {
-            const user = getStore('currentUser', {});
-            const isAdmin = user.email.toLowerCase() === ADMIN_EMAIL;
+        function checkAct2() {
+            let u = getD('cu'); let pts = 0;
+            // Q1: 018 de 2023
+            if(!u.act2[0]) { let v = document.getElementById('a2-q0').value.toLowerCase(); if(v.includes('018') && v.includes('2023')) { u.act2[0] = true; pts++; } }
+            // Q2: 3 – Promover el relacionamiento...
+            if(!u.act2[1]) { let v = document.getElementById('a2-q1').value.toLowerCase(); if((v.includes('3')||v.includes('tres')) && v.includes('promover') && v.includes('institucional')) { u.act2[1] = true; pts++; } }
+            // Q3: C
+            if(!u.act2[2]) { let v = document.getElementById('a2-q2').value; if(v === 'C') { u.act2[2] = true; pts++; } }
+            // Q4: D
+            if(!u.act2[3]) { let v = document.getElementById('a2-q3').value; if(v === 'D') { u.act2[3] = true; pts++; } }
+            // Q5: Shakira
+            if(!u.act2[4]) { let v = document.getElementById('a2-q4').value.toLowerCase(); if(v.includes('shakira')) { u.act2[4] = true; pts++; } }
+            
+            setD('cu', u); saveUserActState();
+            if(pts > 0) addPoints(pts); else alert('No hubo respuestas correctas nuevas.');
+        }
 
-            if (sectionId === 'admin' && !isAdmin) return; // Bloqueo de seguridad adicional
+        function submitAct3() {
+            const v = document.getElementById('a3-link').value.trim();
+            if(!v) return alert('Ingresa un link válido');
+            let u = getD('cu'); u.act3 = 'pending'; setD('cu', u); saveUserActState();
+            let subs = getD('subsAct3', []);
+            subs.push({ id: Date.now(), email: u.email, name: u.name, link: v, status: 'pending' });
+            setD('subsAct3', subs); initApp(u); alert('Evidencia enviada a la Matriz.');
+        }
 
-            ['home', 'challenges', 'ranking', 'profile', 'admin'].forEach(sec => {
-                const el = document.getElementById('sec-' + sec);
-                if (el) el.classList.add('hidden');
-                const navBtn = document.getElementById('nav-' + sec);
-                if (navBtn) {
-                    navBtn.className = 'py-3 text-sm font-semibold text-slate-500 hover:text-slate-800 whitespace-nowrap';
-                }
+        function checkAct4() {
+            const words = ['transnacional', 'cosmopolitismo', 'extranjería', 'arancel', 'aduana', 'protocolo', 'mercado', 'negociación', 'visado', 'frontera'];
+            const v = document.getElementById('a4-word').value.toLowerCase().trim();
+            let u = getD('cu');
+            document.getElementById('a4-word').value = '';
+            
+            if(words.includes(v)) {
+                if(!u.act4.includes(v)) { u.act4.push(v); setD('cu', u); saveUserActState(); addPoints(5); } 
+                else alert('Ya encontraste esta palabra.');
+            } else alert('Palabra incorrecta.');
+        }
+
+        // PANEL MATRIZ (ADMIN)
+        function renderAdmin() {
+            const set = getD('settings', {});
+            [1,2,3,4].forEach(i => {
+                const b = document.getElementById('btn-toggle-act'+i);
+                const a = set['act'+i+'Active'];
+                b.innerText = a ? 'DESACTIVAR' : 'ACTIVAR';
+                b.className = `text-xs px-3 py-1 rounded font-bold text-white ${a ? 'bg-uniRosado' : 'bg-uniAzul'}`;
             });
+            document.getElementById('admin-act1-link').value = set.act1Link;
 
-            const targetSec = document.getElementById('sec-' + sectionId);
-            if (targetSec) targetSec.classList.remove('hidden');
-
-            const activeNav = document.getElementById('nav-' + sectionId);
-            if (activeNav) {
-                activeNav.className = 'py-3 text-sm font-semibold text-uniguajiraBlue border-b-2 border-uniguajiraBlue whitespace-nowrap';
-            }
-        }
-
-        // RENDERIZAR RETOS PARA ESTUDIANTES
-        function renderChallenges() {
-            const challenges = getStore('challenges', []);
-            const currentUser = getStore('currentUser', {});
-            const submissions = getStore('submissions', []);
-            const grid = document.getElementById('challenges-grid');
-            grid.innerHTML = '';
-
-            challenges.forEach(ch => {
-                const isCompleted = currentUser.completed && currentUser.completed.includes(ch.id);
-                const pendingSub = submissions.find(s => s.userEmail === currentUser.email && s.challengeId === ch.id && s.status === 'pending');
-
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between space-y-4';
-                
-                let actionHTML = '';
-                if (isCompleted) {
-                    actionHTML = '<span class="block w-full py-2.5 bg-emerald-50 text-emerald-600 text-center text-xs font-bold rounded-xl border border-emerald-200">✅ Reto Aprobado y Validado</span>';
-                } else if (pendingSub) {
-                    actionHTML = '<span class="block w-full py-2.5 bg-amber-50 text-amber-600 text-center text-xs font-bold rounded-xl border border-amber-200">⏳ Evidencia en revisión por la ORI</span>';
-                } else {
-                    actionHTML = `
-                        <div class="space-y-2">
-                            <input type="text" id="ev-${ch.id}" placeholder="Pega el link de tu evidencia..." class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-uniguajiraBlue">
-                            <button onclick="submitEvidence('${ch.id}', '${ch.title}', ${ch.points})" class="w-full py-2.5 bg-uniguajiraBlue hover:bg-opacity-90 text-white text-xs font-semibold rounded-xl shadow-md transition-all">Enviar Evidencia a la ORI</button>
+            // Validaciones Act 3
+            const subs = getD('subsAct3', []).filter(s => s.status === 'pending');
+            const cont = document.getElementById('admin-validations');
+            if(subs.length === 0) cont.innerHTML = '<p class="text-xs text-gray-500">No hay evidencias pendientes.</p>';
+            else {
+                cont.innerHTML = subs.map(s => `
+                    <div class="p-4 bg-gray-50 border rounded-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <p class="font-bold text-sm">${s.name}</p>
+                            <a href="${s.link}" target="_blank" class="text-xs text-blue-600 underline">Ver Evidencia</a>
                         </div>
-                    `;
-                }
-
-                card.innerHTML = `
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-slate-900 text-base">${ch.title}</h3>
-                            <span class="px-2.5 py-1 bg-uniguajiraYellow/20 text-uniguajiraYellow text-xs font-bold rounded-full">+${ch.points} pts</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="pts-${s.id}" min="0" max="7" value="7" class="w-16 p-1 border rounded text-sm text-center" title="Puntos base (max 7)">
+                            <label class="text-xs flex items-center gap-1"><input type="checkbox" id="bon-${s.id}"> +1 pt Clave</label>
+                            <button onclick="approveAct3(${s.id})" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">Aprobar</button>
                         </div>
-                        <p class="text-sm text-slate-600">${ch.desc}</p>
                     </div>
-                    <div>${actionHTML}</div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function submitEvidence(chId, chTitle, points) {
-            const input = document.getElementById('ev-' + chId);
-            const link = input ? input.value.trim() : '';
-            if (!link) {
-                alert('Por favor ingresa un link válido con tu evidencia.');
-                return;
+                `).join('');
             }
-
-            let currentUser = getStore('currentUser', {});
-            let submissions = getStore('submissions', []);
-
-            const newSub = {
-                id: Date.now().toString(),
-                userEmail: currentUser.email,
-                userName: currentUser.name,
-                challengeId: chId,
-                challengeTitle: chTitle,
-                points: points,
-                link: link,
-                status: 'pending'
-            };
-
-            submissions.push(newSub);
-            setStore('submissions', submissions);
-            renderChallenges();
-            alert('¡Evidencia enviada con éxito! La ORI la revisará para validar tus puntos.');
         }
 
-        // RANKING
+        function toggleAct(i) {
+            let set = getD('settings', {});
+            set['act'+i+'Active'] = !set['act'+i+'Active'];
+            setD('settings', set); renderAdmin(); initApp(getD('cu'));
+        }
+
+        function saveAct1Link() {
+            let set = getD('settings', {});
+            set.act1Link = document.getElementById('admin-act1-link').value.trim();
+            setD('settings', set); alert('Link de Actividad 1 guardado.');
+        }
+
+        function approveAct3(id) {
+            let subs = getD('subsAct3', []);
+            let sub = subs.find(s => s.id === id);
+            if(!sub) return;
+
+            const basePts = parseInt(document.getElementById('pts-'+id).value) || 0;
+            const bonus = document.getElementById('bon-'+id).checked ? 1 : 0;
+            const total = basePts + bonus;
+
+            sub.status = 'approved'; setD('subsAct3', subs);
+
+            let users = getD('users', []);
+            let target = users.find(u => u.email === sub.email);
+            if(target) {
+                target.act3 = 'approved';
+                target.points += total;
+                target.lastTime = Date.now();
+                setD('users', users);
+            }
+            renderAdmin(); renderRanking(); alert(`Aprobado con ${total} puntos.`);
+        }
+
+        // RANKING COMPLEJO (Desempate por Milisegundo)
         function renderRanking() {
-            let users = getStore('users', []);
-            // Filtrar para excluir al admin de la tabla de estudiantes si se desea, o mantenerlo
-            users.sort((a, b) => b.points - a.points);
-            const tbody = document.getElementById('ranking-tbody');
-            tbody.innerHTML = '';
-
-            const currentUser = getStore('currentUser', {});
-            let userRank = '--';
-
-            users.forEach((u, index) => {
-                if (u.email === currentUser.email) userRank = '#' + (index + 1);
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-slate-50 hover:bg-slate-50/50';
-                tr.innerHTML = `
-                    <td class="p-4 font-bold text-slate-900">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1)}</td>
-                    <td class="p-4 font-medium text-slate-800">${u.name} ${u.email === currentUser.email ? '(Tú)' : ''}</td>
-                    <td class="p-4 text-slate-500">${u.program}</td>
-                    <td class="p-4 text-right font-extrabold text-uniguajiraBlue">${u.points} pts</td>
-                `;
-                tbody.appendChild(tr);
+            let users = getD('users', []).filter(u => u.email !== ADMIN_EMAIL); // Excluir matriz del ranking
+            
+            // Ordenar: Mayor puntaje primero. Si hay empate, menor lastTime (quien lo hizo primero)
+            users.sort((a, b) => {
+                if(b.points !== a.points) return b.points - a.points;
+                return a.lastTime - b.lastTime;
             });
 
-            document.getElementById('home-rank').innerText = userRank;
+            const tbody = document.getElementById('ranking-body');
+            tbody.innerHTML = users.map((u, i) => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="p-4 font-bold text-gray-500">${i+1}</td>
+                    <td class="p-4 font-bold text-uniAzul flex flex-col">
+                        ${u.name} 
+                        <span class="text-[10px] text-gray-400 font-normal">Última act: ${new Date(u.lastTime).toLocaleTimeString()}</span>
+                    </td>
+                    <td class="p-4 text-right font-extrabold text-uniNegro">${u.points} pts</td>
+                </tr>
+            `).join('');
         }
 
-        // ADMIN: CREAR RETO
-        function handleCreateChallenge(e) {
-            e.preventDefault();
-            const title = document.getElementById('admin-ch-title').value.trim();
-            const points = parseInt(document.getElementById('admin-ch-points').value);
-            const desc = document.getElementById('admin-ch-desc').value.trim();
-
-            let challenges = getStore('challenges', []);
-            const newCh = {
-                id: Date.now().toString(),
-                title,
-                points,
-                desc
-            };
-
-            challenges.push(newCh);
-            setStore('challenges', challenges);
-
-            document.getElementById('admin-ch-title').value = '';
-            document.getElementById('admin-ch-desc').value = '';
-            renderAdminChallenges();
-            renderChallenges();
-        }
-
-        function renderAdminChallenges() {
-            const challenges = getStore('challenges', []);
-            const list = document.getElementById('admin-challenges-list');
-            list.innerHTML = '';
-
-            challenges.forEach(ch => {
-                const item = document.createElement('div');
-                item.className = 'flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100';
-                item.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-slate-900 text-sm">${ch.title} <span class="text-xs font-normal text-slate-500">(+${ch.points} pts)</span></h4>
-                        <p class="text-xs text-slate-500">${ch.desc}</p>
-                    </div>
-                    <button onclick="deleteChallenge('${ch.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 font-semibold text-xs rounded-xl transition-all">Eliminar</button>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function deleteChallenge(id) {
-            let challenges = getStore('challenges', []);
-            challenges = challenges.filter(c => c.id !== id);
-            setStore('challenges', challenges);
-            renderAdminChallenges();
-            renderChallenges();
-        }
-
-        // ADMIN: VALIDAR EVIDENCIAS
-        function renderAdminSubmissions() {
-            const submissions = getStore('submissions', []);
-            const list = document.getElementById('admin-submissions-list');
-            list.innerHTML = '';
-
-            const pending = submissions.filter(s => s.status === 'pending');
-
-            if (pending.length === 0) {
-                list.innerHTML = '<p class="text-xs text-slate-400 italic">No hay evidencias pendientes por aprobar en este momento.</p>';
-                return;
-            }
-
-            pending.forEach(sub => {
-                const item = document.createElement('div');
-                item.className = 'p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4';
-                item.innerHTML = `
-                    <div class="space-y-1">
-                        <h4 class="font-bold text-slate-900 text-sm">${sub.userName} <span class="text-xs font-normal text-slate-500">(${sub.challengeTitle})</span></h4>
-                        <p class="text-xs text-slate-600">Evidencia: <a href="${sub.link}" target="_blank" class="text-uniguajiraBlue underline font-medium">${sub.link}</a></p>
-                        <span class="inline-block px-2 py-0.5 bg-uniguajiraYellow/20 text-uniguajiraYellow font-bold text-[10px] rounded-md">+${sub.points} puntos a otorgar</span>
-                    </div>
-                    <div class="flex space-x-2 w-full md:w-auto">
-                        <button onclick="approveSubmission('${sub.id}')" class="flex-1 md:flex-initial px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl transition-all">Aprobar</button>
-                        <button onclick="rejectSubmission('${sub.id}')" class="flex-1 md:flex-initial px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 font-semibold text-xs rounded-xl transition-all">Rechazar</button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function approveSubmission(subId) {
-            let submissions = getStore('submissions', []);
-            let users = getStore('users', []);
-
-            const sub = submissions.find(s => s.id === subId);
-            if (!sub) return;
-
-            sub.status = 'approved';
-
-            // Sumar puntos al estudiante
-            let targetUser = users.find(u => u.email === sub.userEmail);
-            if (targetUser) {
-                if (!targetUser.completed) targetUser.completed = [];
-                if (!targetUser.completed.includes(sub.challengeId)) {
-                    targetUser.completed.push(sub.challengeId);
-                    targetUser.points += sub.points;
-                }
-            }
-
-            setStore('submissions', submissions);
-            setStore('users', users);
-
-            // Si el admin logueado es también el usuario actual
-            let currentUser = getStore('currentUser', {});
-            if (currentUser.email === sub.userEmail) {
-                setStore('currentUser', targetUser);
-            }
-
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            renderAdminSubmissions();
-            renderRanking();
-            alert('¡Evidencia aprobada! Puntos sumados correctamente al perfil del estudiante.');
-        }
-
-        function rejectSubmission(subId) {
-            let submissions = getStore('submissions', []);
-            const sub = submissions.find(s => s.id === subId);
-            if (sub) sub.status = 'rejected';
-            setStore('submissions', submissions);
-            renderAdminSubmissions();
-            alert('Evidencia rechazada.');
-        }
-
-        // Ejecutar al cargar
-        window.onload = checkSession;
+        window.onload = checkAuth;
     </script>
 </body>
 </html>
