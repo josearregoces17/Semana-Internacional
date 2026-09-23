@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semana Internacional - Uniguajira</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        ug: {
+                            blue: '#004b87',
+                            turquoise: '#00a499',
+                            orange: '#f26522',
+                            purple: '#662483',
+                            light: '#f8fafc',
+                        }
+                    },
+                    backgroundImage: {
+                        'world-pattern': "url('data:image/svg+xml,%3Csvg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Ccircle cx=\"50\" cy=\"50\" r=\"2\" fill=\"%23004b87\" fill-opacity=\"0.1\"/%3E%3C/svg%3E')",
+                        'passport-stamp': "url('data:image/svg+xml,%3Csvg width=\"200\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Ccircle cx=\"100\" cy=\"100\" r=\"80\" fill=\"none\" stroke=\"%23f26522\" stroke-width=\"4\" stroke-dasharray=\"10 5\" opacity=\"0.1\"/%3E%3Ctext x=\"100\" y=\"110\" font-family=\"Arial\" font-size=\"24\" fill=\"%23f26522\" text-anchor=\"middle\" opacity=\"0.1\" transform=\"rotate(-15 100 100)\"%3EUNIGUAJIRA%3C/text%3E%3C/svg%3E')"
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fly': 'fly 10s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fly: {
+                            '0%': { transform: 'translateX(-100%) translateY(0) rotate(15deg)' },
+                            '100%': { transform: 'translateX(100vw) translateY(-100px) rotate(15deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 75, 135, 0.1);
+        }
+        .gamified-border {
+            position: relative;
+        }
+        .gamified-border::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0; right: 0; height: 4px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 0 0 0.5rem 0.5rem;
+        }
+        .stamp {
+            border: 4px dashed;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-15deg);
+            opacity: 0.8;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #00a499; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #004b87; }
+        
+        /* Hide scrollbar for horizontal lists */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen bg-world-pattern flex flex-col font-sans">
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Airplane Animation Layer -->
+    <div class="fixed top-20 left-0 w-full h-full pointer-events-none overflow-hidden z-0 opacity-20">
+        <i class="fas fa-plane text-ug-orange text-4xl absolute animate-fly"></i>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-container" class="flex-grow flex flex-col relative z-10 hidden">
+        
+        <!-- Top Navigation -->
+        <header class="bg-ug-blue text-white shadow-md sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('dashboard')">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-ug-blue font-bold text-xl gamified-border">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <span class="font-display font-bold text-xl tracking-tight hidden sm:block">Semana Internacional</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="bg-ug-turquoise px-3 py-1 rounded-full text-sm font-bold flex items-center gap-2 gamified-border" title="Tus Puntos">
+                            <i class="fas fa-star text-yellow-300"></i>
+                            <span id="nav-points">0</span> pts
+                        </div>
+                        <button onclick="navigate('profile')" class="w-10 h-10 rounded-full border-2 border-white overflow-hidden hover:opacity-80 transition">
+                            <img id="nav-avatar" src="https://placehold.co/100x100/662483/white?text=User" alt="Avatar" class="w-full h-full object-cover">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Layout with Sidebar -->
+        <div class="flex-grow flex max-w-7xl mx-auto w-full w-full">
+            
+            <!-- Sidebar Navigation (Desktop) / Bottom Nav (Mobile) -->
+            <nav class="bg-white shadow-xl md:w-64 fixed bottom-0 w-full md:relative md:flex-col flex justify-around md:justify-start z-30 md:rounded-tr-2xl pb-safe md:pb-0">
+                <div class="md:p-6 md:block hidden">
+                    <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Navegación</h2>
+                </div>
+                
+                <button onclick="navigate('dashboard')" id="nav-btn-dashboard" class="flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-500 hover:text-ug-blue hover:bg-blue-50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent nav-btn">
+                    <i class="fas fa-compass text-lg md:text-xl"></i>
+                    <span class="text-[10px] md:text-sm font-semibold">Inicio</span>
+                </button>
+                
+                <button onclick="navigate('challenges')" id="nav-btn-challenges" class="flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-500 hover:text-ug-orange hover:bg-orange-50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent nav-btn">
+                    <i class="fas fa-map-marked-alt text-lg md:text-xl"></i>
+                    <span class="text-[10px] md:text-sm font-semibold">Retos</span>
+                </button>
+                
+                <button onclick="navigate('ranking')" id="nav-btn-ranking" class="flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-500 hover:text-ug-turquoise hover:bg-teal-50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent nav-btn">
+                    <i class="fas fa-trophy text-lg md:text-xl"></i>
+                    <span class="text-[10px] md:text-sm font-semibold">Ranking</span>
+                </button>
+                
+                <button onclick="navigate('profile')" id="nav-btn-profile" class="flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:px-6 md:py-4 w-full text-gray-500 hover:text-ug-purple hover:bg-purple-50 transition-colors border-t-2 md:border-t-0 md:border-l-4 border-transparent nav-btn">
+                    <i class="fas fa-passport text-lg md:text-xl"></i>
+                    <span class="text-[10px] md:text-sm font-semibold">Perfil</span>
+                </button>
+                
+                <div class="mt-auto hidden md:block p-6">
+                    <button onclick="toggleAdminView()" id="admin-toggle-btn" class="hidden w-full bg-gray-800 text-white py-2 rounded-lg font-semibold text-sm hover:bg-gray-700 transition">
+                        <i class="fas fa-user-shield mr-2"></i>Panel Organizador
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Dynamic Content Area -->
+            <main class="flex-grow p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto w-full relative" id="main-content">
+                <!-- Views will be injected here -->
+            </main>
+        </div>
+    </div>
+
+    <!-- GENERIC MODAL -->
+    <div id="global-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl transform transition-all relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 z-10 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, onSnapshot, getDocs, orderBy, writeBatch, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Variables
+        window.appId = typeof __app_id !== 'undefined' ? __app_id : 'uniguajira-semana-intl';
+        window.firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            // Mock config for local testing if env vars missing
+            apiKey: "mock-key", projectId: "mock-project"
+        };
+        
+        let app, db;
+        try {
+            app = initializeApp(window.firebaseConfig);
+            db = getFirestore(app);
+            window.db = db;
+        } catch (e) {
+            console.error("Firebase init error", e);
+        }
+
+        // State Management
+        window.currentUser = null;
+        window.allUsers = [];
+        window.allSubmissions = []; // For admin
+        
+        // Define Challenges statically (can be moved to DB later)
+        window.CHALLENGES = [
+            {
+                id: 'c1_instagram',
+                title: '🌎 Reto Instagram Internacional',
+                desc: 'Sube una foto en un stand cultural con el hashtag #UniguajiraGlobal.',
+                points: 100,
+                type: 'upload',
+                icon: 'fab fa-instagram',
+                color: 'bg-pink-500',
+                criteria: 'Ingresa el link de tu publicación pública.'
+            },
+            {
+                id: 'c2_quiz',
+                title: '🌍 Quiz Cultural',
+                desc: 'Demuestra tus conocimientos sobre culturas del mundo en este test rápido.',
+                points: 50,
+                type: 'quiz',
+                icon: 'fas fa-brain',
+                color: 'bg-ug-turquoise',
+                criteria: 'Responde correctamente para ganar puntos al instante.'
+            },
+            {
+                id: 'c3_explorer',
+                title: '✈ Explorador Cultural',
+                desc: 'Graba un video corto (TikTok/Reels) explicando una tradición extranjera.',
+                points: 150,
+                type: 'upload',
+                icon: 'fas fa-video',
+                color: 'bg-ug-purple',
+                criteria: 'Requiere aprobación del organizador (150pts al aprobar).'
+            },
+            {
+                id: 'c4_conference',
+                title: '🎤 Asistencia Conferencia Magistral',
+                desc: 'Registra tu asistencia en la charla de apertura.',
+                points: 200,
+                type: 'code',
+                icon: 'fas fa-chalkboard-teacher',
+                color: 'bg-ug-blue',
+                criteria: 'Ingresa el código secreto dado por el ponente.'
+            }
+        ];
+
+        // Define Levels
+        window.LEVELS = [
+            { name: 'Explorador Internacional', min: 0, icon: 'fa-hiking', color: 'text-gray-500' },
+            { name: 'Viajero Cultural', min: 150, icon: 'fa-suitcase-rolling', color: 'text-ug-turquoise' },
+            { name: 'Embajador Global', min: 400, icon: 'fa-passport', color: 'text-ug-purple' },
+            { name: 'Líder Internacional', min: 700, icon: 'fa-globe', color: 'text-yellow-500' }
+        ];
+
+        // Define Badges Logic
+        window.BADGES_DEF = {
+            'b_first': { id: 'b_first', title: 'Primer Vuelo', desc: 'Completaste tu primer reto.', icon: 'fa-paper-plane', color: 'bg-blue-500' },
+            'b_social': { id: 'b_social', title: 'Creador Cultural', desc: 'Completaste un reto de redes sociales.', icon: 'fa-hashtag', color: 'bg-pink-500' },
+            'b_smart': { id: 'b_smart', title: 'Sabio del Mundo', desc: 'Aprobaste el Quiz Cultural.', icon: 'fa-lightbulb', color: 'bg-yellow-500' },
+            'b_star': { id: 'b_star', title: 'Participante Destacado', desc: 'Alcanzaste 500 puntos.', icon: 'fa-star', color: 'bg-ug-orange' }
+        };
+
+        // --- Auto-Start Demo Mode (Acceso Directo) ---
+        window.autoStartDemo = async function() {
+            // Usuario por defecto (Admin) para ver toda la página de inmediato
+            window.currentUser = {
+                uid: 'demo_admin_user_001',
+                email: 'josearregocesfreyles@gmail.com',
+                name: 'José Arregocés',
+                program: 'Ingeniería de Sistemas',
+                semester: '8',
+                role: 'admin',
+                points: 0,
+                level: 'Explorador Internacional',
+                badges: [],
+                challengesCompleted: [],
+                createdAt: new Date().toISOString(),
+                avatarUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Jose+Arregoces&backgroundColor=004b87,00a499,f26522,662483'
+            };
+
+            try {
+                // Intenta sincronizar con BD para que funcione el ranking general
+                const userRef = doc(db, 'artifacts', window.appId, 'public', 'data', 'users', window.currentUser.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    window.currentUser = { ...userSnap.data(), uid: userSnap.id };
+                } else {
+                    await setDoc(userRef, window.currentUser);
+                }
+            } catch (e) {
+                console.warn("Firestore en modo sólo-lectura local.");
+            }
+            
+            finishLogin();
+        };
+
+        // Iniciar automáticamente al cargar
+        setTimeout(autoStartDemo, 300);
+
+        function finishLogin() {
+            const landing = document.getElementById('view-landing');
+            if(landing) landing.classList.add('hidden');
+            
+            document.getElementById('app-container').classList.remove('hidden');
+            
+            // Update Top Nav
+            document.getElementById('nav-avatar').src = window.currentUser.avatarUrl || `https://placehold.co/100x100/004b87/white?text=${window.currentUser.name.charAt(0)}`;
+            updateNavPoints();
+            
+            // Show Admin toggle if applicable
+            if(window.currentUser.role === 'admin') {
+                document.getElementById('admin-toggle-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('admin-toggle-btn').classList.add('hidden');
+            }
+            
+            // Setup listeners
+            setupRealtimeListeners();
+            
+            // Navigate to Dashboard
+            navigate('dashboard');
+        }
+
+        function setupRealtimeListeners() {
+            if(!window.currentUser) return;
+            
+            // 1. Listen to current user profile updates
+            const userRef = doc(db, 'artifacts', window.appId, 'public', 'data', 'users', window.currentUser.uid);
+            onSnapshot(userRef, (docSnap) => {
+                if(docSnap.exists()){
+                    const oldPoints = window.currentUser.points;
+                    window.currentUser = docSnap.data();
+                    window.currentUser.uid = docSnap.id;
+                    updateNavPoints();
+                    checkLevelUp(oldPoints, window.currentUser.points);
+                    
+                    // Refresh view if needed
+                    if(window.currentView === 'dashboard') renderDashboard();
+                    if(window.currentView === 'profile') renderProfile();
+                }
+            }, (error) => console.error("User sync error", error));
+
+            // 2. Listen to all users for ranking and admin stats
+            const usersRef = collection(db, 'artifacts', window.appId, 'public', 'data', 'users');
+            onSnapshot(usersRef, (snapshot) => {
+                window.allUsers = [];
+                snapshot.forEach(doc => window.allUsers.push(doc.data()));
+                
+                if(window.currentView === 'ranking') renderRanking();
+                if(window.currentView === 'admin') renderAdmin();
+            }, (error) => console.error("Users list sync error", error));
+            
+            // 3. Listen to Submissions (Admin Only ideally, but we fetch all for demo simplicity)
+            const subsRef = collection(db, 'artifacts', window.appId, 'public', 'data', 'submissions');
+            onSnapshot(subsRef, (snapshot) => {
+                window.allSubmissions = [];
+                snapshot.forEach(doc => {
+                    window.allSubmissions.push({ id: doc.id, ...doc.data() });
+                });
+                if(window.currentView === 'admin') renderAdmin();
+            }, (error) => console.error("Submissions sync error", error));
+        }
+
+        function updateNavPoints() {
+            document.getElementById('nav-points').textContent = window.currentUser.points || 0;
+        }
+
+        function checkLevelUp(oldPts, newPts) {
+            if(oldPts === undefined || oldPts >= newPts) return;
+            const oldLvl = getLevelData(oldPts);
+            const newLvl = getLevelData(newPts);
+            
+            if(oldLvl.name !== newLvl.name) {
+                showToast(`¡Subiste de nivel a ${newLvl.name}!`, "success");
+            }
+            
+            // Check for b_star badge
+            if(newPts >= 500 && !window.currentUser.badges.includes('b_star')) {
+                awardBadge('b_star');
+            }
+        }
+
+        window.currentView = '';
+        
+        window.navigate = function(viewId) {
+            window.currentView = viewId;
+            
+            // Reset active states
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-ug-blue', 'text-ug-orange', 'text-ug-turquoise', 'text-ug-purple', 'border-ug-blue', 'border-ug-orange', 'border-ug-turquoise', 'border-ug-purple');
+                btn.classList.add('text-gray-500', 'border-transparent');
+            });
+            
+            // Set active state
+            const btn = document.getElementById(`nav-btn-${viewId}`);
+            if(btn) {
+                const activeColor = 
+                    viewId === 'dashboard' ? 'text-ug-blue' :
+                    viewId === 'challenges' ? 'text-ug-orange' :
+                    viewId === 'ranking' ? 'text-ug-turquoise' : 'text-ug-purple';
+                const activeBorder = 
+                    viewId === 'dashboard' ? 'border-ug-blue' :
+                    viewId === 'challenges' ? 'border-ug-orange' :
+                    viewId === 'ranking' ? 'border-ug-turquoise' : 'border-ug-purple';
+                
+                btn.classList.remove('text-gray-500', 'border-transparent');
+                btn.classList.add(activeColor, activeBorder);
+            }
+
+            // Render content
+            const main = document.getElementById('main-content');
+            main.innerHTML = ''; // clear
+            
+            switch(viewId) {
+                case 'dashboard': renderDashboard(); break;
+                case 'challenges': renderChallenges(); break;
+                case 'ranking': renderRanking(); break;
+                case 'profile': renderProfile(); break;
+                case 'admin': renderAdmin(); break;
+            }
+            window.scrollTo(0,0);
+        };
+
+        window.toggleAdminView = function() {
+            if(window.currentView === 'admin') navigate('dashboard');
+            else navigate('admin');
+        };
+
+        window.showToast = function(message, type="info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-gray-800';
+            let icon = 'fa-info-circle';
+            if(type === 'success') { bg = 'bg-green-600'; icon = 'fa-check-circle'; }
+            if(type === 'error') { bg = 'bg-red-600'; icon = 'fa-exclamation-triangle'; }
+            if(type === 'warning') { bg = 'bg-ug-orange'; icon = 'fa-exclamation-circle'; }
+
+            toast.className = `${bg} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-x-full`;
+            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+            
+            // Animate out
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        window.closeModal = function() {
+            document.getElementById('global-modal').classList.add('hidden');
+        };
+
+        window.openModal = function(contentHTML) {
+            document.getElementById('modal-content').innerHTML = contentHTML;
+            document.getElementById('global-modal').classList.remove('hidden');
+        };
+
+        
+        function getLevelData(points) {
+            let current = window.LEVELS[0];
+            let next = window.LEVELS[1];
+            for (let i = 0; i < window.LEVELS.length; i++) {
+                if (points >= window.LEVELS[i].min) {
+                    current = window.LEVELS[i];
+                    next = window.LEVELS[i+1] || null;
+                }
+            }
+            
+            let progress = 100;
+            if (next) {
+                const range = next.min - current.min;
+                const earned = points - current.min;
+                progress = Math.min(100, Math.max(0, (earned / range) * 100));
+            }
+            
+            return { current, next, progress };
+        }
+
+        async function awardBadge(badgeId) {
+            if(!window.currentUser || !window.currentUser.uid) return;
+            if(window.currentUser.badges && window.currentUser.badges.includes(badgeId)) return; // already has it
+
+            const userRef = doc(db, 'artifacts', window.appId, 'public', 'data', 'users', window.currentUser.uid);
+            
+            try {
+                const currentBadges = window.currentUser.badges || [];
+                await updateDoc(userRef, {
+                    badges: [...currentBadges, badgeId]
+                });
+                const b = window.BADGES_DEF[badgeId];
+                showToast(`¡Nueva insignia obtenida: ${b.title}!`, "success");
+            } catch(e) {
+                console.error("Error awarding badge", e);
+            }
+        }
+
+        
+        function renderDashboard() {
+            const main = document.getElementById('main-content');
+            const u = window.currentUser;
+            const lvl = getLevelData(u.points);
+            
+            // Filter recommended challenges (not completed)
+            const available = window.CHALLENGES.filter(c => !(u.challengesCompleted || []).includes(c.id));
+            const recosHTML = available.slice(0,2).map(c => `
+                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full ${c.color} text-white flex items-center justify-center">
+                            <i class="${c.icon}"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-gray-800">${c.title}</h4>
+                            <p class="text-xs text-ug-orange font-bold">+${c.points} pts</p>
+                        </div>
+                    </div>
+                    <button onclick="openChallengeModal('${c.id}')" class="text-ug-blue hover:text-ug-turquoise p-2">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            `).join('') || `<p class="text-sm text-gray-500 italic">¡Has completado todos los retos recomendados!</p>`;
+
+            // Render
+            main.innerHTML = `
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <!-- Welcome Card -->
+                    <div class="bg-gradient-to-r from-ug-blue to-ug-purple rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute right-0 top-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+                            <i class="fas fa-globe text-9xl"></i>
+                        </div>
+                        <div class="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-white/30 overflow-hidden bg-white shrink-0">
+                                <img src="${u.avatarUrl}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-grow text-center md:text-left">
+                                <h1 class="text-2xl md:text-3xl font-display font-bold mb-1">¡Hola, ${u.name.split(' ')[0]}!</h1>
+                                <p class="text-blue-200 text-sm mb-3"><i class="fas fa-graduation-cap mr-1"></i> ${u.program} • Semestre ${u.semester}</p>
+                                
+                                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full font-semibold border border-white/30">
+                                    <i class="fas ${lvl.current.icon} text-yellow-300"></i>
+                                    <span>Nivel: ${lvl.current.name}</span>
+                                </div>
+                            </div>
+                            <div class="text-center md:text-right shrink-0 bg-black/20 p-4 rounded-2xl backdrop-blur border border-white/10">
+                                <p class="text-xs text-blue-200 uppercase tracking-wide font-bold mb-1">Puntaje Total</p>
+                                <p class="text-4xl font-display font-bold text-yellow-400">${u.points}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Progress Card -->
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 md:col-span-2">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-route text-ug-turquoise"></i> Tu Ruta Internacional
+                            </h3>
+                            
+                            <div class="flex justify-between text-sm font-semibold text-gray-600 mb-2">
+                                <span>${lvl.current.name}</span>
+                                <span>${lvl.next ? lvl.next.name : 'Máximo'}</span>
+                            </div>
+                            
+                            <div class="h-4 w-full bg-gray-100 rounded-full overflow-hidden mb-2 relative">
+                                <div class="h-full bg-gradient-to-r from-ug-turquoise to-ug-blue rounded-full transition-all duration-1000" style="width: ${lvl.progress}%"></div>
+                                <i class="fas fa-plane text-white text-xs absolute top-1/2 -translate-y-1/2 shadow-sm" style="left: calc(${lvl.progress}% - 10px);"></i>
+                            </div>
+                            
+                            <p class="text-xs text-gray-500 text-right">
+                                ${lvl.next ? `Faltan ${lvl.next.min - u.points} pts para el siguiente nivel` : '¡Alcanzaste el rango máximo!'}
+                            </p>
+
+                            <div class="mt-6">
+                                <h4 class="text-sm font-bold text-gray-700 mb-3">Últimas Insignias</h4>
+                                <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                                    ${renderBadgesList(u.badges)}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Card -->
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-bolt text-ug-orange"></i> Siguientes Pasos
+                            </h3>
+                            <div class="space-y-3">
+                                ${recosHTML}
+                            </div>
+                            <button onclick="navigate('challenges')" class="w-full mt-4 bg-gray-50 hover:bg-gray-100 text-ug-blue font-bold py-2 rounded-xl text-sm transition">
+                                Ver todos los retos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBadgesList(userBadgesList) {
+            if(!userBadgesList || userBadgesList.length === 0) {
+                return `<div class="w-10 h-10 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400" title="Aún no tienes insignias"><i class="fas fa-lock"></i></div>`;
+            }
+            return userBadgesList.map(bId => {
+                const b = window.BADGES_DEF[bId];
+                if(!b) return '';
+                return `
+                    <div class="w-12 h-12 rounded-full ${b.color} text-white flex items-center justify-center shrink-0 shadow-md transform hover:scale-110 transition cursor-help relative group gamified-border">
+                        <i class="fas ${b.icon}"></i>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition z-50">
+                            ${b.title}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+
+        function renderChallenges() {
+            const main = document.getElementById('main-content');
+            const completed = window.currentUser.challengesCompleted || [];
+            
+            let gridHTML = window.CHALLENGES.map(c => {
+                const isDone = completed.includes(c.id);
+                const isPending = false; // Simplified for MVP (assuming auto-approve or instant)
+                
+                return `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border ${isDone ? 'border-green-200' : 'border-gray-200'} flex flex-col hover:shadow-lg transition group">
+                    <div class="${isDone ? 'bg-green-500' : c.color} p-4 text-white flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-[-20px] top-[-20px] opacity-20 text-6xl"><i class="${c.icon}"></i></div>
+                        <h3 class="font-bold text-lg relative z-10 w-[80%]">${c.title}</h3>
+                        <div class="relative z-10 text-xl font-bold bg-white/20 w-12 h-12 flex items-center justify-center rounded-full backdrop-blur">
+                            ${isDone ? '<i class="fas fa-check"></i>' : c.points}
+                        </div>
+                    </div>
+                    <div class="p-5 flex-grow flex flex-col">
+                        <p class="text-sm text-gray-600 mb-4 flex-grow">${c.desc}</p>
+                        
+                        ${isDone 
+                            ? `<div class="bg-green-50 text-green-700 p-2 rounded-lg text-sm text-center font-semibold"><i class="fas fa-check-circle mr-1"></i> Completado</div>`
+                            : `<button onclick="openChallengeModal('${c.id}')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-semibold text-sm transition flex items-center justify-center gap-2 group-hover:bg-ug-turquoise group-hover:text-white gamified-border">
+                                Iniciar Reto <i class="fas fa-arrow-right"></i>
+                               </button>`
+                        }
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            main.innerHTML = `
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-8">
+                        <h2 class="text-3xl font-display font-bold text-gray-800 flex items-center gap-3">
+                            <i class="fas fa-map-marked-alt text-ug-orange"></i> Pasaporte de Retos
+                        </h2>
+                        <p class="text-gray-500 mt-2">Completa misiones para ganar puntos y subir en el ranking global.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${gridHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.openChallengeModal = function(challengeId) {
+            const c = window.CHALLENGES.find(x => x.id === challengeId);
+            if(!c) return;
+
+            let actionArea = '';
+            if (c.type === 'upload' || c.type === 'code') {
+                actionArea = `
+                    <div class="mt-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Evidencia / Respuesta</label>
+                        <input type="text" id="challenge-input" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-${c.color.split('-')[1]}-500 outline-none" placeholder="${c.criteria}">
+                        <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle"></i> ${c.type === 'upload' ? 'Pega el enlace URL aquí.' : 'Ingresa el código proporcionado.'}</p>
+                    </div>
+                    <button onclick="processChallengeSubmit('${c.id}')" class="w-full mt-6 ${c.color} hover:opacity-90 text-white font-bold py-3 rounded-xl transition shadow-md gamified-border">
+                        Enviar Evidencia
+                    </button>
+                `;
+            } else if (c.type === 'quiz') {
+                actionArea = `
+                    <div class="mt-4 space-y-3" id="quiz-options">
+                        <button onclick="processQuizSubmit('${c.id}', false)" class="w-full p-3 text-left border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-ug-blue transition">A. París, Francia</button>
+                        <button onclick="processQuizSubmit('${c.id}', true)" class="w-full p-3 text-left border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-ug-blue transition">B. Roma, Italia (Correcta para Demo)</button>
+                        <button onclick="processQuizSubmit('${c.id}', false)" class="w-full p-3 text-left border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-ug-blue transition">C. Atenas, Grecia</button>
+                    </div>
+                `;
+            }
+
+            const html = `
+                <div>
+                    <div class="${c.color} p-6 text-white text-center relative">
+                        <i class="${c.icon} text-4xl mb-2 opacity-80"></i>
+                        <h3 class="text-2xl font-bold font-display">${c.title}</h3>
+                        <div class="absolute top-4 left-4 bg-white/20 px-3 py-1 rounded-full text-sm font-bold backdrop-blur border border-white/30">
+                            ${c.points} pts
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-700 text-center mb-6">${c.desc}</p>
+                        ${actionArea}
+                    </div>
+                </div>
+            `;
+            openModal(html);
+        };
+
+        // Simulated submission handlers
+        window.processChallengeSubmit = async function(challengeId) {
+            const input = document.getElementById('challenge-input').value.trim();
+            if(!input) return showToast("Debes ingresar la evidencia requerida", "error");
+            
+            const c = window.CHALLENGES.find(x => x.id === challengeId);
+            
+            // For Demo: Auto-approve everything instead of sending to admin panel to keep it purely self-contained and immediately rewarding.
+            // In a real app, 'c3_explorer' would write to 'submissions' collection and wait.
+            
+            await completeChallenge(c);
+            closeModal();
+        };
+
+        window.processQuizSubmit = async function(challengeId, isCorrect) {
+            if(!isCorrect) {
+                showToast("Respuesta incorrecta. ¡Intenta de nuevo luego!", "error");
+                closeModal();
+                return;
+            }
+            
+            const c = window.CHALLENGES.find(x => x.id === challengeId);
+            await completeChallenge(c);
+            awardBadge('b_smart'); // specific badge for quiz
+            closeModal();
+        };
+
+        async function completeChallenge(challengeObj) {
+            if(!window.currentUser) return;
+            const uid = window.currentUser.uid;
+            const userRef = doc(db, 'artifacts', window.appId, 'public', 'data', 'users', uid);
+            
+            try {
+                // Show loading
+                showToast("Procesando...", "info");
+                
+                // Get latest data to avoid race conditions
+                const snap = await getDoc(userRef);
+                const data = snap.data();
+                
+                const newPoints = (data.points || 0) + challengeObj.points;
+                const newCompleted = [...(data.challengesCompleted || []), challengeObj.id];
+                
+                await updateDoc(userRef, {
+                    points: newPoints,
+                    challengesCompleted: newCompleted
+                });
+
+                showToast(`¡Reto completado! +${challengeObj.points} pts`, "success");
+                
+                // Check general badges
+                if(newCompleted.length === 1) awardBadge('b_first');
+                if(challengeObj.id === 'c1_instagram') awardBadge('b_social');
+                
+                // Note: Realtime listener will automatically update the UI (points, levels, etc)
+                
+            } catch (e) {
+                console.error("Submit error", e);
+                showToast("Error al procesar el reto", "error");
+            }
+        }
+
+
+        function renderRanking() {
+            const main = document.getElementById('main-content');
+            
+            // Sort users by points DESC
+            const sortedUsers = [...window.allUsers].sort((a, b) => (b.points || 0) - (a.points || 0));
+            
+            let tableHTML = '';
+            sortedUsers.forEach((u, index) => {
+                let badgeHTML = '';
+                if(index === 0) badgeHTML = '<i class="fas fa-medal text-yellow-400 text-xl drop-shadow-md"></i>';
+                else if(index === 1) badgeHTML = '<i class="fas fa-medal text-gray-400 text-xl drop-shadow-md"></i>';
+                else if(index === 2) badgeHTML = '<i class="fas fa-medal text-amber-600 text-xl drop-shadow-md"></i>';
+                else badgeHTML = `<span class="text-gray-400 font-bold w-6 inline-block text-center">${index + 1}</span>`;
+
+                const isMe = window.currentUser && u.uid === window.currentUser.uid;
+                
+                tableHTML += `
+                    <tr class="border-b border-gray-100 hover:bg-blue-50 transition ${isMe ? 'bg-blue-50/50' : ''}">
+                        <td class="py-4 px-4 text-center">${badgeHTML}</td>
+                        <td class="py-4 px-4">
+                            <div class="flex items-center gap-3">
+                                <img src="${u.avatarUrl || 'https://placehold.co/40'}" class="w-10 h-10 rounded-full border border-gray-200">
+                                <div>
+                                    <p class="font-bold text-gray-800 flex items-center gap-2">
+                                        ${u.name} 
+                                        ${isMe ? '<span class="text-[10px] bg-ug-blue text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Tú</span>' : ''}
+                                    </p>
+                                    <p class="text-xs text-gray-500 truncate max-w-[150px] md:max-w-xs">${u.program}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-4 text-center hidden md:table-cell">
+                            <span class="text-xs font-semibold px-2 py-1 bg-gray-100 rounded-lg text-gray-600">${u.level || 'Explorador'}</span>
+                        </td>
+                        <td class="py-4 px-4 text-center font-bold text-ug-orange text-lg">
+                            ${u.points || 0}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            if(sortedUsers.length === 0) {
+                tableHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-500">No hay exploradores registrados aún.</td></tr>`;
+            }
+
+            main.innerHTML = `
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-10">
+                        <div class="inline-block p-4 rounded-full bg-blue-100 text-ug-blue mb-4">
+                            <i class="fas fa-trophy text-4xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-display font-bold text-gray-800">Ranking Global</h2>
+                        <p class="text-gray-500 mt-2">Los mejores exploradores de la Semana Internacional.</p>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider">
+                                        <th class="py-4 px-4 text-center w-16">Pos</th>
+                                        <th class="py-4 px-4">Estudiante</th>
+                                        <th class="py-4 px-4 text-center hidden md:table-cell">Nivel</th>
+                                        <th class="py-4 px-4 text-center w-24">Puntos</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableHTML}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfile() {
+            const main = document.getElementById('main-content');
+            const u = window.currentUser;
+            const lvl = getLevelData(u.points);
+            
+            // Generate all badges (acquired and locked)
+            const badgesHTML = Object.values(window.BADGES_DEF).map(b => {
+                const hasBadge = (u.badges || []).includes(b.id);
+                return `
+                    <div class="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border ${hasBadge ? 'border-ug-blue shadow-sm' : 'border-gray-200 opacity-60'}">
+                        <div class="w-16 h-16 rounded-full ${hasBadge ? b.color : 'bg-gray-300'} text-white flex items-center justify-center text-2xl mb-3 shadow-inner">
+                            <i class="fas ${hasBadge ? b.icon : 'fa-lock'}"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-center text-gray-800 leading-tight h-10 flex items-center">${b.title}</h4>
+                        <p class="text-xs text-center text-gray-500 mt-1 h-10">${b.desc}</p>
+                    </div>
+                `;
+            }).join('');
+
+            main.innerHTML = `
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <!-- ID Card (Passport style) -->
+                    <div class="bg-[#003366] rounded-3xl overflow-hidden shadow-xl text-white relative gamified-border">
+                        <!-- Passport texture -->
+                        <div class="absolute inset-0 bg-world-pattern opacity-10"></div>
+                        <div class="absolute right-[-50px] bottom-[-50px] opacity-20 transform rotate-[-20deg]">
+                            <i class="fas fa-stamp text-9xl"></i>
+                        </div>
+                        
+                        <div class="p-8 relative z-10 flex flex-col md:flex-row gap-8">
+                            <div class="shrink-0 flex flex-col items-center">
+                                <div class="w-32 h-40 bg-white p-2 rounded-lg shadow-lg rotate-[-2deg]">
+                                    <img src="${u.avatarUrl}" class="w-full h-full object-cover rounded bg-gray-100">
+                                </div>
+                                <div class="mt-4 flex items-center justify-center gap-2 text-yellow-400 font-mono text-sm tracking-widest bg-black/30 px-3 py-1 rounded">
+                                    <i class="fas fa-barcode"></i> UG-${u.uid.substring(0,5).toUpperCase()}
+                                </div>
+                            </div>
+                            
+                            <div class="flex-grow space-y-4 font-mono">
+                                <div class="border-b border-blue-800 pb-4">
+                                    <h2 class="text-3xl font-bold uppercase tracking-wider text-blue-100">${u.name}</h2>
+                                    <p class="text-blue-300 text-sm mt-1">PASAPORTE INTERNACIONAL</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p class="text-blue-400 text-xs">Programa / Major</p>
+                                        <p class="font-bold text-white uppercase">${u.program}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-blue-400 text-xs">Semestre / Term</p>
+                                        <p class="font-bold text-white">${u.semester}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-blue-400 text-xs">Nivel / Status</p>
+                                        <p class="font-bold text-yellow-400 uppercase">${lvl.current.name}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-blue-400 text-xs">Puntos / Miles</p>
+                                        <p class="font-bold text-white">${u.points || 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Badges Collection -->
+                    <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                                <i class="fas fa-medal text-ug-orange"></i> Colección de Insignias
+                            </h3>
+                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-bold">
+                                ${(u.badges || []).length} / ${Object.keys(window.BADGES_DEF).length}
+                            </span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            ${badgesHTML}
+                        </div>
+                    </div>
+                    
+                    ${u.role === 'admin' ? `
+                    <div class="text-center mt-8">
+                        <button onclick="toggleAdminView()" class="bg-gray-800 text-white px-6 py-2 rounded-xl text-sm font-bold shadow hover:bg-gray-700 transition">
+                            <i class="fas fa-cogs mr-2"></i> Ir al Panel de Administrador
+                        </button>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+
+        function renderAdmin() {
+            if(window.currentUser.role !== 'admin') {
+                navigate('dashboard');
+                return;
+            }
+
+            const main = document.getElementById('main-content');
+            
+            const totalUsers = window.allUsers.length;
+            const totalPoints = window.allUsers.reduce((sum, u) => sum + (u.points || 0), 0);
+            
+            // Count total completed challenges across all users
+            let totalCompleted = 0;
+            window.allUsers.forEach(u => {
+                if(u.challengesCompleted) totalCompleted += u.challengesCompleted.length;
+            });
+
+            main.innerHTML = `
+                <div class="max-w-6xl mx-auto space-y-6">
+                    <div class="flex justify-between items-center bg-gray-800 text-white p-6 rounded-2xl shadow-lg gamified-border border-b-4 border-b-ug-orange">
+                        <div>
+                            <h2 class="text-2xl font-display font-bold flex items-center gap-2">
+                                <i class="fas fa-user-shield text-ug-orange"></i> Panel Organizador (ORI)
+                            </h2>
+                            <p class="text-gray-400 text-sm mt-1">Control de la Semana Internacional Uniguajira</p>
+                        </div>
+                        <button onclick="toggleAdminView()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm transition">
+                            Volver a Estudiante
+                        </button>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-blue-100 text-ug-blue flex items-center justify-center text-2xl">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-semibold uppercase">Estudiantes</p>
+                                <p class="text-3xl font-bold text-gray-800">${totalUsers}</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-orange-100 text-ug-orange flex items-center justify-center text-2xl">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-semibold uppercase">Puntos Globales</p>
+                                <p class="text-3xl font-bold text-gray-800">${totalPoints}</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-teal-100 text-ug-turquoise flex items-center justify-center text-2xl">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 font-semibold uppercase">Retos Completados</p>
+                                <p class="text-3xl font-bold text-gray-800">${totalCompleted}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Table -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mt-8">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 class="font-bold text-gray-800">Directorio de Participantes</h3>
+                            <button onclick="showToast('Exportación descargada (Simulada)', 'success')" class="text-sm text-ug-blue hover:underline">
+                                <i class="fas fa-download mr-1"></i> Exportar CSV
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto max-h-96">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead class="sticky top-0 bg-white shadow-sm z-10">
+                                    <tr class="text-gray-500 uppercase tracking-wider text-xs">
+                                        <th class="py-3 px-4">UID</th>
+                                        <th class="py-3 px-4">Nombre</th>
+                                        <th class="py-3 px-4">Programa</th>
+                                        <th class="py-3 px-4 text-center">Puntos</th>
+                                        <th class="py-3 px-4 text-center">Retos</th>
+                                        <th class="py-3 px-4 text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.allUsers.map(u => `
+                                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                            <td class="py-3 px-4 font-mono text-xs text-gray-400">${u.uid.substring(0,8)}...</td>
+                                            <td class="py-3 px-4 font-semibold text-gray-800">${u.name}</td>
+                                            <td class="py-3 px-4 text-gray-600">${u.program}</td>
+                                            <td class="py-3 px-4 text-center font-bold text-ug-orange">${u.points || 0}</td>
+                                            <td class="py-3 px-4 text-center">${(u.challengesCompleted||[]).length}</td>
+                                            <td class="py-3 px-4 text-center">
+                                                <button onclick="adminAddPoints('${u.uid}')" class="text-ug-turquoise hover:bg-teal-50 px-2 py-1 rounded transition text-xs" title="Regalar 50 puntos">
+                                                    <i class="fas fa-plus-circle"></i> 50pts
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        }
+
+        window.adminAddPoints = async function(targetUid) {
+            if(!window.currentUser || window.currentUser.role !== 'admin') return;
+            const userRef = doc(db, 'artifacts', window.appId, 'public', 'data', 'users', targetUid);
+            try {
+                const targetDoc = window.allUsers.find(u => u.uid === targetUid);
+                if(!targetDoc) return;
+                const newPts = (targetDoc.points || 0) + 50;
+                await updateDoc(userRef, { points: newPts });
+                showToast(`Puntos añadidos a ${targetDoc.name}`, "success");
+            } catch(e) {
+                console.error(e);
+                showToast("Error al añadir puntos", "error");
+            }
+        };
+
+        // Init layout handling
+        window.addEventListener('resize', () => {
+            // Optional: handle mobile vs desktop layout specifics dynamically if needed
+        });
+
+    </script>
+</body>
+</html>
