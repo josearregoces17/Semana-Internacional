@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semana Internacional - Uniguajira</title>
+    <title>Semana Internacional - Universidad de La Guajira</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -48,7 +48,6 @@
     <style>
         body { background-color: #f8fafc; }
         
-        /* Smooth UI enhancements */
         .glass-panel {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -56,7 +55,6 @@
             box-shadow: 0 8px 32px 0 rgba(98, 167, 180, 0.1);
         }
         
-        /* 3D Button Effect */
         .btn-3d {
             position: relative;
             transition: all 0.2s ease;
@@ -76,7 +74,6 @@
             bottom: 0px;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #E0A342; border-radius: 4px; }
@@ -84,7 +81,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Loader */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #62A7B4;
@@ -97,10 +93,8 @@
 </head>
 <body class="text-gray-800 antialiased min-h-screen bg-world-pattern flex flex-col font-sans">
 
-    <!-- Toast Container for Notifications -->
     <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2"></div>
 
-    <!-- Background Decorations -->
     <div class="fixed top-20 left-0 w-full h-full pointer-events-none overflow-hidden z-0 opacity-[0.15]">
         <i class="fas fa-plane text-ug-flamenco text-6xl absolute animate-fly"></i>
     </div>
@@ -114,12 +108,15 @@
                     <i class="fas fa-sun text-ug-desierto text-5xl absolute -top-4 -right-4 animate-spin-slow"></i>
                     <i class="fas fa-cactus text-ug-mar text-6xl relative z-10 drop-shadow-md"></i>
                 </div>
-                <h1 class="font-display font-black text-4xl mt-4 text-ug-negro tracking-tight">niguajira<br><span class="text-ug-desierto text-2xl font-bold">Internacional</span></h1>
+                <h1 class="font-display font-black text-3xl mt-4 text-ug-negro tracking-tight leading-tight">
+                    Universidad de La Guajira<br>
+                    <span class="text-ug-desierto text-2xl font-bold">Uniguajira Internacional</span>
+                </h1>
                 <p class="text-xs font-bold text-ug-flamenco uppercase tracking-widest mt-2">Educación Global • Impacto Local</p>
             </div>
 
             <!-- Login / Register Card -->
-            <div class="glass-panel rounded-3xl p-8">
+            <div class="glass-panel rounded-3xl p-8 shadow-xl">
                 
                 <!-- Toggle Tabs -->
                 <div class="flex bg-gray-100 rounded-xl p-1 mb-6">
@@ -143,12 +140,12 @@
                             <input type="password" id="login-pass" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-mar focus:bg-white transition" placeholder="••••••••">
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-ug-mar hover:bg-[#4E8893] text-white font-bold py-3 rounded-xl btn-3d mt-2">
+                    <button type="submit" class="w-full bg-ug-mar hover:bg-[#4E8893] text-white font-bold py-3 rounded-xl btn-3d mt-2 shadow-md">
                         Iniciar Sesión
                     </button>
                 </form>
 
-                <!-- Register Form (Hidden by default) -->
+                <!-- Register Form -->
                 <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Nombre Completo</label>
@@ -169,11 +166,11 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Crea una Contraseña</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Contraseña (Mín. 6 caracteres)</label>
                         <input type="password" id="reg-pass" required minlength="6" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-desierto focus:bg-white transition" placeholder="••••••••">
                     </div>
-                    <button type="submit" class="w-full bg-ug-desierto hover:bg-[#c98e32] text-white font-bold py-3 rounded-xl btn-3d mt-2">
-                        Crear Cuenta
+                    <button type="submit" class="w-full bg-ug-desierto hover:bg-[#c98e32] text-white font-bold py-3 rounded-xl btn-3d mt-2 shadow-md">
+                        Crear Cuenta y Participar
                     </button>
                 </form>
 
@@ -192,7 +189,7 @@
                     <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('dashboard')">
                         <i class="fas fa-cactus text-ug-mar text-2xl"></i>
                         <div class="leading-none hidden sm:block">
-                            <span class="font-display font-black text-xl text-ug-negro">niguajira</span><br>
+                            <span class="font-display font-black text-sm text-ug-negro">Uniguajira</span><br>
                             <span class="text-[10px] font-bold text-ug-desierto uppercase tracking-widest">Internacional</span>
                         </div>
                     </div>
@@ -247,13 +244,13 @@
                 </button>
                 
                 <div id="admin-menu-container" class="mt-auto hidden md:block p-6 border-t border-gray-100">
-                    <button onclick="navigate('admin')" id="nav-btn-admin" class="nav-btn w-full bg-ug-negro text-white py-3 rounded-xl font-bold text-sm hover:bg-gray-800 transition btn-3d flex items-center justify-center gap-2">
-                        <i class="fas fa-user-shield"></i> Panel ORI
+                    <button onclick="navigate('admin')" id="nav-btn-admin" class="nav-btn w-full bg-ug-negro text-white py-3 rounded-xl font-bold text-sm hover:bg-gray-800 transition btn-3d flex items-center justify-center gap-2 shadow">
+                        <i class="fas fa-user-shield text-ug-desierto"></i> Panel ORI
                     </button>
                 </div>
                 <!-- Admin shortcut mobile -->
                 <button onclick="navigate('admin')" id="admin-mobile-btn" class="hidden nav-btn flex flex-col md:hidden items-center gap-1 p-3 w-full text-ug-negro hover:bg-gray-100 transition-colors border-t-2 border-transparent">
-                    <i class="fas fa-cogs text-xl"></i>
+                    <i class="fas fa-cogs text-xl text-ug-desierto"></i>
                     <span class="text-[10px] font-bold tracking-wide">Admin</span>
                 </button>
             </nav>
@@ -276,10 +273,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration (Using Demo Environment Paths)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'uniguajira-semana-intl-v2';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'uniguajira-semana-intl-v3';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "demo", projectId: "demo" };
         
         let app, db;
@@ -290,17 +286,14 @@
             console.error("Firebase init error", e);
         }
 
-        // Base Paths for Firestore based on Rules
         const USERS_PATH = `artifacts/${appId}/public/data/users`;
         const CHALLENGES_PATH = `artifacts/${appId}/public/data/challenges`;
 
-        // State variables
         window.currentUser = null;
         window.allUsers = [];
         window.allChallenges = [];
         window.currentView = '';
 
-        // Definitions
         const LEVELS = [
             { name: 'Explorador Internacional', min: 0, icon: 'fa-hiking', color: 'text-gray-500' },
             { name: 'Viajero Cultural', min: 150, icon: 'fa-suitcase-rolling', color: 'text-ug-mar' },
@@ -315,9 +308,6 @@
             'b_star': { id: 'b_star', title: 'Destacado', desc: 'Alcanzaste 500 puntos.', icon: 'fa-star', color: 'bg-ug-negro' }
         };
 
-        // --- Custom Authentication System (Base64 encoding for obfuscation) ---
-        // We use Base64 to obscure plain text data in the DB as requested, 
-        // acting as a custom Auth layer.
         const encode64 = str => btoa(encodeURIComponent(str));
         const decode64 = str => decodeURIComponent(atob(str));
 
@@ -347,27 +337,23 @@
             const program = document.getElementById('reg-program').value.trim();
             const semester = document.getElementById('reg-semester').value;
 
-            // Simple validation
-            if(pass.length < 6) return showToast("La contraseña debe tener 6+ caracteres", "error");
+            if(pass.length < 6) return showToast("La contraseña debe tener mínimo 6 caracteres", "error");
 
             try {
-                // Encode to use as Unique ID and protect data
                 const uid = encode64(email);
                 const userRef = doc(db, USERS_PATH, uid);
-                
-                // Check if exists
                 const snap = await getDoc(userRef);
+                
                 if(snap.exists()) {
-                    return showToast("Este correo ya está registrado.", "error");
+                    return showToast("Este correo ya está registrado. Inicia sesión.", "error");
                 }
 
-                // Identify Admin
                 const role = email === 'josearregocesfreyles@gmail.com' ? 'admin' : 'student';
 
                 const newUserData = {
                     uid: uid,
                     emailEncoded: encode64(email),
-                    passEncoded: encode64(pass), // Obfuscated password
+                    passEncoded: encode64(pass),
                     name: name,
                     program: program,
                     semester: semester,
@@ -381,13 +367,12 @@
                 await setDoc(userRef, newUserData);
                 showToast("¡Cuenta creada con éxito!", "success");
                 
-                // Auto login
                 localStorage.setItem(`session_${appId}`, uid);
                 loadApp(newUserData);
 
             } catch (err) {
                 console.error(err);
-                showToast("Error en el servidor al registrar.", "error");
+                showToast("Error al registrar cuenta.", "error");
             }
         };
 
@@ -402,12 +387,12 @@
                 const snap = await getDoc(userRef);
 
                 if(!snap.exists()) {
-                    return showToast("Correo o contraseña incorrectos.", "error");
+                    return showToast("Correo no encontrado. Regístrate primero.", "error");
                 }
 
                 const userData = snap.data();
                 if(userData.passEncoded !== encode64(pass)) {
-                    return showToast("Correo o contraseña incorrectos.", "error");
+                    return showToast("Contraseña incorrecta.", "error");
                 }
 
                 showToast(`¡Bienvenido de nuevo, ${userData.name.split(' ')[0]}!`, "success");
@@ -430,7 +415,6 @@
             switchAuthTab('login');
         };
 
-        // --- Init Logic ---
         async function checkSession() {
             const storedUid = localStorage.getItem(`session_${appId}`);
             if(storedUid) {
@@ -447,24 +431,17 @@
             }
         }
         
-        // Run on load
         window.addEventListener('DOMContentLoaded', () => {
             checkSession();
         });
 
-
-        // --- STREAMING_CHUNK: App Flow & Realtime Data ---
         function loadApp(userData) {
             window.currentUser = userData;
             
-            // UI Toggle
             document.getElementById('view-auth').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
-            
-            // Set basic nav info
             document.getElementById('nav-avatar').src = userData.avatarUrl;
             
-            // Admin controls visibility
             if(userData.role === 'admin') {
                 document.getElementById('admin-menu-container').classList.remove('hidden');
                 document.getElementById('admin-mobile-btn').classList.remove('hidden');
@@ -480,7 +457,6 @@
         function setupRealtimeListeners() {
             if(!window.currentUser) return;
 
-            // 1. Current User Listener
             onSnapshot(doc(db, USERS_PATH, window.currentUser.uid), (docSnap) => {
                 if(docSnap.exists()){
                     const oldPts = window.currentUser.points || 0;
@@ -488,12 +464,10 @@
                     
                     document.getElementById('nav-points').textContent = window.currentUser.points || 0;
                     
-                    // Level up check
                     const oldLvl = getLevelData(oldPts);
                     const newLvl = getLevelData(window.currentUser.points);
                     if(oldLvl.name !== newLvl.name) showToast(`¡Subiste de nivel a ${newLvl.name}!`, "success");
                     
-                    // Badge check
                     if(window.currentUser.points >= 500 && !(window.currentUser.badges||[]).includes('b_star')) {
                         awardBadge('b_star');
                     }
@@ -503,7 +477,6 @@
                 }
             });
 
-            // 2. All Users Listener (for Ranking & Admin)
             onSnapshot(collection(db, USERS_PATH), (snapshot) => {
                 window.allUsers = [];
                 snapshot.forEach(doc => window.allUsers.push(doc.data()));
@@ -511,13 +484,11 @@
                 if(window.currentView === 'admin') renderAdmin();
             });
 
-            // 3. Dynamic Challenges Listener
             onSnapshot(collection(db, CHALLENGES_PATH), (snapshot) => {
                 window.allChallenges = [];
                 snapshot.forEach(doc => window.allChallenges.push({ id: doc.id, ...doc.data() }));
                 
-                // If no challenges exist yet (first load), create some defaults automatically
-                if(window.allChallenges.length === 0 && window.currentUser.role === 'admin') {
+                if(window.allChallenges.length === 0) {
                     seedDefaultChallenges();
                 }
 
@@ -526,7 +497,6 @@
             });
         }
 
-        // Auto-seed challenges if DB is empty
         async function seedDefaultChallenges() {
             const defaults = [
                 { title: '🌎 Reto Instagram Internacional', desc: 'Sube una foto en el stand cultural.', points: 100, type: 'upload', icon: 'fab fa-instagram', color: 'bg-ug-flamenco' },
@@ -539,16 +509,13 @@
             }
         }
 
-        // UI Navigation
         window.navigate = function(viewId) {
             window.currentView = viewId;
             
-            // Reset nav buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-ug-mar', 'text-ug-desierto', 'text-ug-flamenco', 'bg-teal-50', 'bg-amber-50', 'bg-rose-50', 'border-ug-mar', 'border-ug-desierto', 'border-ug-flamenco');
                 btn.classList.add('text-gray-400', 'border-transparent');
                 
-                // Fix admin mobile button color reset
                 if(btn.id === 'admin-mobile-btn') btn.classList.replace('text-gray-400', 'text-ug-negro');
                 if(btn.id === 'nav-btn-admin') {
                     btn.classList.remove('text-gray-400');
@@ -556,7 +523,6 @@
                 }
             });
             
-            // Set active
             const btn = document.getElementById(`nav-btn-${viewId}`);
             if(btn && viewId !== 'admin') {
                 const colors = {
@@ -585,10 +551,9 @@
                     case 'admin': renderAdmin(); break;
                 }
                 window.scrollTo(0,0);
-            }, 50); // slight delay for smooth transition
+            }, 50);
         };
 
-        // --- Helpers ---
         function getLevelData(points) {
             let current = LEVELS[0], next = LEVELS[1];
             for (let i = 0; i < LEVELS.length; i++) {
@@ -648,8 +613,6 @@
             } catch(e) { console.error("Badge error", e); }
         }
 
-        // --- STREAMING_CHUNK: Views Rendering ---
-
         function renderDashboard() {
             const main = document.getElementById('main-content');
             const u = window.currentUser;
@@ -673,7 +636,7 @@
                 </div>
             `).join('');
 
-            if(!recosHTML) recosHTML = `<p class="text-sm text-gray-500 italic text-center py-4">¡Estás al día con los retos!</p>`;
+            if(!recosHTML) recosHTML = `<p class="text-sm text-gray-500 italic text-center py-4">¡Estás al día con todos los retos!</p>`;
 
             main.innerHTML = `
                 <div class="max-w-4xl mx-auto space-y-6">
@@ -805,7 +768,7 @@
                         <h2 class="text-3xl font-display font-black text-ug-negro uppercase tracking-tight flex items-center justify-center md:justify-start gap-3">
                             <i class="fas fa-passport text-ug-mar"></i> Pasaporte de Retos
                         </h2>
-                        <p class="text-gray-500 mt-2 font-medium">Completa misiones globales para subir en el ranking.</p>
+                        <p class="text-gray-500 mt-2 font-medium">Completa misiones globales para acumular puntos.</p>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -822,7 +785,7 @@
             let actionArea = `
                 <div class="mt-6">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Evidencia / Respuesta</label>
-                    <input type="text" id="challenge-input" class="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-mar font-medium" placeholder="Escribe tu respuesta aquí...">
+                    <input type="text" id="challenge-input" class="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ug-mar font-medium" placeholder="Escribe tu respuesta o enlace...">
                 </div>
                 <button onclick="submitChallenge('${c.id}')" class="w-full mt-6 ${c.color} text-white font-bold py-4 rounded-xl transition btn-3d uppercase tracking-widest text-sm shadow-lg">
                     Enviar Misión
@@ -832,8 +795,8 @@
             if(c.type === 'quiz') {
                 actionArea = `
                     <div class="mt-6 space-y-3" id="quiz-options">
-                        <button onclick="submitQuiz('${c.id}', false)" class="w-full p-4 text-left border-2 border-gray-100 rounded-xl hover:border-ug-mar hover:bg-teal-50 transition font-bold text-ug-negro">A. Falsa</button>
-                        <button onclick="submitQuiz('${c.id}', true)"  class="w-full p-4 text-left border-2 border-gray-100 rounded-xl hover:border-ug-mar hover:bg-teal-50 transition font-bold text-ug-negro">B. Correcta (Demo)</button>
+                        <button onclick="submitQuiz('${c.id}', false)" class="w-full p-4 text-left border-2 border-gray-100 rounded-xl hover:border-ug-mar hover:bg-teal-50 transition font-bold text-ug-negro">A. Opción Incorrecta</button>
+                        <button onclick="submitQuiz('${c.id}', true)"  class="w-full p-4 text-left border-2 border-gray-100 rounded-xl hover:border-ug-mar hover:bg-teal-50 transition font-bold text-ug-negro">B. Opción Correcta (Demo)</button>
                     </div>
                 `;
             }
@@ -864,7 +827,7 @@
         
         window.submitQuiz = async function(id, isCorrect) {
             if(!isCorrect) {
-                showToast("Respuesta incorrecta. ¡Sigue explorando!", "error");
+                showToast("Respuesta incorrecta. ¡Inténtalo de nuevo!", "error");
                 closeModal();
                 return;
             }
@@ -887,14 +850,13 @@
                 
                 showToast(`¡Misión completada! +${c.points} pts`, "success");
                 
-                // Logic for badges
                 if(newCompleted.length === 1) awardBadge('b_first');
                 if(c.type === 'upload') awardBadge('b_social');
                 if(isQuiz) awardBadge('b_smart');
                 
                 closeModal();
             } catch(e) {
-                showToast("Error de conexión.", "error");
+                showToast("Error de conexión al guardar.", "error");
             }
         }
 
@@ -948,7 +910,7 @@
                                 <thead class="bg-ug-negro text-white">
                                     <tr class="text-[10px] uppercase tracking-widest font-bold">
                                         <th class="py-4 px-4 text-center">Top</th>
-                                        <th class="py-4 px-4">Explorador</th>
+                                        <th class="py-4 px-4">Estudiante</th>
                                         <th class="py-4 px-4 text-center hidden md:table-cell">Rango</th>
                                         <th class="py-4 px-4 text-right pr-6">Puntos</th>
                                     </tr>
@@ -993,8 +955,8 @@
                             <div class="flex-grow text-white w-full">
                                 <div class="border-b-2 border-white/20 pb-4 mb-4 flex justify-between items-end">
                                     <div>
-                                        <p class="text-xs font-bold text-white/70 uppercase tracking-widest mb-1">República Estudiantil</p>
-                                        <h2 class="text-3xl font-display font-black uppercase tracking-tight">${u.name}</h2>
+                                        <p class="text-xs font-bold text-white/70 uppercase tracking-widest mb-1">Universidad de La Guajira</p>
+                                        <h2 class="text-2xl md:text-3xl font-display font-black uppercase tracking-tight">${u.name}</h2>
                                     </div>
                                     <i class="fas fa-qrcode text-4xl opacity-50"></i>
                                 </div>
@@ -1013,7 +975,7 @@
                                         <p class="font-bold text-ug-desierto uppercase tracking-wide bg-ug-negro/30 inline-block px-2 py-0.5 rounded">${lvl.current.name}</p>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Millas (Puntos)</p>
+                                        <p class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Puntos Acumulados</p>
                                         <p class="font-black text-xl">${u.points||0}</p>
                                     </div>
                                 </div>
@@ -1039,7 +1001,6 @@
             `;
         }
 
-        // --- STREAMING_CHUNK: Admin Panel ---
         function renderAdmin() {
             if(!window.currentUser || window.currentUser.role !== 'admin') return navigate('dashboard');
             
@@ -1053,24 +1014,20 @@
                         <i class="fas fa-cogs absolute -right-10 -bottom-10 text-9xl opacity-10"></i>
                         <div class="relative z-10">
                             <h2 class="text-3xl font-display font-black uppercase tracking-tight flex items-center gap-3">
-                                <i class="fas fa-shield-alt text-ug-desierto"></i> Panel ORI
+                                <i class="fas fa-shield-alt text-ug-desierto"></i> Panel ORI (Administrador)
                             </h2>
-                            <p class="text-gray-400 font-medium mt-1">Control General de la Semana Internacional</p>
-                        </div>
-                        <div class="text-right hidden md:block">
-                            <p class="text-[10px] uppercase text-gray-500 font-bold tracking-widest">Admin Global</p>
-                            <p class="font-bold text-ug-mar">${window.currentUser.emailEncoded ? decode64(window.currentUser.emailEncoded) : 'Admin'}</p>
+                            <p class="text-gray-400 font-medium mt-1">Gestión general de la Semana Internacional • Uniguajira</p>
                         </div>
                     </div>
 
                     <!-- Stats -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Usuarios</p>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Estudiantes</p>
                             <p class="text-3xl font-black text-ug-mar">${window.allUsers.length}</p>
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Puntos Repartidos</p>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Puntos Totales</p>
                             <p class="text-3xl font-black text-ug-desierto">${totalP}</p>
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -1102,17 +1059,17 @@
                                         <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Color</label>
                                         <select id="new-c-color" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none">
                                             <option value="bg-ug-mar">Azul Mar</option>
-                                            <option value="bg-ug-desierto">Amarillo</option>
-                                            <option value="bg-ug-flamenco">Rosado</option>
+                                            <option value="bg-ug-desierto">Amarillo Desierto</option>
+                                            <option value="bg-ug-flamenco">Rosado Flamenco</option>
                                             <option value="bg-ug-negro">Negro</option>
                                         </select>
                                     </div>
                                 </div>
-                                <button type="submit" class="w-full bg-ug-negro hover:bg-gray-800 text-white font-bold py-3 rounded-xl text-sm btn-3d mt-2">Guardar Reto</button>
+                                <button type="submit" class="w-full bg-ug-negro hover:bg-gray-800 text-white font-bold py-3 rounded-xl text-sm btn-3d mt-2 shadow">Guardar Reto</button>
                             </form>
                             
                             <h4 class="font-bold text-xs uppercase text-gray-400 mt-8 mb-4">Retos Actuales</h4>
-                            <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                            <div class="space-y-2 max-h-48 overflow-y-auto pr-2">
                                 ${window.allChallenges.map(c => `
                                     <div class="flex justify-between items-center p-2 bg-gray-50 rounded border border-gray-100 text-sm">
                                         <span class="font-bold text-gray-700 truncate">${c.title}</span>
@@ -1125,15 +1082,15 @@
                         <!-- Users Table -->
                         <div class="glass-panel p-0 rounded-3xl shadow-sm lg:col-span-2 overflow-hidden flex flex-col">
                             <div class="p-6 bg-white border-b border-gray-100 flex justify-between items-center">
-                                <h3 class="font-black uppercase text-ug-negro">Directorio Estudiantil</h3>
+                                <h3 class="font-black uppercase text-ug-negro">Directorio de Estudiantes</h3>
                             </div>
                             <div class="overflow-auto max-h-[500px] flex-grow">
                                 <table class="w-full text-left text-sm border-collapse">
                                     <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm">
                                         <tr class="text-[10px] uppercase text-gray-500 tracking-widest">
                                             <th class="py-3 px-4">Estudiante</th>
-                                            <th class="py-3 px-4">Info</th>
-                                            <th class="py-3 px-4 text-center">Pts</th>
+                                            <th class="py-3 px-4">Programa</th>
+                                            <th class="py-3 px-4 text-center">Puntos</th>
                                             <th class="py-3 px-4 text-center">Acción</th>
                                         </tr>
                                     </thead>
@@ -1144,7 +1101,7 @@
                                                     <p class="font-bold text-gray-800">${u.name}</p>
                                                     <p class="text-[10px] text-gray-400 font-mono">${decode64(u.emailEncoded)}</p>
                                                 </td>
-                                                <td class="py-3 px-4 text-xs text-gray-500">${u.program}</td>
+                                                <td class="py-3 px-4 text-xs text-gray-500">${u.program} (Sem. ${u.semester})</td>
                                                 <td class="py-3 px-4 text-center font-black text-ug-desierto">${u.points||0}</td>
                                                 <td class="py-3 px-4 text-center">
                                                     <button onclick="adminAddPoints('${u.uid}', 50)" class="bg-ug-mar/10 text-ug-mar hover:bg-ug-mar hover:text-white px-2 py-1 rounded transition text-[10px] font-bold uppercase tracking-wider" title="Regalar 50 puntos">
@@ -1176,7 +1133,6 @@
                     icon: 'fas fa-star', type: 'text', createdAt: new Date().toISOString()
                 });
                 showToast("Reto creado exitosamente", "success");
-                renderAdmin(); // refresh locally (though snapshot handles it too)
             } catch(err) { showToast("Error al crear reto", "error"); }
         };
 
@@ -1185,7 +1141,7 @@
             try {
                 await deleteDoc(doc(db, CHALLENGES_PATH, id));
                 showToast("Reto eliminado", "info");
-            } catch(err) { showToast("Error", "error"); }
+            } catch(err) { showToast("Error al eliminar", "error"); }
         };
 
         window.adminAddPoints = async function(targetUid, amount) {
@@ -1194,7 +1150,7 @@
                 if(!u) return;
                 const newPts = (u.points||0) + amount;
                 await updateDoc(doc(db, USERS_PATH, targetUid), { points: newPts });
-                showToast(`+${amount}pts a ${u.name.split(' ')[0]}`, "success");
+                showToast(`+${amount} pts asignados a ${u.name.split(' ')[0]}`, "success");
             } catch(err) { showToast("Error", "error"); }
         };
 
