@@ -23,16 +23,16 @@
 </head>
 <body class="text-uniNegro antialiased min-h-screen flex flex-col">
 
-    <!-- CONFIGURACIÓN DE FIREBASE YA INTEGRADA -->
+    <!-- AQUI PEGA TU CONFIGURACIÓN DE FIREBASE -->
     <script>
+        // ⚠️ REEMPLAZA ESTO CON TUS DATOS REALES DE FIREBASE
         const firebaseConfig = {
-          apiKey: "AIzaSyDlrdS1CZFZGJbMFoOvL9cpNjNfYIQLdo4",
-          authDomain: "semana-internacional-7280d.firebaseapp.com",
-          projectId: "semana-internacional-7280d",
-          storageBucket: "semana-internacional-7280d.firebasestorage.app",
-          messagingSenderId: "1049667429914",
-          appId: "1:1049667429914:web:2a168f5d1669d76f8d93a3",
-          measurementId: "G-6HS6ET8NQC"
+          apiKey: "TU_API_KEY",
+          authDomain: "tu-proyecto.firebaseapp.com",
+          projectId: "tu-proyecto",
+          storageBucket: "tu-proyecto.appspot.com",
+          messagingSenderId: "TUS_NUMEROS",
+          appId: "TU_APP_ID"
         };
         // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
@@ -49,28 +49,40 @@
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-extrabold text-uniAzul tracking-tight">Uniguajira</h1>
                 <h2 class="text-xl font-bold text-uniRosado">Internacional</h2>
-                <p class="text-sm text-gray-500 mt-2">Semana Internacional</p>
+                <p class="text-sm text-gray-500 mt-2">Semana Internacional 2026</p>
             </div>
             
             <div id="auth-error" class="mb-4 text-xs text-uniRosado text-center font-bold"></div>
 
             <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
-                <input type="email" id="login-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
-                <input type="password" id="login-password" required placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
-                <button type="submit" class="w-full py-3 bg-uniAzul text-white font-bold rounded-xl shadow-md">Ingresar</button>
-                <div class="text-center mt-4">
-                    <button type="button" onclick="document.getElementById('form-login').classList.add('hidden'); document.getElementById('form-register').classList.remove('hidden');" class="text-xs text-gray-500 underline">Crear cuenta nueva</button>
+                <input type="email" id="login-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAzul">
+                <input type="password" id="login-password" required placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAzul">
+                <button type="submit" class="w-full py-3 bg-uniAzul hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md transition-all">Ingresar a la Plataforma</button>
+                <div class="text-center mt-4 space-x-2">
+                    <button type="button" onclick="switchTab('register')" class="text-xs text-gray-500 underline hover:text-uniAzul">Crear cuenta</button>
+                    <span class="text-gray-300">|</span>
+                    <button type="button" onclick="switchTab('recover')" class="text-xs text-gray-500 underline hover:text-uniRosado">¿Olvidaste tu contraseña?</button>
                 </div>
             </form>
 
             <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-                <input type="text" id="reg-name" required placeholder="Nombre Completo" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
-                <input type="email" id="reg-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
-                <input type="text" id="reg-program" required placeholder="Programa Académico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
-                <input type="password" id="reg-password" required placeholder="Crear Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
-                <button type="submit" class="w-full py-3 bg-uniAmarillo text-uniNegro font-bold rounded-xl shadow-md">Registrarse</button>
+                <input type="text" id="reg-name" required placeholder="Nombre Completo" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo">
+                <input type="email" id="reg-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo">
+                <input type="text" id="reg-program" required placeholder="Programa Académico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo">
+                <input type="password" id="reg-password" required placeholder="Crear Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo">
+                <button type="submit" class="w-full py-3 bg-uniAmarillo hover:bg-opacity-90 text-uniNegro font-bold rounded-xl shadow-md transition-all">Registrarse</button>
                 <div class="text-center mt-4">
-                    <button type="button" onclick="document.getElementById('form-register').classList.add('hidden'); document.getElementById('form-login').classList.remove('hidden');" class="text-xs text-gray-500 underline">Volver a iniciar sesión</button>
+                    <button type="button" onclick="switchTab('login')" class="text-xs text-gray-500 underline hover:text-uniAzul">Volver a iniciar sesión</button>
+                </div>
+            </form>
+
+            <form id="form-recover" onsubmit="handleRecover(event)" class="space-y-4 hidden">
+                <p class="text-xs text-gray-500 mb-2 text-center">Ingresa tu correo y define una nueva contraseña.</p>
+                <input type="email" id="rec-email" required placeholder="Correo Registrado" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniRosado">
+                <input type="password" id="rec-password" required placeholder="Nueva Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniRosado">
+                <button type="submit" class="w-full py-3 bg-uniRosado hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md transition-all">Restablecer Contraseña</button>
+                <div class="text-center mt-4">
+                    <button type="button" onclick="switchTab('login')" class="text-xs text-gray-500 underline hover:text-uniAzul">Volver a iniciar sesión</button>
                 </div>
             </form>
         </div>
@@ -84,66 +96,113 @@
                     <div class="bg-white text-uniAzul p-2 rounded-lg font-extrabold text-xl leading-none">UI</div>
                     <div>
                         <h1 class="font-extrabold leading-none text-lg">Uniguajira Internacional</h1>
+                        <span class="text-xs font-semibold text-uniAmarillo hidden md:inline">Impacto Local, Educación Global</span>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div id="admin-badge"></div>
-                    <button onclick="logout()" class="text-xs font-bold bg-white/20 px-3 py-1.5 rounded-lg">Salir</button>
+                    <button onclick="logout()" class="text-xs font-bold bg-white/20 px-3 py-1.5 rounded-lg hover:bg-white/30 transition-all">Salir</button>
                 </div>
             </div>
         </header>
 
         <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-[60px] z-30">
             <div class="max-w-7xl mx-auto px-4 flex space-x-6 overflow-x-auto">
-                <button onclick="switchSec('act')" id="nav-act" class="py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap">🎯 Actividades</button>
-                <button onclick="switchSec('rank')" id="nav-rank" class="py-3 text-sm font-bold text-gray-500 whitespace-nowrap">🏆 Ranking</button>
-                <button onclick="switchSec('prof')" id="nav-prof" class="py-3 text-sm font-bold text-gray-500 whitespace-nowrap">👤 Mi Perfil</button>
-                <button onclick="switchSec('admin')" id="nav-admin" class="py-3 text-sm font-bold text-uniRosado whitespace-nowrap hidden">⚙️ MATRIZ ORI</button>
+                <button onclick="switchSec('act')" id="nav-act" class="py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap transition-all">🎯 Actividades</button>
+                <button onclick="switchSec('rank')" id="nav-rank" class="py-3 text-sm font-bold text-gray-500 whitespace-nowrap transition-all">🏆 Ranking</button>
+                <button onclick="switchSec('prof')" id="nav-prof" class="py-3 text-sm font-bold text-gray-500 whitespace-nowrap transition-all">👤 Mi Perfil</button>
+                <button onclick="switchSec('admin')" id="nav-admin" class="py-3 text-sm font-bold text-uniRosado whitespace-nowrap hidden transition-all">⚙️ MATRIZ ORI</button>
             </div>
         </nav>
 
         <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+            <!-- SECCIÓN: ACTIVIDADES -->
             <section id="sec-act" class="space-y-6">
                 <div class="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-uniAzul">
                     <h2 class="text-2xl font-extrabold text-uniNegro">Retos Activos</h2>
+                    <p class="text-sm text-gray-500">Participa en las actividades habilitadas por la ORI para sumar puntos.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="activities-container">Cargando...</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="activities-container">
+                    <!-- Dinámico -->
+                </div>
             </section>
 
+            <!-- SECCIÓN: RANKING -->
             <section id="sec-rank" class="space-y-6 hidden">
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold">Ranking General</h2>
+                        <span class="text-xs bg-uniAmarillo px-2 py-1 rounded text-uniNegro font-bold">Desempate por tiempo</span>
+                    </div>
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-white text-gray-500"><tr><th class="p-4">#</th><th class="p-4">Estudiante</th><th class="p-4 text-right">Puntos</th></tr></thead>
+                        <thead class="bg-white text-gray-500"><tr><th class="p-4">#</th><th class="p-4">Estudiante</th><th class="p-4 text-right">Puntos Totales</th></tr></thead>
                         <tbody id="ranking-body" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </section>
 
+            <!-- SECCIÓN: PERFIL -->
             <section id="sec-prof" class="space-y-6 hidden">
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 flex flex-col items-center">
-                    <div class="w-20 h-20 rounded-full bg-uniAzul text-white text-3xl font-bold flex items-center justify-center mb-4" id="p-avatar">U</div>
-                    <h2 id="p-name" class="text-2xl font-bold text-uniNegro">Nombre</h2>
-                    <p id="p-prog" class="text-sm text-gray-600">Programa</p>
-                    <div class="mt-2 inline-block px-4 py-1 bg-uniAmarillo/20 text-uniAmarillo font-extrabold rounded-full">Puntos: <span id="p-points">0</span></div>
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-20 h-20 rounded-full bg-uniAzul text-white text-3xl font-bold flex items-center justify-center shadow-lg" id="p-avatar">U</div>
+                    <div class="text-center md:text-left">
+                        <h2 id="p-name" class="text-2xl font-bold text-uniNegro">Nombre</h2>
+                        <p id="p-prog" class="text-sm text-gray-600">Programa</p>
+                        <div class="mt-2 inline-block px-4 py-1 bg-uniAmarillo/20 text-uniAmarillo font-extrabold rounded-full border border-uniAmarillo/30">
+                            Puntos: <span id="p-points">0</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
+            <!-- SECCIÓN: MATRIZ ADMIN -->
             <section id="sec-admin" class="space-y-6 hidden">
-                <div class="bg-uniNegro text-white p-6 rounded-2xl border-t-4 border-uniRosado">
+                <div class="bg-uniNegro text-white p-6 rounded-2xl shadow-lg border-t-4 border-uniRosado">
                     <h2 class="text-2xl font-extrabold text-uniRosado">Panel de Control Matriz</h2>
+                    <p class="text-sm text-gray-400">Gestión total de actividades, validaciones y tiempos.</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 space-y-4" id="admin-controls">
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4" id="admin-controls">
                     <!-- Dinámico -->
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                    <h3 class="font-bold text-lg border-b pb-2">Validación Manual (Actividad 3)</h3>
+                    <div id="admin-validations" class="space-y-3">
+                        <!-- Dinámico -->
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- LÓGICA DE BASE DE DATOS EN LA NUBE -->
+    <!-- LÓGICA DE FIREBASE Y RESTAURACIÓN DE RETOS -->
     <script>
-        // ESCUCHADORES EN TIEMPO REAL A LA NUBE
+        // --- MANEJO DE VISTAS DE AUTH ---
+        function switchTab(t) {
+            document.getElementById('form-login').classList.toggle('hidden', t !== 'login');
+            document.getElementById('form-register').classList.toggle('hidden', t !== 'register');
+            document.getElementById('form-recover').classList.toggle('hidden', t !== 'recover');
+            document.getElementById('auth-error').innerText = '';
+        }
+
+        // --- SISTEMA DE ACTUALIZACIÓN DE PUNTOS EN FIREBASE ---
+        async function updateUserAct(pts, fieldsObject) {
+            fieldsObject.lastTime = Date.now(); // Actualizar milisegundo de desempate
+            if (pts > 0) {
+                fieldsObject.points = firebase.firestore.FieldValue.increment(pts);
+            }
+            try {
+                await db.collection('users').doc(currentUser.email).update(fieldsObject);
+                if (pts > 0) alert(`¡Felicidades! Has sumado ${pts} puntos.`);
+            } catch (error) {
+                console.error("Error actualizando puntos:", error);
+            }
+        }
+
+        // --- ESCUCHADORES EN TIEMPO REAL ---
         function initRealtimeListeners() {
-            // Escuchar cambios en la configuración global (Matriz)
+            // Escuchar configuración global
             db.collection('config').doc('global').onSnapshot(doc => {
                 if (doc.exists) {
                     globalSettings = doc.data();
@@ -154,13 +213,13 @@
                 }
             });
 
-            // Escuchar cambios en el usuario actual
+            // Escuchar cambios en el perfil del usuario activo (puntos)
             if(currentUser) {
                 db.collection('users').doc(currentUser.email).onSnapshot(doc => {
                     if (doc.exists) {
                         currentUser = doc.data();
                         document.getElementById('p-points').innerText = currentUser.points;
-                        renderActivities();
+                        renderActivities(); // Recargar retos por si completó alguno
                     }
                 });
             }
@@ -172,24 +231,57 @@
                 snapshot.forEach(doc => {
                     const u = doc.data();
                     if(u.email !== ADMIN_EMAIL) {
-                        html += `<tr class="border-b border-gray-100">
-                            <td class="p-4 font-bold text-gray-400">${rank++}</td>
-                            <td class="p-4 font-bold text-uniAzul">${u.name}</td>
-                            <td class="p-4 text-right font-extrabold text-lg">${u.points}</td>
+                        html += `
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                            <td class="p-4 font-extrabold text-gray-400">${rank++}</td>
+                            <td class="p-4 font-bold text-uniAzul flex flex-col">
+                                ${u.name} 
+                                <span class="text-[10px] text-gray-400 font-normal mt-0.5">⏱ Desempate: ${new Date(u.lastTime).toLocaleTimeString()}</span>
+                            </td>
+                            <td class="p-4 text-right font-extrabold text-uniNegro text-lg">${u.points}</td>
                         </tr>`;
                     }
                 });
                 document.getElementById('ranking-body').innerHTML = html;
             });
+
+            // Si es Admin, escuchar evidencias pendientes (Actividad 3)
+            if (currentUser && currentUser.email === ADMIN_EMAIL) {
+                db.collection('subsAct3').where('status', '==', 'pending').onSnapshot(snap => {
+                    let html = '';
+                    if (snap.empty) {
+                        html = '<p class="text-xs text-gray-500 italic">No hay evidencias pendientes en este momento.</p>';
+                    } else {
+                        snap.forEach(doc => {
+                            const s = doc.data();
+                            const id = doc.id;
+                            html += `
+                            <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-col md:flex-row justify-between items-center gap-4 mb-3">
+                                <div>
+                                    <p class="font-bold text-sm text-uniAzul">${s.name}</p>
+                                    <a href="${s.link}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800 underline">Abrir Evidencia Adjunta</a>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" id="pts-${id}" min="0" max="7" value="7" class="w-16 p-1 border border-gray-300 rounded text-sm text-center focus:ring-1 focus:ring-uniAzul outline-none" title="Puntos base (max 7)">
+                                    <label class="text-xs flex items-center gap-1 font-bold text-gray-600"><input type="checkbox" id="bon-${id}"> +1 pt Clave</label>
+                                    <button onclick="approveAct3('${id}', '${s.email}')" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold shadow-sm hover:bg-green-700 transition-all">Aprobar</button>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                    document.getElementById('admin-validations').innerHTML = html;
+                });
+            }
         }
 
+        // --- AUTH LOGIC CON FIREBASE ---
         async function handleRegister(e) {
             e.preventDefault();
             const em = document.getElementById('reg-email').value.toLowerCase().trim();
             const docRef = db.collection('users').doc(em);
             const doc = await docRef.get();
             
-            if(doc.exists) return document.getElementById('auth-error').innerText = 'Correo ya registrado';
+            if(doc.exists) return document.getElementById('auth-error').innerText = 'El correo ya se encuentra registrado.';
             
             const newUser = {
                 email: em, name: document.getElementById('reg-name').value, program: document.getElementById('reg-program').value,
@@ -208,7 +300,6 @@
             const em = document.getElementById('login-email').value.toLowerCase().trim();
             const pw = btoa(document.getElementById('login-password').value);
             
-            // Logica especial para crear al admin si no existe
             if(em === ADMIN_EMAIL) {
                 const adminDoc = await db.collection('users').doc(em).get();
                 if(!adminDoc.exists) {
@@ -228,6 +319,20 @@
             currentUser = doc.data();
             localStorage.setItem('uni_email', em);
             showApp();
+        }
+
+        async function handleRecover(e) {
+            e.preventDefault();
+            const em = document.getElementById('rec-email').value.toLowerCase().trim();
+            const np = document.getElementById('rec-password').value;
+            const docRef = db.collection('users').doc(em);
+            const doc = await docRef.get();
+            
+            if(!doc.exists) return document.getElementById('auth-error').innerText = 'El correo no está registrado en el sistema.';
+            
+            await docRef.update({ password: btoa(np) });
+            alert('¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.');
+            switchTab('login');
         }
 
         async function autoLogin() {
@@ -250,6 +355,8 @@
             
             const isAdmin = currentUser.email === ADMIN_EMAIL;
             document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
+            document.getElementById('admin-badge').innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-xs px-2 py-1 font-bold rounded shadow-sm">MATRIZ</span>' : '';
+            
             document.getElementById('p-name').innerText = currentUser.name;
             document.getElementById('p-prog').innerText = currentUser.program;
             document.getElementById('p-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
@@ -265,49 +372,178 @@
         function switchSec(s) {
             const isAdmin = currentUser.email === ADMIN_EMAIL;
             if (s === 'admin' && !isAdmin) return;
-            ['act','rank','prof','admin'].forEach(x => document.getElementById('sec-'+x).classList.add('hidden'));
+            
             ['act','rank','prof','admin'].forEach(x => {
+                const el = document.getElementById('sec-'+x);
                 const nav = document.getElementById('nav-'+x);
-                if(nav) nav.className = 'py-3 text-sm font-bold text-gray-500 whitespace-nowrap' + (x === 'admin' && !isAdmin ? ' hidden' : '');
+                if(el) el.classList.add('hidden');
+                if(nav) nav.className = 'py-3 text-sm font-bold text-gray-500 whitespace-nowrap transition-all' + (x === 'admin' && !isAdmin ? ' hidden' : '');
             });
+            
             document.getElementById('sec-'+s).classList.remove('hidden');
-            document.getElementById('nav-'+s).className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap';
+            const activeNav = document.getElementById('nav-'+s);
+            if (activeNav) activeNav.className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap transition-all';
         }
 
-        // --- RENDER DE ACTIVIDADES QUE REACCIONA A LA NUBE ---
+        // --- RENDERIZADO Y LÓGICA DE LAS 4 ACTIVIDADES RESTAURADAS ---
         function renderActivities() {
             const cont = document.getElementById('activities-container');
             let html = '';
-            
+            let hasActiveActivities = false;
+
+            // ACT 1: Adivina la publicación (5 pts)
             if(globalSettings.act1Active) {
-                html += `<div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm"><h3 class="font-bold text-uniAzul">Adivina la publicación</h3>
-                ${currentUser.act1 ? '<p class="text-green-600 font-bold mt-2">✅ Completado</p>' : '<button onclick="completeTestAct(1)" class="w-full bg-uniAzul text-white py-2 mt-2 rounded font-bold text-sm">Validar Link</button>'}</div>`;
-            }
-            if(globalSettings.act2Active) {
-                html += `<div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm"><h3 class="font-bold text-uniAzul">Preguntas de Internacionalización</h3><p class="text-sm mt-2 text-gray-500">Responde las preguntas de la matriz.</p></div>`;
-            }
-            if(globalSettings.act3Active) {
-                html += `<div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm"><h3 class="font-bold text-uniAzul">Historia Internacional</h3><p class="text-sm mt-2 text-gray-500">Sube tu evidencia de historia o video.</p></div>`;
-            }
-            if(globalSettings.act4Active) {
-                html += `<div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm"><h3 class="font-bold text-uniAzul">Palabras Ocultas</h3><p class="text-sm mt-2 text-gray-500">Busca las palabras por la universidad.</p></div>`;
+                hasActiveActivities = true;
+                let inner = currentUser.act1 
+                    ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded-xl border border-green-200">✅ Completado (5 pts)</div>` 
+                    : `<input type="text" id="a1-link" placeholder="Pega el link aquí..." class="w-full p-3 text-sm border border-gray-200 rounded-xl mb-3 focus:ring-2 focus:ring-uniAzul outline-none">
+                       <button onclick="checkAct1()" class="w-full bg-uniAzul text-white py-3 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-all shadow-md">Validar Link</button>`;
+                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 1: Adivina la publicación</h3><p class="text-xs text-gray-500">Encuentra la publicación exacta de Instagram que configuró la ORI.</p></div>${inner}</div>`;
             }
 
-            if (!globalSettings.act1Active && !globalSettings.act2Active && !globalSettings.act3Active && !globalSettings.act4Active) {
-                html = `<div class="col-span-2 text-center py-10"><h3 class="text-lg font-bold text-uniAzul">⏳ Actualmente no hay retos activos</h3><p class="text-sm text-gray-500">Espera instrucciones de la ORI.</p></div>`;
+            // ACT 2: Preguntas de Internacionalización (5 pts)
+            if(globalSettings.act2Active) {
+                hasActiveActivities = true;
+                let inner = `<div class="space-y-4">`;
+                const q = [
+                    { id: 0, t: '1. Política de Internacionalización (No. y Año)', in: `<input type="text" id="a2-q0" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul" placeholder="Ej: 000 de 2020">` },
+                    { id: 1, t: '2. ¿Cuántos objetivos tiene y cuál empieza por "Promover"?', in: `<input type="text" id="a2-q1" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul" placeholder="Respuesta completa">` },
+                    { id: 2, t: '3. Un estudiante de Uniguajira a México es:', in: `<select id="a2-q2" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
+                    { id: 3, t: '4. Profesor de Barranquilla a Uniguajira es:', in: `<select id="a2-q3" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
+                    { id: 4, t: '5. Nombre de la mascota de la ORI 🐶:', in: `<input type="text" id="a2-q4" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul" placeholder="Nombre...">` }
+                ];
+                q.forEach(i => {
+                    inner += `<div><label class="text-xs font-bold text-gray-700 block mb-1">${i.t}</label>
+                    ${currentUser.act2[i.id] ? '<span class="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded">✅ Correcto (+1 pt)</span>' : i.in}</div>`;
+                });
+                inner += currentUser.act2.every(x=>x) ? '' : `<button onclick="checkAct2()" class="w-full bg-uniAzul text-white py-3 rounded-xl font-bold text-sm mt-3 hover:bg-opacity-90 transition-all shadow-md">Enviar Respuestas</button>`;
+                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 2: Preguntas</h3><p class="text-xs text-gray-500">Cada respuesta correcta suma 1 punto.</p></div>${inner}</div></div>`;
+            }
+
+            // ACT 3: Historia Internacional (Hasta 8 pts)
+            if(globalSettings.act3Active) {
+                hasActiveActivities = true;
+                let inner = '';
+                if(currentUser.act3 === 'approved') inner = `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded-xl border border-green-200">✅ Evaluado y Aprobado</div>`;
+                else if(currentUser.act3 === 'pending') inner = `<div class="p-3 bg-yellow-50 text-yellow-700 font-bold text-sm rounded-xl border border-yellow-200">⏳ En revisión por Matriz ORI</div>`;
+                else {
+                    inner = `<input type="text" id="a3-link" placeholder="Link de tu video/historia..." class="w-full p-3 text-sm border border-gray-200 rounded-xl mb-3 outline-none focus:ring-2 focus:ring-uniRosado">
+                     <button onclick="submitAct3()" class="w-full bg-uniRosado text-white py-3 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-all shadow-md">Enviar a Revisión (Máx 8 pts)</button>`;
+                }
+                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 3: Historia Internacional</h3><p class="text-xs text-gray-500">Tómate una foto con un souvenir en la oficina. Pega aquí el link de tu historia/video. La ORI la evaluará manualmente.</p></div>${inner}</div>`;
+            }
+
+            // ACT 4: Palabras Ocultas (Hasta 50 pts)
+            if(globalSettings.act4Active) {
+                hasActiveActivities = true;
+                let found = currentUser.act4.length;
+                let inner = found >= 10 ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded-xl border border-green-200">✅ Has encontrado las 10 palabras (50 pts)</div>` :
+                    `<div class="flex gap-2 mb-3"><input type="text" id="a4-word" placeholder="Ingresa palabra oculta..." class="flex-1 p-3 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-uniAmarillo"><button onclick="checkAct4()" class="bg-uniAmarillo text-uniNegro px-5 py-3 rounded-xl font-bold text-sm shadow-md transition-all hover:scale-105">Validar</button></div>`;
+                inner += `<div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-xs font-bold text-gray-700 mb-1">Palabras Encontradas (${found}/10):</p><p class="text-xs text-gray-500">${currentUser.act4.join(', ') || 'Aún no has encontrado ninguna.'}</p></div>`;
+                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 4: Palabras Ocultas</h3><p class="text-xs text-gray-500">Encuentra los paquetes de letras en el campus. Cada palabra correcta te suma 5 pts.</p></div>${inner}</div>`;
+            }
+
+            if (!hasActiveActivities) {
+                html = `<div class="col-span-1 md:col-span-2 text-center py-12 px-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <span class="text-4xl">⏳</span>
+                    <h3 class="text-lg font-bold text-uniAzul mt-4">Actualmente no hay retos activos</h3>
+                    <p class="text-sm text-gray-500 mt-2">La Oficina de Relaciones Internacionales habilitará nuevas actividades pronto. ¡Mantente atento!</p>
+                </div>`;
             }
             cont.innerHTML = html;
         }
 
-        // --- MATRIZ ADMIN QUE GUARDA EN LA NUBE ---
+        // --- VALIDACIONES DE LAS ACTIVIDADES ---
+        async function checkAct1() {
+            const v = document.getElementById('a1-link').value.trim();
+            if (v === globalSettings.act1Link) {
+                await updateUserAct(5, { act1: true });
+            } else {
+                alert('El link es incorrecto. ¡Sigue buscando en nuestro perfil!');
+            }
+        }
+
+        async function checkAct2() {
+            let pts = 0;
+            let currentResp = [...currentUser.act2];
+            
+            if(!currentResp[0]) { let v = document.getElementById('a2-q0').value.toLowerCase(); if(v.includes('018') && v.includes('2023')) { currentResp[0] = true; pts++; } }
+            if(!currentResp[1]) { let v = document.getElementById('a2-q1').value.toLowerCase(); if((v.includes('3')||v.includes('tres')) && v.includes('promover') && v.includes('institucional')) { currentResp[1] = true; pts++; } }
+            if(!currentResp[2]) { let v = document.getElementById('a2-q2').value; if(v === 'C') { currentResp[2] = true; pts++; } }
+            if(!currentResp[3]) { let v = document.getElementById('a2-q3').value; if(v === 'D') { currentResp[3] = true; pts++; } }
+            if(!currentResp[4]) { let v = document.getElementById('a2-q4').value.toLowerCase(); if(v.includes('shakira')) { currentResp[4] = true; pts++; } }
+            
+            if (pts > 0) {
+                await updateUserAct(pts, { act2: currentResp });
+            } else {
+                alert('No hubo respuestas correctas nuevas. Revisa bien la información e intenta de nuevo.');
+            }
+        }
+
+        async function submitAct3() {
+            const v = document.getElementById('a3-link').value.trim();
+            if(!v) return alert('Por favor, ingresa el link de tu historia o video.');
+            
+            // Marcar el estado local como pendiente para bloquear el botón
+            await updateUserAct(0, { act3: 'pending' });
+            
+            // Crear la solicitud en la base de datos para que la vea el Admin
+            await db.collection('subsAct3').add({
+                email: currentUser.email,
+                name: currentUser.name,
+                link: v,
+                status: 'pending',
+                date: Date.now()
+            });
+            alert('¡Evidencia enviada con éxito! La ORI la revisará pronto.');
+        }
+
+        async function checkAct4() {
+            const validWords = ['transnacional', 'cosmopolitismo', 'extranjería', 'arancel', 'aduana', 'protocolo', 'mercado', 'negociación', 'visado', 'frontera'];
+            const v = document.getElementById('a4-word').value.toLowerCase().trim();
+            document.getElementById('a4-word').value = ''; // limpiar input
+            
+            if (validWords.includes(v)) {
+                let currentWords = [...currentUser.act4];
+                if (!currentWords.includes(v)) {
+                    currentWords.push(v);
+                    await updateUserAct(5, { act4: currentWords });
+                } else {
+                    alert('Ya habías registrado esa palabra. ¡Busca las demás!');
+                }
+            } else {
+                alert('Esa no es una de las palabras ocultas. Sigue buscando.');
+            }
+        }
+
+        // --- PANEL DE MATRIZ ADMIN ---
         function renderAdmin() {
             const cont = document.getElementById('admin-controls');
-            let html = '<h3 class="font-bold border-b pb-2">Control de Interruptores Globales</h3>';
-            [1,2,3,4].forEach(i => {
+            let html = '<h3 class="font-bold border-b pb-2 mb-4 text-lg">Activación y Configuración</h3>';
+            
+            // Actividad 1 con campo para cambiar link
+            const a1 = globalSettings.act1Active;
+            html += `
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-gray-50 rounded-xl mb-4 border border-gray-200">
+                <div class="flex-1 w-full">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-gray-700">Actividad 1: Adivina la publicación</span>
+                        <button onclick="toggleActCloud(1)" class="px-4 py-1 text-white text-xs font-bold rounded-lg shadow-sm transition-all ${a1 ? 'bg-uniRosado' : 'bg-uniAzul'}">${a1 ? 'DESACTIVAR' : 'ACTIVAR'}</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="admin-act1-link" value="${globalSettings.act1Link}" placeholder="Link de Instagram Objetivo..." class="w-full p-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-uniAzul">
+                        <button onclick="saveAct1Link()" class="text-xs bg-uniAzul text-white px-4 py-2 rounded-lg font-bold hover:bg-opacity-90 shadow-sm whitespace-nowrap">Guardar Link</button>
+                    </div>
+                </div>
+            </div>`;
+
+            // Resto de los botones (2, 3 y 4)
+            [2,3,4].forEach(i => {
                 const a = globalSettings['act'+i+'Active'];
-                html += `<div class="flex justify-between items-center p-3 bg-gray-50 mb-2 rounded border border-gray-100">
-                    <span class="font-bold text-sm text-gray-700">Actividad ${i}</span>
-                    <button onclick="toggleActCloud(${i})" class="px-3 py-1 text-white text-xs font-bold rounded shadow-sm ${a ? 'bg-uniRosado' : 'bg-uniAzul'}">${a ? 'DESACTIVAR' : 'ACTIVAR'}</button>
+                const titles = {2: 'Preguntas de Internacionalización', 3: 'Historia Internacional (Manual)', 4: 'Palabras Ocultas'};
+                html += `<div class="flex justify-between items-center p-4 bg-gray-50 mb-3 rounded-xl border border-gray-200">
+                    <span class="font-bold text-sm text-gray-700">Actividad ${i}: ${titles[i]}</span>
+                    <button onclick="toggleActCloud(${i})" class="px-4 py-1 text-white text-xs font-bold rounded-lg shadow-sm transition-all ${a ? 'bg-uniRosado' : 'bg-uniAzul'}">${a ? 'DESACTIVAR' : 'ACTIVAR'}</button>
                 </div>`;
             });
             cont.innerHTML = html;
@@ -318,6 +554,36 @@
             await db.collection('config').doc('global').update({
                 [field]: !globalSettings[field]
             });
+        }
+
+        async function saveAct1Link() {
+            const newLink = document.getElementById('admin-act1-link').value.trim();
+            if(!newLink) return alert('No puedes dejar el link vacío.');
+            await db.collection('config').doc('global').update({ act1Link: newLink });
+            alert('Link de Instagram objetivo actualizado con éxito.');
+        }
+
+        async function approveAct3(docId, userEmail) {
+            const basePts = parseInt(document.getElementById('pts-'+docId).value) || 0;
+            const bonus = document.getElementById('bon-'+docId).checked ? 1 : 0;
+            const total = basePts + bonus;
+
+            try {
+                // Marcar evidencia como aprobada
+                await db.collection('subsAct3').doc(docId).update({ status: 'approved' });
+                
+                // Darle los puntos al estudiante
+                await db.collection('users').doc(userEmail).update({
+                    act3: 'approved',
+                    points: firebase.firestore.FieldValue.increment(total),
+                    lastTime: Date.now() // Actualizar el reloj para el desempate del ranking
+                });
+                
+                alert(`¡Evidencia aprobada! Se han otorgado ${total} puntos al estudiante.`);
+            } catch(e) {
+                console.error("Error al aprobar:", e);
+                alert("Hubo un error al aprobar la evidencia.");
+            }
         }
 
         window.onload = autoLogin;
