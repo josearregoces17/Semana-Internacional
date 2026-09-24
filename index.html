@@ -25,7 +25,7 @@
 
     <!-- AQUI PEGA TU CONFIGURACIÓN DE FIREBASE -->
     <script>
-        // ⚠️ REEMPLAZA ESTO CON TUS DATOS REALES DE FIREBASE
+        // ⚠️ REEMPLAZA ESTE BLOQUE CON TUS DATOS DE FIREBASE
         const firebaseConfig = {
           apiKey: "TU_API_KEY",
           authDomain: "tu-proyecto.firebaseapp.com",
@@ -52,12 +52,13 @@
                 <p class="text-sm text-gray-500 mt-2">Semana Internacional 2026</p>
             </div>
             
-            <div id="auth-error" class="mb-4 text-xs text-uniRosado text-center font-bold"></div>
+            <!-- CONTENEDOR DE ERRORES -->
+            <div id="auth-error" class="mb-4 text-xs text-uniRosado text-center font-bold bg-red-50 rounded p-2 empty:hidden"></div>
 
             <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
                 <input type="email" id="login-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAzul">
                 <input type="password" id="login-password" required placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAzul">
-                <button type="submit" class="w-full py-3 bg-uniAzul hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md transition-all">Ingresar a la Plataforma</button>
+                <button type="submit" id="btn-login" class="w-full py-3 bg-uniAzul hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md transition-all">Ingresar a la Plataforma</button>
                 <div class="text-center mt-4 space-x-2">
                     <button type="button" onclick="switchTab('register')" class="text-xs text-gray-500 underline hover:text-uniAzul">Crear cuenta</button>
                     <span class="text-gray-300">|</span>
@@ -70,7 +71,7 @@
                 <input type="email" id="reg-email" required placeholder="Correo Electrónico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo">
                 <input type="text" id="reg-program" required placeholder="Programa Académico" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo">
                 <input type="password" id="reg-password" required placeholder="Crear Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo">
-                <button type="submit" class="w-full py-3 bg-uniAmarillo hover:bg-opacity-90 text-uniNegro font-bold rounded-xl shadow-md transition-all">Registrarse</button>
+                <button type="submit" id="btn-register" class="w-full py-3 bg-uniAmarillo hover:bg-opacity-90 text-uniNegro font-bold rounded-xl shadow-md transition-all">Registrarse</button>
                 <div class="text-center mt-4">
                     <button type="button" onclick="switchTab('login')" class="text-xs text-gray-500 underline hover:text-uniAzul">Volver a iniciar sesión</button>
                 </div>
@@ -88,7 +89,7 @@
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
+    <!-- APP PRINCIPAL (Oculta hasta iniciar sesión) -->
     <div id="app-container" class="hidden flex-col min-h-screen">
         <header class="bg-uniAzul text-white shadow-md sticky top-0 z-40 border-b-4 border-uniAmarillo">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -176,9 +177,7 @@
         </main>
     </div>
 
-    <!-- LÓGICA DE FIREBASE Y RESTAURACIÓN DE RETOS -->
     <script>
-        // --- MANEJO DE VISTAS DE AUTH ---
         function switchTab(t) {
             document.getElementById('form-login').classList.toggle('hidden', t !== 'login');
             document.getElementById('form-register').classList.toggle('hidden', t !== 'register');
@@ -186,9 +185,8 @@
             document.getElementById('auth-error').innerText = '';
         }
 
-        // --- SISTEMA DE ACTUALIZACIÓN DE PUNTOS EN FIREBASE ---
         async function updateUserAct(pts, fieldsObject) {
-            fieldsObject.lastTime = Date.now(); // Actualizar milisegundo de desempate
+            fieldsObject.lastTime = Date.now();
             if (pts > 0) {
                 fieldsObject.points = firebase.firestore.FieldValue.increment(pts);
             }
@@ -197,12 +195,11 @@
                 if (pts > 0) alert(`¡Felicidades! Has sumado ${pts} puntos.`);
             } catch (error) {
                 console.error("Error actualizando puntos:", error);
+                alert("Error de conexión al guardar los puntos.");
             }
         }
 
-        // --- ESCUCHADORES EN TIEMPO REAL ---
         function initRealtimeListeners() {
-            // Escuchar configuración global
             db.collection('config').doc('global').onSnapshot(doc => {
                 if (doc.exists) {
                     globalSettings = doc.data();
@@ -211,20 +208,18 @@
                 } else {
                     db.collection('config').doc('global').set(globalSettings);
                 }
-            });
+            }, err => console.error("Error leyendo config:", err));
 
-            // Escuchar cambios en el perfil del usuario activo (puntos)
             if(currentUser) {
                 db.collection('users').doc(currentUser.email).onSnapshot(doc => {
                     if (doc.exists) {
                         currentUser = doc.data();
                         document.getElementById('p-points').innerText = currentUser.points;
-                        renderActivities(); // Recargar retos por si completó alguno
+                        renderActivities();
                     }
                 });
             }
 
-            // Escuchar cambios en el ranking general
             db.collection('users').orderBy('points', 'desc').orderBy('lastTime', 'asc').onSnapshot(snapshot => {
                 let html = '';
                 let rank = 1;
@@ -245,7 +240,6 @@
                 document.getElementById('ranking-body').innerHTML = html;
             });
 
-            // Si es Admin, escuchar evidencias pendientes (Actividad 3)
             if (currentUser && currentUser.email === ADMIN_EMAIL) {
                 db.collection('subsAct3').where('status', '==', 'pending').onSnapshot(snap => {
                     let html = '';
@@ -274,76 +268,107 @@
             }
         }
 
-        // --- AUTH LOGIC CON FIREBASE ---
         async function handleRegister(e) {
             e.preventDefault();
-            const em = document.getElementById('reg-email').value.toLowerCase().trim();
-            const docRef = db.collection('users').doc(em);
-            const doc = await docRef.get();
+            document.getElementById('auth-error').innerText = 'Conectando con el servidor...';
+            const btn = document.getElementById('btn-register');
+            btn.disabled = true;
             
-            if(doc.exists) return document.getElementById('auth-error').innerText = 'El correo ya se encuentra registrado.';
-            
-            const newUser = {
-                email: em, name: document.getElementById('reg-name').value, program: document.getElementById('reg-program').value,
-                password: btoa(document.getElementById('reg-password').value), points: 0, lastTime: Date.now(),
-                act1: false, act2: [false,false,false,false,false], act3: false, act4: []
-            };
-            
-            await docRef.set(newUser);
-            currentUser = newUser;
-            localStorage.setItem('uni_email', em); 
-            showApp();
+            try {
+                const em = document.getElementById('reg-email').value.toLowerCase().trim();
+                const docRef = db.collection('users').doc(em);
+                const doc = await docRef.get();
+                
+                if(doc.exists) {
+                    btn.disabled = false;
+                    return document.getElementById('auth-error').innerText = 'El correo ya se encuentra registrado.';
+                }
+                
+                const newUser = {
+                    email: em, name: document.getElementById('reg-name').value, program: document.getElementById('reg-program').value,
+                    password: btoa(document.getElementById('reg-password').value), points: 0, lastTime: Date.now(),
+                    act1: false, act2: [false,false,false,false,false], act3: false, act4: []
+                };
+                
+                await docRef.set(newUser);
+                currentUser = newUser;
+                localStorage.setItem('uni_email', em); 
+                showApp();
+            } catch (error) {
+                btn.disabled = false;
+                console.error("Error registro:", error);
+                document.getElementById('auth-error').innerText = 'Error de conexión con la base de datos: ' + error.message;
+            }
         }
 
         async function handleLogin(e) {
             e.preventDefault();
-            const em = document.getElementById('login-email').value.toLowerCase().trim();
-            const pw = btoa(document.getElementById('login-password').value);
+            document.getElementById('auth-error').innerText = 'Conectando...';
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true;
             
-            if(em === ADMIN_EMAIL) {
-                const adminDoc = await db.collection('users').doc(em).get();
-                if(!adminDoc.exists) {
-                    await db.collection('users').doc(em).set({
-                        email: ADMIN_EMAIL, name: 'MATRIZ ORI', program: 'Admin', password: btoa('admin123'), points: 0, lastTime: Date.now(), act1: false, act2: [false,false,false,false,false], act3: false, act4: []
-                    });
+            try {
+                const em = document.getElementById('login-email').value.toLowerCase().trim();
+                const pw = btoa(document.getElementById('login-password').value);
+                
+                if(em === ADMIN_EMAIL) {
+                    const adminDoc = await db.collection('users').doc(em).get();
+                    if(!adminDoc.exists) {
+                        await db.collection('users').doc(em).set({
+                            email: ADMIN_EMAIL, name: 'MATRIZ ORI', program: 'Admin', password: btoa('admin123'), points: 0, lastTime: Date.now(), act1: false, act2: [false,false,false,false,false], act3: false, act4: []
+                        });
+                    }
                 }
-            }
 
-            const docRef = db.collection('users').doc(em);
-            const doc = await docRef.get();
-            
-            if(!doc.exists || doc.data().password !== pw) {
-                return document.getElementById('auth-error').innerText = 'Credenciales inválidas.';
+                const docRef = db.collection('users').doc(em);
+                const doc = await docRef.get();
+                
+                if(!doc.exists || doc.data().password !== pw) {
+                    btn.disabled = false;
+                    return document.getElementById('auth-error').innerText = 'Credenciales inválidas.';
+                }
+                
+                currentUser = doc.data();
+                localStorage.setItem('uni_email', em);
+                showApp();
+            } catch (error) {
+                btn.disabled = false;
+                console.error("Error login:", error);
+                document.getElementById('auth-error').innerText = 'Error de conexión: Verifica las reglas de Firestore.';
             }
-            
-            currentUser = doc.data();
-            localStorage.setItem('uni_email', em);
-            showApp();
         }
 
         async function handleRecover(e) {
             e.preventDefault();
-            const em = document.getElementById('rec-email').value.toLowerCase().trim();
-            const np = document.getElementById('rec-password').value;
-            const docRef = db.collection('users').doc(em);
-            const doc = await docRef.get();
-            
-            if(!doc.exists) return document.getElementById('auth-error').innerText = 'El correo no está registrado en el sistema.';
-            
-            await docRef.update({ password: btoa(np) });
-            alert('¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.');
-            switchTab('login');
+            try {
+                const em = document.getElementById('rec-email').value.toLowerCase().trim();
+                const np = document.getElementById('rec-password').value;
+                const docRef = db.collection('users').doc(em);
+                const doc = await docRef.get();
+                
+                if(!doc.exists) return document.getElementById('auth-error').innerText = 'El correo no está registrado en el sistema.';
+                
+                await docRef.update({ password: btoa(np) });
+                alert('¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.');
+                switchTab('login');
+            } catch(error) {
+                document.getElementById('auth-error').innerText = 'Error: ' + error.message;
+            }
         }
 
         async function autoLogin() {
             const savedEmail = localStorage.getItem('uni_email');
             if(savedEmail) {
-                const doc = await db.collection('users').doc(savedEmail).get();
-                if(doc.exists) {
-                    currentUser = doc.data();
-                    showApp();
-                } else {
-                    localStorage.removeItem('uni_email');
+                try {
+                    const doc = await db.collection('users').doc(savedEmail).get();
+                    if(doc.exists) {
+                        currentUser = doc.data();
+                        showApp();
+                    } else {
+                        localStorage.removeItem('uni_email');
+                    }
+                } catch(error) {
+                    console.error("Error autologin:", error);
                 }
             }
         }
@@ -385,13 +410,11 @@
             if (activeNav) activeNav.className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap transition-all';
         }
 
-        // --- RENDERIZADO Y LÓGICA DE LAS 4 ACTIVIDADES RESTAURADAS ---
         function renderActivities() {
             const cont = document.getElementById('activities-container');
             let html = '';
             let hasActiveActivities = false;
 
-            // ACT 1: Adivina la publicación (5 pts)
             if(globalSettings.act1Active) {
                 hasActiveActivities = true;
                 let inner = currentUser.act1 
@@ -401,7 +424,6 @@
                 html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 1: Adivina la publicación</h3><p class="text-xs text-gray-500">Encuentra la publicación exacta de Instagram que configuró la ORI.</p></div>${inner}</div>`;
             }
 
-            // ACT 2: Preguntas de Internacionalización (5 pts)
             if(globalSettings.act2Active) {
                 hasActiveActivities = true;
                 let inner = `<div class="space-y-4">`;
@@ -420,7 +442,6 @@
                 html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 2: Preguntas</h3><p class="text-xs text-gray-500">Cada respuesta correcta suma 1 punto.</p></div>${inner}</div></div>`;
             }
 
-            // ACT 3: Historia Internacional (Hasta 8 pts)
             if(globalSettings.act3Active) {
                 hasActiveActivities = true;
                 let inner = '';
@@ -433,7 +454,6 @@
                 html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 3: Historia Internacional</h3><p class="text-xs text-gray-500">Tómate una foto con un souvenir en la oficina. Pega aquí el link de tu historia/video. La ORI la evaluará manualmente.</p></div>${inner}</div>`;
             }
 
-            // ACT 4: Palabras Ocultas (Hasta 50 pts)
             if(globalSettings.act4Active) {
                 hasActiveActivities = true;
                 let found = currentUser.act4.length;
@@ -453,7 +473,6 @@
             cont.innerHTML = html;
         }
 
-        // --- VALIDACIONES DE LAS ACTIVIDADES ---
         async function checkAct1() {
             const v = document.getElementById('a1-link').value.trim();
             if (v === globalSettings.act1Link) {
@@ -484,24 +503,27 @@
             const v = document.getElementById('a3-link').value.trim();
             if(!v) return alert('Por favor, ingresa el link de tu historia o video.');
             
-            // Marcar el estado local como pendiente para bloquear el botón
             await updateUserAct(0, { act3: 'pending' });
             
-            // Crear la solicitud en la base de datos para que la vea el Admin
-            await db.collection('subsAct3').add({
-                email: currentUser.email,
-                name: currentUser.name,
-                link: v,
-                status: 'pending',
-                date: Date.now()
-            });
-            alert('¡Evidencia enviada con éxito! La ORI la revisará pronto.');
+            try {
+                await db.collection('subsAct3').add({
+                    email: currentUser.email,
+                    name: currentUser.name,
+                    link: v,
+                    status: 'pending',
+                    date: Date.now()
+                });
+                alert('¡Evidencia enviada con éxito! La ORI la revisará pronto.');
+            } catch(e) {
+                console.error(e);
+                alert('Error enviando evidencia.');
+            }
         }
 
         async function checkAct4() {
             const validWords = ['transnacional', 'cosmopolitismo', 'extranjería', 'arancel', 'aduana', 'protocolo', 'mercado', 'negociación', 'visado', 'frontera'];
             const v = document.getElementById('a4-word').value.toLowerCase().trim();
-            document.getElementById('a4-word').value = ''; // limpiar input
+            document.getElementById('a4-word').value = ''; 
             
             if (validWords.includes(v)) {
                 let currentWords = [...currentUser.act4];
@@ -516,12 +538,10 @@
             }
         }
 
-        // --- PANEL DE MATRIZ ADMIN ---
         function renderAdmin() {
             const cont = document.getElementById('admin-controls');
             let html = '<h3 class="font-bold border-b pb-2 mb-4 text-lg">Activación y Configuración</h3>';
             
-            // Actividad 1 con campo para cambiar link
             const a1 = globalSettings.act1Active;
             html += `
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-gray-50 rounded-xl mb-4 border border-gray-200">
@@ -537,7 +557,6 @@
                 </div>
             </div>`;
 
-            // Resto de los botones (2, 3 y 4)
             [2,3,4].forEach(i => {
                 const a = globalSettings['act'+i+'Active'];
                 const titles = {2: 'Preguntas de Internacionalización', 3: 'Historia Internacional (Manual)', 4: 'Palabras Ocultas'};
@@ -551,16 +570,22 @@
 
         async function toggleActCloud(i) {
             const field = 'act'+i+'Active';
-            await db.collection('config').doc('global').update({
-                [field]: !globalSettings[field]
-            });
+            try {
+                await db.collection('config').doc('global').update({ [field]: !globalSettings[field] });
+            } catch(e) {
+                console.error(e);
+            }
         }
 
         async function saveAct1Link() {
             const newLink = document.getElementById('admin-act1-link').value.trim();
             if(!newLink) return alert('No puedes dejar el link vacío.');
-            await db.collection('config').doc('global').update({ act1Link: newLink });
-            alert('Link de Instagram objetivo actualizado con éxito.');
+            try {
+                await db.collection('config').doc('global').update({ act1Link: newLink });
+                alert('Link de Instagram objetivo actualizado con éxito.');
+            } catch(e) {
+                console.error(e);
+            }
         }
 
         async function approveAct3(docId, userEmail) {
@@ -569,16 +594,12 @@
             const total = basePts + bonus;
 
             try {
-                // Marcar evidencia como aprobada
                 await db.collection('subsAct3').doc(docId).update({ status: 'approved' });
-                
-                // Darle los puntos al estudiante
                 await db.collection('users').doc(userEmail).update({
                     act3: 'approved',
                     points: firebase.firestore.FieldValue.increment(total),
-                    lastTime: Date.now() // Actualizar el reloj para el desempate del ranking
+                    lastTime: Date.now() 
                 });
-                
                 alert(`¡Evidencia aprobada! Se han otorgado ${total} puntos al estudiante.`);
             } catch(e) {
                 console.error("Error al aprobar:", e);
