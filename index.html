@@ -7,40 +7,44 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- FIREBASE LIBRARIES -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
+  <!-- INICIO DE CONFIGURACIÓN FIREBASE BLINDADA -->
     <script>
-        tailwind.config = {
-            theme: { extend: { colors: { uniAzul: '#62A7B4', uniAmarillo: '#EOA342', uniRosado: '#CA5E50', uniNegro: '#000000', uniFondo: '#F9FAFB' }, fontFamily: { poppins: ['Poppins', 'sans-serif'] } } }
-        }
-    </script>
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #F9FAFB; }
-        .bg-pattern { background-color: #62A7B4; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
-    </style>
-</head>
-<body class="text-uniNegro antialiased min-h-screen flex flex-col">
-
-    <!-- AQUI PEGA TU CONFIGURACIÓN DE FIREBASE -->
-    <script>
-        // ⚠️ REEMPLAZA ESTE BLOQUE CON TUS DATOS DE FIREBASE
-        const firebaseConfig = {
-          apiKey: "TU_API_KEY",
-          authDomain: "tu-proyecto.firebaseapp.com",
-          projectId: "tu-proyecto",
-          storageBucket: "tu-proyecto.appspot.com",
-          messagingSenderId: "TUS_NUMEROS",
-          appId: "TU_APP_ID"
-        };
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        let db;
         const ADMIN_EMAIL = 'josearregocesfreyles@gmail.com';
-        
         let currentUser = null;
         let globalSettings = { act1Active: true, act2Active: true, act3Active: true, act4Active: true, act1Link: 'https://instagram.com/uniguajira' };
+
+        try {
+            // ⚠️ RECUERDA PEGAR TUS CLAVES REALES AQUÍ
+            const firebaseConfig = {
+                apiKey: "TU_API_KEY",
+                authDomain: "tu-proyecto.firebaseapp.com",
+                projectId: "tu-proyecto",
+                storageBucket: "tu-proyecto.appspot.com",
+                messagingSenderId: "TUS_NUMEROS",
+                appId: "TU_APP_ID"
+            };
+            
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+
+            // CÓDIGO NUEVO ANTI-BLOQUEOS PARA REDES UNIVERSITARIAS
+            db.settings({
+                experimentalForceLongPolling: true,
+                useFetchStreams: false
+            });
+
+        } catch (error) {
+            window.addEventListener('DOMContentLoaded', () => {
+                const errorBox = document.getElementById('auth-error');
+                if(errorBox) {
+                    errorBox.innerHTML = "🚨 ERROR FATAL AL INICIAR: Pegaste mal las claves... " + error.message;
+                    errorBox.classList.remove('hidden');
+                    errorBox.classList.add('bg-red-600', 'text-white', 'p-4', 'text-sm');
+                }
+                alert("ERROR CRÍTICO: Revisa tu configuración de Firebase en el código HTML.");
+            });
+        }
     </script>
 
     <!-- LOGIN / REGISTRO / RECUPERACIÓN -->
