@@ -32,7 +32,6 @@
         .bg-pattern { background-color: #62A7B4; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(98, 167, 180, 0.1), 0 8px 10px -6px rgba(98, 167, 180, 0.1); }
         
-        /* ANIMACIÓN SUTIL DEL AVIONCITO TRANSPARENTE */
         @keyframes floatPlane {
             0% { transform: translate(0, 0) rotate(0deg); opacity: 0.15; }
             50% { transform: translate(30px, -20px) rotate(5deg); opacity: 0.3; }
@@ -51,16 +50,15 @@
 </head>
 <body class="text-uniNegro antialiased min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <!-- AVIONCITO SUTIL DE FONDO EN LA APP -->
     <svg class="floating-plane hidden md:block" viewBox="0 0 24 24" fill="none" stroke="#EOA342" stroke-width="1.5">
         <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
     </svg>
 
-    <!-- LOGIN / REGISTRO / RECUPERACIÓN -->
-    <div id="auth-container" class="fixed inset-0 z-50 bg-pattern flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white p-8 rounded-3xl card-shadow border-t-8 border-uniAmarillo relative overflow-hidden">
+    <!-- LOGIN / REGISTRO / RECUPERACIÓN (CORREGIDO PARA MOSTRAR SOLO UNO A LA VEZ) -->
+    <div id="auth-container" class="fixed inset-0 z-50 bg-pattern flex items-center justify-center p-4 overflow-y-auto">
+        <div class="max-w-md w-full bg-white p-6 sm:p-8 rounded-3xl card-shadow border-t-8 border-uniAmarillo relative my-auto">
+            
             <div class="text-center mb-6">
-                <!-- LOGO ORI INTEGRADO -->
                 <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-uniAzul text-white mb-2 shadow-md border-2 border-uniAmarillo overflow-hidden p-1">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-white"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 </div>
@@ -70,6 +68,7 @@
             
             <div id="auth-error" class="mb-4 text-xs text-white text-center font-bold bg-uniRosado py-2 px-3 rounded-xl hidden"></div>
 
+            <!-- FORMULARIO LOGIN -->
             <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="text-xs font-bold text-gray-600 mb-1 block">Correo Electrónico</label>
@@ -87,22 +86,42 @@
                 </div>
             </form>
 
+            <!-- FORMULARIO REGISTRO (INICIALMENTE OCULTO) -->
             <form id="form-register" onsubmit="handleRegister(event)" class="space-y-3 hidden">
-                <input type="text" id="reg-name" required placeholder="Nombre Completo" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
-                <input type="email" id="reg-email" required placeholder="Correo Electrónico" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
-                <input type="text" id="reg-program" required placeholder="Programa Académico" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
-                <input type="password" id="reg-password" required placeholder="Crear Contraseña" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
-                <button type="submit" id="btn-register" class="w-full py-3.5 bg-uniAmarillo hover:bg-opacity-90 text-uniNegro font-bold rounded-xl shadow-md transition-all text-sm">Registrarse</button>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 mb-1 block">Nombre Completo</label>
+                    <input type="text" id="reg-name" required placeholder="Tus Nombres y Apellidos" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 mb-1 block">Correo Electrónico</label>
+                    <input type="email" id="reg-email" required placeholder="tu.correo@uniguajira.edu.co" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 mb-1 block">Programa Académico</label>
+                    <input type="text" id="reg-program" required placeholder="Ej: Ingeniería Industrial" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 mb-1 block">Crear Contraseña</label>
+                    <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniAmarillo text-sm">
+                </div>
+                <button type="submit" id="btn-register" class="w-full py-3.5 bg-uniAmarillo hover:bg-opacity-90 text-uniNegro font-bold rounded-xl shadow-md transition-all text-sm mt-2">Registrarse</button>
                 <div class="text-center mt-3 pt-2 border-t border-gray-100">
                     <button type="button" onclick="switchTab('login')" class="text-xs font-bold text-uniAzul hover:underline">← Volver a iniciar sesión</button>
                 </div>
             </form>
 
+            <!-- FORMULARIO RECUPERACIÓN (INICIALMENTE OCULTO) -->
             <form id="form-recover" onsubmit="handleRecover(event)" class="space-y-3 hidden">
                 <p class="text-xs text-gray-500 mb-2 text-center">Ingresa tu correo registrado para definir una nueva contraseña.</p>
-                <input type="email" id="rec-email" required placeholder="Correo Registrado" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniRosado text-sm">
-                <input type="password" id="rec-password" required placeholder="Nueva Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniRosado text-sm">
-                <button type="submit" class="w-full py-3.5 bg-uniRosado hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md transition-all text-sm">Restablecer Contraseña</button>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 mb-1 block">Correo Registrado</label>
+                    <input type="email" id="rec-email" required placeholder="tu.correo@uniguajira.edu.co" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniRosado text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 mb-1 block">Nueva Contraseña</label>
+                    <input type="password" id="rec-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-uniRosado text-sm">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-uniRosado hover:bg-opacity-90 text-white font-bold rounded-xl shadow-md transition-all text-sm mt-2">Restablecer Contraseña</button>
                 <div class="text-center mt-3 pt-2 border-t border-gray-100">
                     <button type="button" onclick="switchTab('login')" class="text-xs font-bold text-uniAzul hover:underline">← Volver a iniciar sesión</button>
                 </div>
@@ -115,7 +134,6 @@
         <header class="bg-uniAzul text-white shadow-md sticky top-0 z-40 border-b-4 border-uniAmarillo">
             <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <!-- LOGO INSTITUCIONAL ORI (DISEÑO OFICIAL) -->
                     <div class="bg-white px-3 py-1.5 rounded-xl shadow border border-uniAmarillo flex items-center gap-2">
                         <div class="flex flex-col">
                             <span class="text-[9px] font-black text-uniRosado uppercase tracking-tighter leading-none">Oficina de Relaciones</span>
@@ -145,7 +163,6 @@
         </nav>
 
         <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
-            <!-- SECCIÓN: ACTIVIDADES -->
             <section id="sec-act" class="space-y-6">
                 <div class="bg-white rounded-2xl p-6 card-shadow border-l-4 border-uniAmarillo flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
@@ -159,7 +176,6 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="activities-container"></div>
             </section>
 
-            <!-- SECCIÓN: RANKING -->
             <section id="sec-rank" class="space-y-6 hidden">
                 <div class="bg-white rounded-2xl card-shadow overflow-hidden border border-gray-100">
                     <div class="p-5 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
@@ -178,7 +194,6 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN: PERFIL -->
             <section id="sec-prof" class="space-y-6 hidden">
                 <div class="bg-white rounded-3xl card-shadow p-8 border border-gray-100 flex flex-col md:flex-row items-center gap-6 max-w-2xl mx-auto">
                     <div class="w-24 h-24 rounded-2xl bg-uniAzul text-white text-4xl font-extrabold flex items-center justify-center shadow-md border-2 border-uniAmarillo" id="p-avatar">U</div>
@@ -192,7 +207,6 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN: MATRIZ ADMIN -->
             <section id="sec-admin" class="space-y-6 hidden">
                 <div class="bg-uniNegro text-white p-6 rounded-2xl card-shadow border-t-4 border-uniRosado">
                     <h2 class="text-2xl font-extrabold text-uniRosado">Panel de Control Matriz ORI</h2>
