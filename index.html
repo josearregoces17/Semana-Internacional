@@ -7,45 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-  <!-- INICIO DE CONFIGURACIÓN FIREBASE BLINDADA -->
+    <!-- LIBRERÍAS DE FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
     <script>
-        let db;
-        const ADMIN_EMAIL = 'josearregocesfreyles@gmail.com';
-        let currentUser = null;
-        let globalSettings = { act1Active: true, act2Active: true, act3Active: true, act4Active: true, act1Link: 'https://instagram.com/uniguajira' };
-
-        try {
-            // ⚠️ RECUERDA PEGAR TUS CLAVES REALES AQUÍ
-            const firebaseConfig = {
-                apiKey: "admin123",
-                authDomain: "tu-proyecto.firebaseapp.com",
-                projectId: "tu-proyecto",
-                storageBucket: "tu-proyecto.appspot.com",
-                messagingSenderId: "TUS_NUMEROS",
-                appId: "TU_APP_ID"
-            };
-            
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
-
-            // CÓDIGO NUEVO ANTI-BLOQUEOS PARA REDES UNIVERSITARIAS
-            db.settings({
-                experimentalForceLongPolling: true,
-                useFetchStreams: false
-            });
-
-        } catch (error) {
-            window.addEventListener('DOMContentLoaded', () => {
-                const errorBox = document.getElementById('auth-error');
-                if(errorBox) {
-                    errorBox.innerHTML = "🚨 ERROR FATAL AL INICIAR: Pegaste mal las claves... " + error.message;
-                    errorBox.classList.remove('hidden');
-                    errorBox.classList.add('bg-red-600', 'text-white', 'p-4', 'text-sm');
-                }
-                alert("ERROR CRÍTICO: Revisa tu configuración de Firebase en el código HTML.");
-            });
+        tailwind.config = {
+            theme: { extend: { colors: { uniAzul: '#62A7B4', uniAmarillo: '#EOA342', uniRosado: '#CA5E50', uniNegro: '#000000', uniFondo: '#F9FAFB' }, fontFamily: { poppins: ['Poppins', 'sans-serif'] } } }
         }
     </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #F9FAFB; }
+        .bg-pattern { background-color: #62A7B4; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    </style>
+</head>
+<body class="text-uniNegro antialiased min-h-screen flex flex-col">
 
     <!-- LOGIN / REGISTRO / RECUPERACIÓN -->
     <div id="auth-container" class="fixed inset-0 z-50 bg-pattern flex items-center justify-center p-4">
@@ -56,7 +32,6 @@
                 <p class="text-sm text-gray-500 mt-2">Semana Internacional 2026</p>
             </div>
             
-            <!-- CONTENEDOR DE ERRORES -->
             <div id="auth-error" class="mb-4 text-xs text-uniRosado text-center font-bold bg-red-50 rounded p-2 empty:hidden"></div>
 
             <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
@@ -93,7 +68,7 @@
         </div>
     </div>
 
-    <!-- APP PRINCIPAL (Oculta hasta iniciar sesión) -->
+    <!-- APP PRINCIPAL -->
     <div id="app-container" class="hidden flex-col min-h-screen">
         <header class="bg-uniAzul text-white shadow-md sticky top-0 z-40 border-b-4 border-uniAmarillo">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -127,9 +102,7 @@
                     <h2 class="text-2xl font-extrabold text-uniNegro">Retos Activos</h2>
                     <p class="text-sm text-gray-500">Participa en las actividades habilitadas por la ORI para sumar puntos.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="activities-container">
-                    <!-- Dinámico -->
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="activities-container"></div>
             </section>
 
             <!-- SECCIÓN: RANKING -->
@@ -166,44 +139,216 @@
                     <h2 class="text-2xl font-extrabold text-uniRosado">Panel de Control Matriz</h2>
                     <p class="text-sm text-gray-400">Gestión total de actividades, validaciones y tiempos.</p>
                 </div>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4" id="admin-controls">
-                    <!-- Dinámico -->
-                </div>
-
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4" id="admin-controls"></div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
                     <h3 class="font-bold text-lg border-b pb-2">Validación Manual (Actividad 3)</h3>
-                    <div id="admin-validations" class="space-y-3">
-                        <!-- Dinámico -->
-                    </div>
+                    <div id="admin-validations" class="space-y-3"></div>
                 </div>
             </section>
         </main>
     </div>
 
+    <!-- LÓGICA PRINCIPAL Y CONEXIÓN A FIREBASE -->
     <script>
+        let db;
+        const ADMIN_EMAIL = 'josearregocesfreyles@gmail.com';
+        let currentUser = null;
+        let globalSettings = { act1Active: true, act2Active: true, act3Active: true, act4Active: true, act1Link: 'https://instagram.com/uniguajira' };
+
+        // CONFIGURACIÓN EXACTA DE TU FIREBASE
+        try {
+            const firebaseConfig = {
+              apiKey: "AIzaSyDlrdS1CZFZGJbMFoOvL9cpNjNfYIQLdo4",
+              authDomain: "semana-internacional-7280d.firebaseapp.com",
+              projectId: "semana-internacional-7280d",
+              storageBucket: "semana-internacional-7280d.firebasestorage.app",
+              messagingSenderId: "1049667429914",
+              appId: "1:1049667429914:web:2a168f5d1669d76f8d93a3"
+            };
+            
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+
+            // Código anti-bloqueos para redes universitarias
+            db.settings({
+                experimentalForceLongPolling: true,
+                useFetchStreams: false
+            });
+        } catch (error) {
+            console.error("Error Firebase:", error);
+            window.addEventListener('DOMContentLoaded', () => {
+                const errBox = document.getElementById('auth-error');
+                if(errBox) { errBox.innerText = "Error inicializando base de datos."; errBox.classList.remove('hidden'); }
+            });
+        }
+
+        // NAVEGACIÓN Y TABS
         function switchTab(t) {
             document.getElementById('form-login').classList.toggle('hidden', t !== 'login');
             document.getElementById('form-register').classList.toggle('hidden', t !== 'register');
             document.getElementById('form-recover').classList.toggle('hidden', t !== 'recover');
             document.getElementById('auth-error').innerText = '';
+            document.getElementById('auth-error').classList.add('hidden');
         }
 
-        async function updateUserAct(pts, fieldsObject) {
-            fieldsObject.lastTime = Date.now();
-            if (pts > 0) {
-                fieldsObject.points = firebase.firestore.FieldValue.increment(pts);
-            }
+        function switchSec(s) {
+            const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+            if (s === 'admin' && !isAdmin) return;
+            
+            ['act','rank','prof','admin'].forEach(x => {
+                const el = document.getElementById('sec-'+x);
+                const nav = document.getElementById('nav-'+x);
+                if(el) el.classList.add('hidden');
+                if(nav) nav.className = 'py-3 text-sm font-bold text-gray-500 whitespace-nowrap transition-all' + (x === 'admin' && !isAdmin ? ' hidden' : '');
+            });
+            
+            document.getElementById('sec-'+s).classList.remove('hidden');
+            const activeNav = document.getElementById('nav-'+s);
+            if (activeNav) activeNav.className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap transition-all';
+        }
+
+        // FUNCIONES DE AUTENTICACIÓN
+        async function handleRegister(e) {
+            e.preventDefault();
+            const errorBox = document.getElementById('auth-error');
+            errorBox.classList.remove('hidden');
+            errorBox.innerText = 'Conectando con el servidor...';
+            const btn = document.getElementById('btn-register');
+            btn.disabled = true;
+            
             try {
-                await db.collection('users').doc(currentUser.email).update(fieldsObject);
-                if (pts > 0) alert(`¡Felicidades! Has sumado ${pts} puntos.`);
+                const em = document.getElementById('reg-email').value.toLowerCase().trim();
+                const docRef = db.collection('users').doc(em);
+                const doc = await docRef.get();
+                
+                if(doc.exists) {
+                    btn.disabled = false;
+                    errorBox.innerText = 'El correo ya se encuentra registrado.';
+                    return;
+                }
+                
+                const newUser = {
+                    email: em, name: document.getElementById('reg-name').value, program: document.getElementById('reg-program').value,
+                    password: btoa(document.getElementById('reg-password').value), points: 0, lastTime: Date.now(),
+                    act1: false, act2: [false,false,false,false,false], act3: false, act4: []
+                };
+                
+                await docRef.set(newUser);
+                currentUser = newUser;
+                localStorage.setItem('uni_email', em); 
+                showApp();
             } catch (error) {
-                console.error("Error actualizando puntos:", error);
-                alert("Error de conexión al guardar los puntos.");
+                btn.disabled = false;
+                errorBox.innerText = 'Error de conexión. Verifica que tienes internet.';
             }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const errorBox = document.getElementById('auth-error');
+            errorBox.classList.remove('hidden');
+            errorBox.innerText = 'Conectando...';
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true;
+            
+            try {
+                const em = document.getElementById('login-email').value.toLowerCase().trim();
+                const pw = btoa(document.getElementById('login-password').value);
+                
+                // Creación automática del Admin
+                if(em === ADMIN_EMAIL) {
+                    const adminDoc = await db.collection('users').doc(em).get();
+                    if(!adminDoc.exists) {
+                        await db.collection('users').doc(em).set({
+                            email: ADMIN_EMAIL, name: 'MATRIZ ORI', program: 'Admin', password: btoa('admin123'), points: 0, lastTime: Date.now(), act1: false, act2: [false,false,false,false,false], act3: false, act4: []
+                        });
+                    }
+                }
+
+                const docRef = db.collection('users').doc(em);
+                const doc = await docRef.get();
+                
+                if(!doc.exists || doc.data().password !== pw) {
+                    btn.disabled = false;
+                    errorBox.innerText = 'Credenciales inválidas.';
+                    return;
+                }
+                
+                currentUser = doc.data();
+                localStorage.setItem('uni_email', em);
+                showApp();
+            } catch (error) {
+                btn.disabled = false;
+                errorBox.innerText = 'Error de red. Intenta nuevamente.';
+            }
+        }
+
+        async function handleRecover(e) {
+            e.preventDefault();
+            const errorBox = document.getElementById('auth-error');
+            errorBox.classList.remove('hidden');
+            
+            try {
+                const em = document.getElementById('rec-email').value.toLowerCase().trim();
+                const np = document.getElementById('rec-password').value;
+                const docRef = db.collection('users').doc(em);
+                const doc = await docRef.get();
+                
+                if(!doc.exists) {
+                    errorBox.innerText = 'El correo no está registrado en el sistema.';
+                    return;
+                }
+                
+                await docRef.update({ password: btoa(np) });
+                alert('¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.');
+                switchTab('login');
+            } catch(error) {
+                errorBox.innerText = 'Error actualizando contraseña.';
+            }
+        }
+
+        async function autoLogin() {
+            if(!db) return; // Si firebase falló, no intentar
+            const savedEmail = localStorage.getItem('uni_email');
+            if(savedEmail) {
+                try {
+                    const doc = await db.collection('users').doc(savedEmail).get();
+                    if(doc.exists) {
+                        currentUser = doc.data();
+                        showApp();
+                    } else {
+                        localStorage.removeItem('uni_email');
+                    }
+                } catch(error) {
+                    console.error("Autologin falló", error);
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('uni_email');
+            window.location.reload();
+        }
+
+        // INICIALIZACIÓN DE LA APLICACIÓN Y ESCUCHADORES REAL-TIME
+        function showApp() {
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('flex');
+            
+            const isAdmin = currentUser.email === ADMIN_EMAIL;
+            document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
+            document.getElementById('admin-badge').innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-xs px-2 py-1 font-bold rounded shadow-sm">MATRIZ</span>' : '';
+            
+            document.getElementById('p-name').innerText = currentUser.name;
+            document.getElementById('p-prog').innerText = currentUser.program;
+            document.getElementById('p-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
+            
+            initRealtimeListeners();
         }
 
         function initRealtimeListeners() {
+            // Escuchar configuración global (Actividades activas)
             db.collection('config').doc('global').onSnapshot(doc => {
                 if (doc.exists) {
                     globalSettings = doc.data();
@@ -212,18 +357,18 @@
                 } else {
                     db.collection('config').doc('global').set(globalSettings);
                 }
-            }, err => console.error("Error leyendo config:", err));
+            });
 
-            if(currentUser) {
-                db.collection('users').doc(currentUser.email).onSnapshot(doc => {
-                    if (doc.exists) {
-                        currentUser = doc.data();
-                        document.getElementById('p-points').innerText = currentUser.points;
-                        renderActivities();
-                    }
-                });
-            }
+            // Escuchar cambios en los puntos del usuario activo
+            db.collection('users').doc(currentUser.email).onSnapshot(doc => {
+                if (doc.exists) {
+                    currentUser = doc.data();
+                    document.getElementById('p-points').innerText = currentUser.points;
+                    renderActivities();
+                }
+            });
 
+            // Escuchar cambios en el ranking general
             db.collection('users').orderBy('points', 'desc').orderBy('lastTime', 'asc').onSnapshot(snapshot => {
                 let html = '';
                 let rank = 1;
@@ -244,7 +389,8 @@
                 document.getElementById('ranking-body').innerHTML = html;
             });
 
-            if (currentUser && currentUser.email === ADMIN_EMAIL) {
+            // Escuchar validaciones pendientes (Sólo Matriz)
+            if (currentUser.email === ADMIN_EMAIL) {
                 db.collection('subsAct3').where('status', '==', 'pending').onSnapshot(snap => {
                     let html = '';
                     if (snap.empty) {
@@ -257,11 +403,11 @@
                             <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-col md:flex-row justify-between items-center gap-4 mb-3">
                                 <div>
                                     <p class="font-bold text-sm text-uniAzul">${s.name}</p>
-                                    <a href="${s.link}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800 underline">Abrir Evidencia Adjunta</a>
+                                    <a href="${s.link}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800 underline break-all">${s.link}</a>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <input type="number" id="pts-${id}" min="0" max="7" value="7" class="w-16 p-1 border border-gray-300 rounded text-sm text-center focus:ring-1 focus:ring-uniAzul outline-none" title="Puntos base (max 7)">
-                                    <label class="text-xs flex items-center gap-1 font-bold text-gray-600"><input type="checkbox" id="bon-${id}"> +1 pt Clave</label>
+                                    <input type="number" id="pts-${id}" min="0" max="7" value="7" class="w-16 p-1 border border-gray-300 rounded text-sm text-center outline-none">
+                                    <label class="text-xs flex items-center gap-1 font-bold text-gray-600"><input type="checkbox" id="bon-${id}"> +1 Clave</label>
                                     <button onclick="approveAct3('${id}', '${s.email}')" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold shadow-sm hover:bg-green-700 transition-all">Aprobar</button>
                                 </div>
                             </div>`;
@@ -272,291 +418,143 @@
             }
         }
 
-        async function handleRegister(e) {
-            e.preventDefault();
-            document.getElementById('auth-error').innerText = 'Conectando con el servidor...';
-            const btn = document.getElementById('btn-register');
-            btn.disabled = true;
-            
+        async function updateUserAct(pts, fieldsObject) {
+            fieldsObject.lastTime = Date.now();
+            if (pts > 0) { fieldsObject.points = firebase.firestore.FieldValue.increment(pts); }
             try {
-                const em = document.getElementById('reg-email').value.toLowerCase().trim();
-                const docRef = db.collection('users').doc(em);
-                const doc = await docRef.get();
-                
-                if(doc.exists) {
-                    btn.disabled = false;
-                    return document.getElementById('auth-error').innerText = 'El correo ya se encuentra registrado.';
-                }
-                
-                const newUser = {
-                    email: em, name: document.getElementById('reg-name').value, program: document.getElementById('reg-program').value,
-                    password: btoa(document.getElementById('reg-password').value), points: 0, lastTime: Date.now(),
-                    act1: false, act2: [false,false,false,false,false], act3: false, act4: []
-                };
-                
-                await docRef.set(newUser);
-                currentUser = newUser;
-                localStorage.setItem('uni_email', em); 
-                showApp();
+                await db.collection('users').doc(currentUser.email).update(fieldsObject);
+                if (pts > 0) alert(`¡Felicidades! Has sumado ${pts} puntos.`);
             } catch (error) {
-                btn.disabled = false;
-                console.error("Error registro:", error);
-                document.getElementById('auth-error').innerText = 'Error de conexión con la base de datos: ' + error.message;
+                alert("Error de conexión al guardar los puntos.");
             }
         }
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            document.getElementById('auth-error').innerText = 'Conectando...';
-            const btn = document.getElementById('btn-login');
-            btn.disabled = true;
-            
-            try {
-                const em = document.getElementById('login-email').value.toLowerCase().trim();
-                const pw = btoa(document.getElementById('login-password').value);
-                
-                if(em === ADMIN_EMAIL) {
-                    const adminDoc = await db.collection('users').doc(em).get();
-                    if(!adminDoc.exists) {
-                        await db.collection('users').doc(em).set({
-                            email: ADMIN_EMAIL, name: 'MATRIZ ORI', program: 'Admin', password: btoa('admin123'), points: 0, lastTime: Date.now(), act1: false, act2: [false,false,false,false,false], act3: false, act4: []
-                        });
-                    }
-                }
-
-                const docRef = db.collection('users').doc(em);
-                const doc = await docRef.get();
-                
-                if(!doc.exists || doc.data().password !== pw) {
-                    btn.disabled = false;
-                    return document.getElementById('auth-error').innerText = 'Credenciales inválidas.';
-                }
-                
-                currentUser = doc.data();
-                localStorage.setItem('uni_email', em);
-                showApp();
-            } catch (error) {
-                btn.disabled = false;
-                console.error("Error login:", error);
-                document.getElementById('auth-error').innerText = 'Error de conexión: Verifica las reglas de Firestore.';
-            }
-        }
-
-        async function handleRecover(e) {
-            e.preventDefault();
-            try {
-                const em = document.getElementById('rec-email').value.toLowerCase().trim();
-                const np = document.getElementById('rec-password').value;
-                const docRef = db.collection('users').doc(em);
-                const doc = await docRef.get();
-                
-                if(!doc.exists) return document.getElementById('auth-error').innerText = 'El correo no está registrado en el sistema.';
-                
-                await docRef.update({ password: btoa(np) });
-                alert('¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.');
-                switchTab('login');
-            } catch(error) {
-                document.getElementById('auth-error').innerText = 'Error: ' + error.message;
-            }
-        }
-
-        async function autoLogin() {
-            const savedEmail = localStorage.getItem('uni_email');
-            if(savedEmail) {
-                try {
-                    const doc = await db.collection('users').doc(savedEmail).get();
-                    if(doc.exists) {
-                        currentUser = doc.data();
-                        showApp();
-                    } else {
-                        localStorage.removeItem('uni_email');
-                    }
-                } catch(error) {
-                    console.error("Error autologin:", error);
-                }
-            }
-        }
-
-        function showApp() {
-            document.getElementById('auth-container').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-            document.getElementById('app-container').classList.add('flex');
-            
-            const isAdmin = currentUser.email === ADMIN_EMAIL;
-            document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
-            document.getElementById('admin-badge').innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-xs px-2 py-1 font-bold rounded shadow-sm">MATRIZ</span>' : '';
-            
-            document.getElementById('p-name').innerText = currentUser.name;
-            document.getElementById('p-prog').innerText = currentUser.program;
-            document.getElementById('p-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
-            
-            initRealtimeListeners();
-        }
-
-        function logout() {
-            localStorage.removeItem('uni_email');
-            window.location.reload();
-        }
-
-        function switchSec(s) {
-            const isAdmin = currentUser.email === ADMIN_EMAIL;
-            if (s === 'admin' && !isAdmin) return;
-            
-            ['act','rank','prof','admin'].forEach(x => {
-                const el = document.getElementById('sec-'+x);
-                const nav = document.getElementById('nav-'+x);
-                if(el) el.classList.add('hidden');
-                if(nav) nav.className = 'py-3 text-sm font-bold text-gray-500 whitespace-nowrap transition-all' + (x === 'admin' && !isAdmin ? ' hidden' : '');
-            });
-            
-            document.getElementById('sec-'+s).classList.remove('hidden');
-            const activeNav = document.getElementById('nav-'+s);
-            if (activeNav) activeNav.className = 'py-3 text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap transition-all';
-        }
-
+        // RENDERIZADO Y LÓGICA DE ACTIVIDADES
         function renderActivities() {
             const cont = document.getElementById('activities-container');
             let html = '';
-            let hasActiveActivities = false;
+            let activeCount = 0;
 
             if(globalSettings.act1Active) {
-                hasActiveActivities = true;
+                activeCount++;
                 let inner = currentUser.act1 
                     ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded-xl border border-green-200">✅ Completado (5 pts)</div>` 
-                    : `<input type="text" id="a1-link" placeholder="Pega el link aquí..." class="w-full p-3 text-sm border border-gray-200 rounded-xl mb-3 focus:ring-2 focus:ring-uniAzul outline-none">
-                       <button onclick="checkAct1()" class="w-full bg-uniAzul text-white py-3 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-all shadow-md">Validar Link</button>`;
+                    : `<input type="text" id="a1-link" placeholder="Pega el link exacto aquí..." class="w-full p-3 text-sm border border-gray-200 rounded-xl mb-3 outline-none focus:ring-2 focus:ring-uniAzul">
+                       <button onclick="checkAct1()" class="w-full bg-uniAzul text-white py-3 rounded-xl font-bold text-sm hover:bg-opacity-90 shadow-md">Validar Link</button>`;
                 html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 1: Adivina la publicación</h3><p class="text-xs text-gray-500">Encuentra la publicación exacta de Instagram que configuró la ORI.</p></div>${inner}</div>`;
             }
 
             if(globalSettings.act2Active) {
-                hasActiveActivities = true;
+                activeCount++;
                 let inner = `<div class="space-y-4">`;
                 const q = [
-                    { id: 0, t: '1. Política de Internacionalización (No. y Año)', in: `<input type="text" id="a2-q0" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul" placeholder="Ej: 000 de 2020">` },
-                    { id: 1, t: '2. ¿Cuántos objetivos tiene y cuál empieza por "Promover"?', in: `<input type="text" id="a2-q1" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul" placeholder="Respuesta completa">` },
-                    { id: 2, t: '3. Un estudiante de Uniguajira a México es:', in: `<select id="a2-q2" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
-                    { id: 3, t: '4. Profesor de Barranquilla a Uniguajira es:', in: `<select id="a2-q3" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul"><option value="">Seleccione...</option><option value="A">Movilidad internacional entrante</option><option value="B">Movilidad nacional saliente</option><option value="C">Movilidad internacional saliente</option><option value="D">Movilidad nacional entrante</option></select>` },
-                    { id: 4, t: '5. Nombre de la mascota de la ORI 🐶:', in: `<input type="text" id="a2-q4" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul" placeholder="Nombre...">` }
+                    { id: 0, t: '1. Política de Internacionalización (No. y Año)', ph: 'Ej: 000 de 2020' },
+                    { id: 1, t: '2. ¿Cuántos objetivos tiene y cuál empieza por "Promover"?', ph: 'Respuesta' },
+                    { id: 2, t: '3. Un estudiante de Uniguajira a México es:', opts: ['A|Movilidad internacional entrante', 'B|Movilidad nacional saliente', 'C|Movilidad internacional saliente', 'D|Movilidad nacional entrante'] },
+                    { id: 3, t: '4. Profesor de Barranquilla a Uniguajira es:', opts: ['A|Movilidad internacional entrante', 'B|Movilidad nacional saliente', 'C|Movilidad internacional saliente', 'D|Movilidad nacional entrante'] },
+                    { id: 4, t: '5. Nombre de la mascota de la ORI 🐶:', ph: 'Nombre...' }
                 ];
+                
                 q.forEach(i => {
+                    let inputHtml = '';
+                    if(i.opts) {
+                        inputHtml = `<select id="a2-q${i.id}" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul"><option value="">Seleccione...</option>` + i.opts.map(o => { let p = o.split('|'); return `<option value="${p[0]}">${p[1]}</option>` }).join('') + `</select>`;
+                    } else {
+                        inputHtml = `<input type="text" id="a2-q${i.id}" placeholder="${i.ph}" class="w-full p-2 border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-uniAzul">`;
+                    }
                     inner += `<div><label class="text-xs font-bold text-gray-700 block mb-1">${i.t}</label>
-                    ${currentUser.act2[i.id] ? '<span class="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded">✅ Correcto (+1 pt)</span>' : i.in}</div>`;
+                    ${currentUser.act2[i.id] ? '<span class="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded border border-green-200">✅ Correcto (+1 pt)</span>' : inputHtml}</div>`;
                 });
-                inner += currentUser.act2.every(x=>x) ? '' : `<button onclick="checkAct2()" class="w-full bg-uniAzul text-white py-3 rounded-xl font-bold text-sm mt-3 hover:bg-opacity-90 transition-all shadow-md">Enviar Respuestas</button>`;
-                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 2: Preguntas</h3><p class="text-xs text-gray-500">Cada respuesta correcta suma 1 punto.</p></div>${inner}</div></div>`;
+                
+                inner += currentUser.act2.every(x=>x) ? '' : `<button onclick="checkAct2()" class="w-full bg-uniAzul text-white py-3 rounded-xl font-bold text-sm mt-3 hover:bg-opacity-90 shadow-md">Enviar Respuestas</button>`;
+                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 2: Preguntas</h3><p class="text-xs text-gray-500">Cada respuesta correcta suma 1 punto al instante.</p></div>${inner}</div></div>`;
             }
 
             if(globalSettings.act3Active) {
-                hasActiveActivities = true;
+                activeCount++;
                 let inner = '';
                 if(currentUser.act3 === 'approved') inner = `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded-xl border border-green-200">✅ Evaluado y Aprobado</div>`;
                 else if(currentUser.act3 === 'pending') inner = `<div class="p-3 bg-yellow-50 text-yellow-700 font-bold text-sm rounded-xl border border-yellow-200">⏳ En revisión por Matriz ORI</div>`;
                 else {
-                    inner = `<input type="text" id="a3-link" placeholder="Link de tu video/historia..." class="w-full p-3 text-sm border border-gray-200 rounded-xl mb-3 outline-none focus:ring-2 focus:ring-uniRosado">
-                     <button onclick="submitAct3()" class="w-full bg-uniRosado text-white py-3 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-all shadow-md">Enviar a Revisión (Máx 8 pts)</button>`;
+                    inner = `<input type="url" id="a3-link" placeholder="Link de tu video/historia..." class="w-full p-3 text-sm border border-gray-200 rounded-xl mb-3 outline-none focus:ring-2 focus:ring-uniRosado">
+                     <button onclick="submitAct3()" class="w-full bg-uniRosado text-white py-3 rounded-xl font-bold text-sm hover:bg-opacity-90 shadow-md">Enviar a Revisión (Máx 8 pts)</button>`;
                 }
-                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 3: Historia Internacional</h3><p class="text-xs text-gray-500">Tómate una foto con un souvenir en la oficina. Pega aquí el link de tu historia/video. La ORI la evaluará manualmente.</p></div>${inner}</div>`;
+                html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 3: Historia Internacional</h3><p class="text-xs text-gray-500">Pega el link de tu historia/video en la oficina. La ORI evaluará y asignará tus puntos.</p></div>${inner}</div>`;
             }
 
             if(globalSettings.act4Active) {
-                hasActiveActivities = true;
+                activeCount++;
                 let found = currentUser.act4.length;
                 let inner = found >= 10 ? `<div class="p-3 bg-green-50 text-green-700 font-bold text-sm rounded-xl border border-green-200">✅ Has encontrado las 10 palabras (50 pts)</div>` :
-                    `<div class="flex gap-2 mb-3"><input type="text" id="a4-word" placeholder="Ingresa palabra oculta..." class="flex-1 p-3 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-uniAmarillo"><button onclick="checkAct4()" class="bg-uniAmarillo text-uniNegro px-5 py-3 rounded-xl font-bold text-sm shadow-md transition-all hover:scale-105">Validar</button></div>`;
+                    `<div class="flex gap-2 mb-3"><input type="text" id="a4-word" placeholder="Ingresa palabra oculta..." class="flex-1 p-3 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-uniAmarillo"><button onclick="checkAct4()" class="bg-uniAmarillo text-uniNegro px-5 py-3 rounded-xl font-bold text-sm shadow-md hover:scale-105 transition-all">Validar</button></div>`;
                 inner += `<div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-xs font-bold text-gray-700 mb-1">Palabras Encontradas (${found}/10):</p><p class="text-xs text-gray-500">${currentUser.act4.join(', ') || 'Aún no has encontrado ninguna.'}</p></div>`;
                 html += `<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"><div class="mb-4"><h3 class="font-extrabold text-uniAzul text-lg mb-1">Actividad 4: Palabras Ocultas</h3><p class="text-xs text-gray-500">Encuentra los paquetes de letras en el campus. Cada palabra correcta te suma 5 pts.</p></div>${inner}</div>`;
             }
 
-            if (!hasActiveActivities) {
+            if (activeCount === 0) {
                 html = `<div class="col-span-1 md:col-span-2 text-center py-12 px-4 bg-white rounded-2xl shadow-sm border border-gray-100">
-                    <span class="text-4xl">⏳</span>
-                    <h3 class="text-lg font-bold text-uniAzul mt-4">Actualmente no hay retos activos</h3>
-                    <p class="text-sm text-gray-500 mt-2">La Oficina de Relaciones Internacionales habilitará nuevas actividades pronto. ¡Mantente atento!</p>
-                </div>`;
+                    <span class="text-4xl">⏳</span><h3 class="text-lg font-bold text-uniAzul mt-4">Actualmente no hay retos activos</h3>
+                    <p class="text-sm text-gray-500 mt-2">La ORI habilitará nuevas actividades pronto.</p></div>`;
             }
             cont.innerHTML = html;
         }
 
         async function checkAct1() {
             const v = document.getElementById('a1-link').value.trim();
-            if (v === globalSettings.act1Link) {
-                await updateUserAct(5, { act1: true });
-            } else {
-                alert('El link es incorrecto. ¡Sigue buscando en nuestro perfil!');
-            }
+            if (v === globalSettings.act1Link) await updateUserAct(5, { act1: true });
+            else alert('El link es incorrecto. ¡Sigue buscando!');
         }
 
         async function checkAct2() {
             let pts = 0;
-            let currentResp = [...currentUser.act2];
+            let cr = [...currentUser.act2];
             
-            if(!currentResp[0]) { let v = document.getElementById('a2-q0').value.toLowerCase(); if(v.includes('018') && v.includes('2023')) { currentResp[0] = true; pts++; } }
-            if(!currentResp[1]) { let v = document.getElementById('a2-q1').value.toLowerCase(); if((v.includes('3')||v.includes('tres')) && v.includes('promover') && v.includes('institucional')) { currentResp[1] = true; pts++; } }
-            if(!currentResp[2]) { let v = document.getElementById('a2-q2').value; if(v === 'C') { currentResp[2] = true; pts++; } }
-            if(!currentResp[3]) { let v = document.getElementById('a2-q3').value; if(v === 'D') { currentResp[3] = true; pts++; } }
-            if(!currentResp[4]) { let v = document.getElementById('a2-q4').value.toLowerCase(); if(v.includes('shakira')) { currentResp[4] = true; pts++; } }
+            if(!cr[0]) { let v = document.getElementById('a2-q0').value.toLowerCase(); if(v.includes('018') && v.includes('2023')) { cr[0] = true; pts++; } }
+            if(!cr[1]) { let v = document.getElementById('a2-q1').value.toLowerCase(); if((v.includes('3')||v.includes('tres')) && v.includes('promover') && v.includes('institucional')) { cr[1] = true; pts++; } }
+            if(!cr[2]) { let v = document.getElementById('a2-q2').value; if(v === 'C') { cr[2] = true; pts++; } }
+            if(!cr[3]) { let v = document.getElementById('a2-q3').value; if(v === 'D') { cr[3] = true; pts++; } }
+            if(!cr[4]) { let v = document.getElementById('a2-q4').value.toLowerCase(); if(v.includes('shakira')) { cr[4] = true; pts++; } }
             
-            if (pts > 0) {
-                await updateUserAct(pts, { act2: currentResp });
-            } else {
-                alert('No hubo respuestas correctas nuevas. Revisa bien la información e intenta de nuevo.');
-            }
+            if (pts > 0) await updateUserAct(pts, { act2: cr });
+            else alert('No hubo respuestas correctas nuevas. Revisa bien e intenta de nuevo.');
         }
 
         async function submitAct3() {
             const v = document.getElementById('a3-link').value.trim();
-            if(!v) return alert('Por favor, ingresa el link de tu historia o video.');
-            
+            if(!v) return alert('Por favor, ingresa un link.');
             await updateUserAct(0, { act3: 'pending' });
-            
-            try {
-                await db.collection('subsAct3').add({
-                    email: currentUser.email,
-                    name: currentUser.name,
-                    link: v,
-                    status: 'pending',
-                    date: Date.now()
-                });
-                alert('¡Evidencia enviada con éxito! La ORI la revisará pronto.');
-            } catch(e) {
-                console.error(e);
-                alert('Error enviando evidencia.');
-            }
+            await db.collection('subsAct3').add({ email: currentUser.email, name: currentUser.name, link: v, status: 'pending', date: Date.now() });
+            alert('¡Evidencia enviada! La ORI la revisará pronto.');
         }
 
         async function checkAct4() {
-            const validWords = ['transnacional', 'cosmopolitismo', 'extranjería', 'arancel', 'aduana', 'protocolo', 'mercado', 'negociación', 'visado', 'frontera'];
+            const words = ['transnacional', 'cosmopolitismo', 'extranjería', 'arancel', 'aduana', 'protocolo', 'mercado', 'negociación', 'visado', 'frontera'];
             const v = document.getElementById('a4-word').value.toLowerCase().trim();
             document.getElementById('a4-word').value = ''; 
             
-            if (validWords.includes(v)) {
-                let currentWords = [...currentUser.act4];
-                if (!currentWords.includes(v)) {
-                    currentWords.push(v);
-                    await updateUserAct(5, { act4: currentWords });
-                } else {
-                    alert('Ya habías registrado esa palabra. ¡Busca las demás!');
-                }
-            } else {
-                alert('Esa no es una de las palabras ocultas. Sigue buscando.');
-            }
+            if (words.includes(v)) {
+                let cw = [...currentUser.act4];
+                if (!cw.includes(v)) { cw.push(v); await updateUserAct(5, { act4: cw }); }
+                else alert('Ya habías registrado esa palabra.');
+            } else alert('Esa no es una de las palabras ocultas.');
         }
 
+        // PANEL DE ADMINISTRACIÓN
         function renderAdmin() {
             const cont = document.getElementById('admin-controls');
-            let html = '<h3 class="font-bold border-b pb-2 mb-4 text-lg">Activación y Configuración</h3>';
+            let html = '<h3 class="font-bold border-b pb-2 mb-4 text-lg">Interruptores y Configuración</h3>';
             
             const a1 = globalSettings.act1Active;
             html += `
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-gray-50 rounded-xl mb-4 border border-gray-200">
+            <div class="flex flex-col md:flex-row gap-4 p-4 bg-gray-50 rounded-xl mb-4 border border-gray-200">
                 <div class="flex-1 w-full">
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-bold text-gray-700">Actividad 1: Adivina la publicación</span>
-                        <button onclick="toggleActCloud(1)" class="px-4 py-1 text-white text-xs font-bold rounded-lg shadow-sm transition-all ${a1 ? 'bg-uniRosado' : 'bg-uniAzul'}">${a1 ? 'DESACTIVAR' : 'ACTIVAR'}</button>
+                        <button onclick="toggleActCloud(1)" class="px-4 py-1 text-white text-xs font-bold rounded shadow-sm ${a1 ? 'bg-uniRosado' : 'bg-uniAzul'}">${a1 ? 'DESACTIVAR' : 'ACTIVAR'}</button>
                     </div>
                     <div class="flex gap-2">
-                        <input type="text" id="admin-act1-link" value="${globalSettings.act1Link}" placeholder="Link de Instagram Objetivo..." class="w-full p-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-uniAzul">
-                        <button onclick="saveAct1Link()" class="text-xs bg-uniAzul text-white px-4 py-2 rounded-lg font-bold hover:bg-opacity-90 shadow-sm whitespace-nowrap">Guardar Link</button>
+                        <input type="text" id="admin-act1-link" value="${globalSettings.act1Link}" placeholder="Link objetivo..." class="w-full p-2 text-sm border border-gray-300 rounded outline-none">
+                        <button onclick="saveAct1Link()" class="text-xs bg-uniAzul text-white px-4 py-2 rounded font-bold shadow-sm">Guardar Link</button>
                     </div>
                 </div>
             </div>`;
@@ -566,49 +564,33 @@
                 const titles = {2: 'Preguntas de Internacionalización', 3: 'Historia Internacional (Manual)', 4: 'Palabras Ocultas'};
                 html += `<div class="flex justify-between items-center p-4 bg-gray-50 mb-3 rounded-xl border border-gray-200">
                     <span class="font-bold text-sm text-gray-700">Actividad ${i}: ${titles[i]}</span>
-                    <button onclick="toggleActCloud(${i})" class="px-4 py-1 text-white text-xs font-bold rounded-lg shadow-sm transition-all ${a ? 'bg-uniRosado' : 'bg-uniAzul'}">${a ? 'DESACTIVAR' : 'ACTIVAR'}</button>
+                    <button onclick="toggleActCloud(${i})" class="px-4 py-1 text-white text-xs font-bold rounded shadow-sm ${a ? 'bg-uniRosado' : 'bg-uniAzul'}">${a ? 'DESACTIVAR' : 'ACTIVAR'}</button>
                 </div>`;
             });
             cont.innerHTML = html;
         }
 
         async function toggleActCloud(i) {
-            const field = 'act'+i+'Active';
-            try {
-                await db.collection('config').doc('global').update({ [field]: !globalSettings[field] });
-            } catch(e) {
-                console.error(e);
-            }
+            await db.collection('config').doc('global').update({ ['act'+i+'Active']: !globalSettings['act'+i+'Active'] });
         }
 
         async function saveAct1Link() {
-            const newLink = document.getElementById('admin-act1-link').value.trim();
-            if(!newLink) return alert('No puedes dejar el link vacío.');
-            try {
-                await db.collection('config').doc('global').update({ act1Link: newLink });
-                alert('Link de Instagram objetivo actualizado con éxito.');
-            } catch(e) {
-                console.error(e);
-            }
+            const nl = document.getElementById('admin-act1-link').value.trim();
+            if(!nl) return alert('Link vacío.');
+            await db.collection('config').doc('global').update({ act1Link: nl });
+            alert('Link actualizado.');
         }
 
         async function approveAct3(docId, userEmail) {
             const basePts = parseInt(document.getElementById('pts-'+docId).value) || 0;
-            const bonus = document.getElementById('bon-'+docId).checked ? 1 : 0;
-            const total = basePts + bonus;
-
+            const total = basePts + (document.getElementById('bon-'+docId).checked ? 1 : 0);
             try {
                 await db.collection('subsAct3').doc(docId).update({ status: 'approved' });
                 await db.collection('users').doc(userEmail).update({
-                    act3: 'approved',
-                    points: firebase.firestore.FieldValue.increment(total),
-                    lastTime: Date.now() 
+                    act3: 'approved', points: firebase.firestore.FieldValue.increment(total), lastTime: Date.now() 
                 });
-                alert(`¡Evidencia aprobada! Se han otorgado ${total} puntos al estudiante.`);
-            } catch(e) {
-                console.error("Error al aprobar:", e);
-                alert("Hubo un error al aprobar la evidencia.");
-            }
+                alert(`Evidencia aprobada (+${total} pts)`);
+            } catch(e) { alert("Error al aprobar."); }
         }
 
         window.onload = autoLogin;
