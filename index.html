@@ -28,9 +28,9 @@
         }
     </script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #F9FAFB; }
+        body { font-family: 'Poppins', sans-serif; background-color: #F9FAFB; margin: 0; padding: 0; }
         .bg-pattern { background-color: #62A7B4; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
-        .card-shadow { box-shadow: 0 10px 25px -5px rgba(98, 167, 180, 0.1), 0 8px 10px -6px rgba(98, 167, 180, 0.1); }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(98, 167, 180, 0.15), 0 8px 10px -6px rgba(98, 167, 180, 0.1); }
         
         @keyframes floatPlane {
             0% { transform: translate(0, 0) rotate(0deg); opacity: 0.15; }
@@ -38,25 +38,26 @@
             100% { transform: translate(0, 0) rotate(0deg); opacity: 0.15; }
         }
         .floating-plane {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 30px;
             width: 50px;
             height: 50px;
             pointer-events: none;
             animation: floatPlane 8s ease-in-out infinite;
+            z-index: 10;
         }
     </style>
 </head>
-<body class="text-uniNegro antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+<body class="text-uniNegro antialiased min-h-screen flex flex-col relative">
 
     <svg class="floating-plane hidden md:block" viewBox="0 0 24 24" fill="none" stroke="#EOA342" stroke-width="1.5">
         <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
     </svg>
 
-    <!-- LOGIN / REGISTRO / RECUPERACIÓN (CORREGIDO PARA MOSTRAR SOLO UNO A LA VEZ) -->
-    <div id="auth-container" class="fixed inset-0 z-50 bg-pattern flex items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-md w-full bg-white p-6 sm:p-8 rounded-3xl card-shadow border-t-8 border-uniAmarillo relative my-auto">
+    <!-- PANTALLA DE AUTENTICACIÓN (BLOQUE UNIVERSAL INDEPENDIENTE) -->
+    <div id="auth-container" class="min-h-screen w-full bg-pattern flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white p-6 sm:p-8 rounded-3xl card-shadow border-t-8 border-uniAmarillo my-auto">
             
             <div class="text-center mb-6">
                 <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-uniAzul text-white mb-2 shadow-md border-2 border-uniAmarillo overflow-hidden p-1">
@@ -86,7 +87,7 @@
                 </div>
             </form>
 
-            <!-- FORMULARIO REGISTRO (INICIALMENTE OCULTO) -->
+            <!-- FORMULARIO REGISTRO -->
             <form id="form-register" onsubmit="handleRegister(event)" class="space-y-3 hidden">
                 <div>
                     <label class="text-xs font-bold text-gray-600 mb-1 block">Nombre Completo</label>
@@ -110,7 +111,7 @@
                 </div>
             </form>
 
-            <!-- FORMULARIO RECUPERACIÓN (INICIALMENTE OCULTO) -->
+            <!-- FORMULARIO RECUPERACIÓN -->
             <form id="form-recover" onsubmit="handleRecover(event)" class="space-y-3 hidden">
                 <p class="text-xs text-gray-500 mb-2 text-center">Ingresa tu correo registrado para definir una nueva contraseña.</p>
                 <div>
@@ -129,8 +130,8 @@
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
-    <div id="app-container" class="hidden flex-col min-h-screen">
+    <!-- APP PRINCIPAL (OCULTA POR DEFECTO HASTA INICIAR SESIÓN) -->
+    <div id="app-container" class="hidden flex-col min-h-screen w-full">
         <header class="bg-uniAzul text-white shadow-md sticky top-0 z-40 border-b-4 border-uniAmarillo">
             <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
@@ -247,11 +248,11 @@
 
         function switchTab(t) {
             ['login', 'register', 'recover'].forEach(tab => {
-                document.getElementById('form-' + tab).classList.toggle('hidden', tab !== t);
+                const el = document.getElementById('form-' + tab);
+                if(el) el.classList.toggle('hidden', tab !== t);
             });
             const err = document.getElementById('auth-error');
-            err.innerText = '';
-            err.classList.add('hidden');
+            if(err) { err.innerText = ''; err.classList.add('hidden'); }
         }
 
         function switchSec(s) {
@@ -265,7 +266,8 @@
                 if(nav) nav.className = 'py-3 text-xs md:text-sm font-bold text-gray-500 whitespace-nowrap transition-all' + (x === 'admin' && !isAdmin ? ' hidden' : '');
             });
             
-            document.getElementById('sec-'+s).classList.remove('hidden');
+            const targetSec = document.getElementById('sec-'+s);
+            if(targetSec) targetSec.classList.remove('hidden');
             const activeNav = document.getElementById('nav-'+s);
             if (activeNav) activeNav.className = 'py-3 text-xs md:text-sm font-bold text-uniAzul border-b-2 border-uniAzul whitespace-nowrap transition-all';
         }
@@ -372,17 +374,33 @@
         }
 
         function showApp() {
-            document.getElementById('auth-container').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-            document.getElementById('app-container').classList.add('flex');
+            // OCULTAR COMPLETAMENTE EL CONTENEDOR DE LOGIN Y MOSTRAR LA APP
+            const authC = document.getElementById('auth-container');
+            const appC = document.getElementById('app-container');
+            
+            if(authC) {
+                authC.style.display = 'none';
+                authC.classList.add('hidden');
+            }
+            if(appC) {
+                appC.classList.remove('hidden');
+                appC.classList.add('flex');
+            }
             
             const isAdmin = currentUser.email === ADMIN_EMAIL;
-            document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
-            document.getElementById('admin-badge').innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-[10px] px-2.5 py-1 font-black rounded-lg shadow uppercase border border-uniAmarillo">MATRIZ ORI</span>' : '';
+            const adminNav = document.getElementById('nav-admin');
+            const adminBadge = document.getElementById('admin-badge');
             
-            document.getElementById('p-name').innerText = currentUser.name;
-            document.getElementById('p-prog').innerText = currentUser.program;
-            document.getElementById('p-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
+            if(adminNav) adminNav.classList.toggle('hidden', !isAdmin);
+            if(adminBadge) adminBadge.innerHTML = isAdmin ? '<span class="bg-uniRosado text-white text-[10px] px-2.5 py-1 font-black rounded-lg shadow uppercase border border-uniAmarillo">MATRIZ ORI</span>' : '';
+            
+            const pName = document.getElementById('p-name');
+            const pProg = document.getElementById('p-prog');
+            const pAvatar = document.getElementById('p-avatar');
+            
+            if(pName) pName.innerText = currentUser.name;
+            if(pProg) pProg.innerText = currentUser.program;
+            if(pAvatar) pAvatar.innerText = currentUser.name.charAt(0).toUpperCase();
             
             initRealtimeListeners();
         }
@@ -401,7 +419,8 @@
             db.collection('users').doc(currentUser.email).onSnapshot(doc => {
                 if (doc.exists) {
                     currentUser = doc.data();
-                    document.getElementById('p-points').innerText = currentUser.points;
+                    const pPoints = document.getElementById('p-points');
+                    if(pPoints) pPoints.innerText = currentUser.points;
                     renderActivities();
                 }
             });
@@ -423,7 +442,8 @@
                         </tr>`;
                     }
                 });
-                document.getElementById('ranking-body').innerHTML = html;
+                const rankBody = document.getElementById('ranking-body');
+                if(rankBody) rankBody.innerHTML = html;
             });
 
             if (currentUser.email === ADMIN_EMAIL) {
@@ -449,7 +469,8 @@
                             </div>`;
                         });
                     }
-                    document.getElementById('admin-validations').innerHTML = html;
+                    const adminVal = document.getElementById('admin-validations');
+                    if(adminVal) adminVal.innerHTML = html;
                 });
             }
         }
@@ -467,6 +488,7 @@
 
         function renderActivities() {
             const cont = document.getElementById('activities-container');
+            if(!cont) return;
             let html = '';
             let activeCount = 0;
 
@@ -576,6 +598,7 @@
 
         function renderAdmin() {
             const cont = document.getElementById('admin-controls');
+            if(!cont) return;
             let html = '<h3 class="font-extrabold text-base text-uniAzul border-b pb-3 mb-4">Gestión de Retos Activos</h3>';
             
             const a1 = globalSettings.act1Active;
